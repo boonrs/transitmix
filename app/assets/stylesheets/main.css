@@ -1,0 +1,265 @@
+/* reset from: http://meyerweb.com/eric/tools/css/reset/ */
+a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
+
+/* from: http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+/* apply a natural box layout model to all elements */
+* { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
+
+body {
+  font-family: jaf-facitweb, sans-serif;
+}
+
+#map {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.ui {
+  width: 280px;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  color: white;
+  text-shadow: -1px -1px 0px rgba(49, 41, 58, 0.5);
+}
+
+.block {
+  position: relative;
+}
+
+.hello {
+  padding: 18px 16px;
+  background: #49385A;
+  line-height: 20px;
+  font-size: 14px;
+}
+
+.hello .tagline {
+  padding-bottom: 10px;
+  font-style: italic;
+}
+
+.hello .newmix {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.route {
+  height: 74px;
+  padding: 12px 16px;
+  border-bottom: 1px solid RGBA(100,100,100,.5);
+
+}
+
+.title {
+  padding: 18px 16px;
+  background: #261835;
+}
+
+.headline {
+  font-size: 18px;
+  margin-bottom: 10px;
+  opacity: .7;
+  font-style: italic;
+}
+
+.headline a {
+  color: white;
+  text-decoration: none;
+}
+
+.headline a:hover {
+  text-decoration: underline;
+}
+
+.mapname {
+  font-weight: 600;
+  font-size: 28px;
+  color: #FFF;
+  outline: none;
+  line-height: 34px;
+}
+
+.add {
+  text-align: right;
+  position: relative;
+  right: 0;
+  font-size: 14px;
+  display: none;
+  padding: 12px 0;
+
+}
+.add p {
+  display: inline;
+  background: #261835;
+    padding: 10px;
+
+}
+
+.add:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.routename {
+  font-weight: 600;
+  font-size: 30px;
+}
+
+.routedesc {
+  font-size: 14px;
+  font-weight: 400;
+  padding-top: 6px;
+}
+
+input:focus { outline: none; }
+
+.newroute {
+  background: #111;
+  display: none;
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  padding: 12px;
+}
+
+.newname {
+  border: none;
+  background: none;
+  border-bottom: 1px solid #303030;
+  font-size: 20px;
+  margin-top: -4px;
+  width: 140px;
+  color: white;
+}
+
+.newdesc {
+  border: none;
+  background: none;
+  border-bottom: 1px solid #303030;
+  font-size: 12px;
+  margin-top: 5px;
+  width: 140px;
+  color: white;
+}
+
+.transittype {
+  position: absolute;
+  right: -9px;
+  top: 8px;
+  background: url(<%= asset_path 'typeselect.png' %>) no-repeat;
+  width: 120px;
+  height: 60px;
+  background-size: 100px 23px;
+  cursor: pointer;
+}
+
+.draw {
+  position: absolute;
+  font-size: 14px;
+  right: 10px;
+  bottom: 8px;
+  padding: 5px 30px;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+.bus {
+  background-image: url(<%= asset_path 'bus-white.png' %>);
+  background-position: 230px 21px;
+  background-repeat: no-repeat;
+}
+
+.train {
+  background-image: url(<%= asset_path 'train-white.png' %>);
+    background-position: 230px 21px;
+  background-repeat: no-repeat;
+}
+
+/* https://stackoverflow.com/questions/16154494/retina-displays-high-res-background-images */
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) { 
+
+  .bus {
+    background-image: url(<%= asset_path 'bus-white@2x.png' %>);
+    background-size: 29px 32px;
+  }
+
+  .train {
+    background-image: url(<%= asset_path 'train-white@2x.png' %>);
+    background-size: 26px 32px;
+  }
+}
+
+.redroute {
+  background-color: #AD0101;
+}
+
+.redroute:hover {
+  background-color: rgb(199, 3, 3);
+  cursor: pointer;
+}
+
+.blueroute {
+  background-color: #0071CA;
+}
+
+.blueroute:hover {
+  background-color: rgb(7, 127, 223);
+  cursor: pointer;
+}
+
+.greenroute {
+  background-color: #0D7215;
+  display: none;
+}
+
+.finishDrawing {
+  position: absolute;
+  background: black;
+  padding: 10px;
+  color: white;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
+.finishDrawing:hover {
+  text-decoration: underline;
+}
+
+.drawBall {
+  width: 25px;
+  height: 25px;
+  margin-left: -12px;
+  margin-top:-12px;
+  border-radius: 15px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+
+
+
+/**************************/
+
+/**************************/
+
+
+.new {
+z-index: 100;
+position: absolute;
+left: 100px;
+top: 100px;
+}

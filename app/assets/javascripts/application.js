@@ -11,5 +11,8 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery_ujs
+//= require underscore-1.6.0
+//= require backbone-1.1.2
+//= require backbone-parse-0.1.0
+//= require app
 //= require_tree .
