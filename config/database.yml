@@ -78,8 +78,8 @@ test:
 #   production:
 #     url: <%= ENV['DATABASE_URL'] %>
 #
-production:
-  <<: *default
-  database: transitmix_production
-  username: transitmix
-  password: <%= ENV['TRANSITMIX_DATABASE_PASSWORD'] %>
+# production:
+#   <<: *default
+#   database: transitmix_production
+#   username: transitmix
+#   password: <%= ENV['TRANSITMIX_DATABASE_PASSWORD'] %>
