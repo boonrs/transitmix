@@ -12,3 +12,13 @@ bundle exec rake db:create
 bundle exec rake db:migrate
 rails server
 ```
+
+## Deploy
+
+```console
+heroku create my-app-name
+heroku config:set SECRET_KEY_BASE=`bundle exec rake secret`
+git push heroku master
+heroku run rake db:migrate
+heroku open
+```
