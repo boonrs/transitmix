@@ -11,8 +11,14 @@
 // about supported directives.
 //
 //= require jquery
-//= require underscore-1.6.0
-//= require backbone-1.1.2
+//= require underscore
+//= require backbone
 //= require backbone-parse-0.1.0
-//= require app
+//= require transit_mix
+//= require utils
+//= require_tree ../templates
+//= require_tree ./models
+//= require_tree ./collections
+//= require_tree ./views
+//= require_tree ./routers
 //= require_tree .

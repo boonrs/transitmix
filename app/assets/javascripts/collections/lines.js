@@ -1,6 +1,6 @@
-app.Lines = Backbone.Collection.extend({
+TransitMix.Lines = Backbone.Collection.extend({
   _parse_class_name: "Item",
-  model: app.Line,
+  model: TransitMix.Line,
 
   // Add a model to the collection, and set focus to true
   focus: function(model) {

@@ -1,4 +1,4 @@
-app.Line = Backbone.Model.extend({
+TransitMix.Line = Backbone.Model.extend({
   _parse_class_name: "Item",
 
   defaults: {
@@ -26,7 +26,7 @@ app.Line = Backbone.Model.extend({
     var requestUrl = "http://router.project-osrm.org/viaroute?loc=" + previous[0] + "," + previous[1] + "&loc=" + point.lat + "," + point.lng;
 
     var addGeometry = function(routeData) {
-      var allPoints = app.utils.decodeGeometry(routeData.route_geometry, 6);
+      var allPoints = TransitMix.utils.decodeGeometry(routeData.route_geometry, 6);
       allCoordinates = allCoordinates.concat(allPoints);           
       this.set('allCoordinates', allCoordinates);
       this.save();

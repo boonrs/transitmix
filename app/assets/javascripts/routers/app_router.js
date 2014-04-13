@@ -1,4 +1,4 @@
-app.Router = Backbone.Router.extend({
+TransitMix.Router = Backbone.Router.extend({
   routes: {
     'new': 'new',
     '-/new': 'new',
@@ -11,17 +11,17 @@ app.Router = Backbone.Router.extend({
   },
 
   line: function(id) {
-    l = new app.Line({ objectId: id });
+    l = new TransitMix.Line({ objectId: id });
     l.fetch({ success: _.bind(this.collection.focus, this.collection) });
     // do advanced things here, like 
   },
 
   new: function() {
-    var line = new app.Line();
+    var line = new TransitMix.Line();
     var collection = this.collection;
 
     var success = function(model) {
-      app.router.navigate('-/' + model.id);
+      TransitMix.router.navigate('-/' + model.id);
       collection.focus(model);
     }
 
