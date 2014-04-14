@@ -7,7 +7,7 @@ app.AppView = Backbone.View.extend({
 
     var center = [37.778733, -122.421467];
     var defaultZoomLevel = 14;
-    var options = { tileLayer: { detectRetina: true }};
+    var options = { tileLayer: { detectRetina: true }, doubleClickZoom: false };
 
     var map = app.map = L.mapbox.map('map', 'codeforamerica.h6mlbj75', options)
       .setView(center, defaultZoomLevel);

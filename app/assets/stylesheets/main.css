@@ -25,6 +25,10 @@ body {
   left: 0;
 }
 
+.drawCursor {
+  cursor: crosshair;
+}
+
 
 /********* Detail View ***************/
 .detailSidebar {

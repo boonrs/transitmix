@@ -23,8 +23,10 @@ app.LineView = Backbone.View.extend({
   },
 
   startDrawing: function() {
+    $(app.map._container).addClass('drawCursor');
     app.map.on('click', this.addPoint, this);
-    this.throttledShowPredicts =  _.throttle(this.showPredicts, 100)
+    this.throttledShowPredicts =  _.throttle(this.showPredicts, 100);
+    app.map.on('dblclick', this.stopDrawing, this);
     app.map.on('mousemove', this.throttledShowPredicts, this);
 
     this.predictLine = L.polyline([], {
@@ -50,6 +52,7 @@ app.LineView = Backbone.View.extend({
   },
 
   stopDrawing: function() {
+    $(app.map._container).removeClass('drawCursor');
     app.map.off('click', this.addPoint, this);
     app.map.off('mousemove', this.throttledShowPredicts, this);
     app.map.removeLayer(this.predictLine);
