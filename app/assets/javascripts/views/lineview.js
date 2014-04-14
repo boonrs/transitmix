@@ -1,36 +1,40 @@
 app.LineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:latlngs', this.updateLatlngs);
+    this.throttledShowPredicts = _.throttle(this.showPredicts, 100);
   },
 
   render: function() {
     var points = this.model.get('points');
-    if (points.length < 2) this.startDrawing();
-
-    // draw the coordinates as a line, and the key coordinates as circles above it
     var latlngs = this.model.get('latlngs');
-    this.markers = [];
     var color = this.model.get('color');
 
+    // A line showing the main proposed transit route .
     this.line = L.polyline(latlngs, options = {
       color: '#' + color,
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
 
-    this.model.get('points').forEach(function(p) {
+    // Markers at each user-added point. Used for editing.
+    this.markers = [];
+    points.forEach(function(p) {
       this.addMarker(p);
     }, this);
+
+    // Jump into drawing mode for newly created lines
+    if (points.length < 2) this.startDrawing();
   },
 
   updateLatlngs: function() {
-    this.line.setLatLngs(this.model.get('latlngs'));
+    var latlngs = this.model.get('latlngs');
+    this.line.setLatLngs(latlngs);
   },
 
   startDrawing: function() {
     $(app.map._container).addClass('drawCursor');
+    
     app.map.on('click', this.addPoint, this);
-    this.throttledShowPredicts =  _.throttle(this.showPredicts, 100);
     app.map.on('dblclick', this.stopDrawing, this);
     app.map.on('mousemove', this.throttledShowPredicts, this);
 
@@ -39,8 +43,6 @@ app.LineView = Backbone.View.extend({
       opacity: 0.5,
       weight: 10,
     }).addTo(app.map);
-
-    //$('body').append('<div class="drawBall"></div>');
   },
 
   showPredicts: function(event) {
@@ -54,13 +56,7 @@ app.LineView = Backbone.View.extend({
 
   addPoint: function(event) {
     this.model.addPoint(event.latlng);
-  },
-
-  addMarker: function(point) {
-    var icon = L.divIcon({ className: "line-point-icon", html: '<div class="point-icon-inner" style="background:#' + this.model.get('color')+ '"></div>' })
-    var marker = L.marker(point, { icon: icon }).addTo(app.map);
-    this.markers.push(marker);
-    marker.on('click', _.bind(this.clickMarker, this));
+    this.addMarker(event.latlng);
   },
 
   stopDrawing: function() {
@@ -68,6 +64,18 @@ app.LineView = Backbone.View.extend({
     app.map.off('click', this.addPoint, this);
     app.map.off('mousemove', this.throttledShowPredicts, this);
     if (this.predictLine) app.map.removeLayer(this.predictLine);
+  },
+
+  // Markers are user-clicked locations, used for dragging and editing lines
+  addMarker: function(point) {
+    var color = this.model.get('color');
+    var icon = L.divIcon({
+      className: '',
+      html: '<div class="mapMarker" style="background:#' + color + '"></div>'
+    });
+    var marker = L.marker(point, { icon: icon, draggable: true, }).addTo(app.map);
+    marker.on('click', _.bind(this.clickMarker, this));
+    this.markers.push(marker);    
   },
 
   clickMarker: function(event) {
@@ -79,10 +87,9 @@ app.LineView = Backbone.View.extend({
 
   remove: function() {
     this.stopDrawing();
-    
     this.line.off('click');
+    this.markers.forEach(function(m) { app.map.removeLayer(m) });
     app.map.removeLayer(this.line);
-
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 });
