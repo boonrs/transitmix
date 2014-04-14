@@ -29,6 +29,13 @@ body {
   cursor: crosshair;
 }
 
+.line-point-icon .point-icon-inner{
+  background: pink;
+  border-radius: 20px;
+  height: 20px !important;
+  width:20px !important;
+}
+
 
 /********* Detail View ***************/
 .detailSidebar {
