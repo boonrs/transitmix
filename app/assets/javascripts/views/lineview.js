@@ -24,7 +24,7 @@ app.LineView = Backbone.View.extend({
 
   startDrawing: function() {
     app.map.on('click', this.addPoint, this);
-    app.map.on('mousemove', _.throttle(this.showPredicts, 300), this);
+    app.map.on('mousemove', _.throttle(this.showPredicts, 100), this);
 
     this.predictLine = L.polyline([], {
       color: 'red',
