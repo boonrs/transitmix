@@ -1,10 +1,6 @@
 app.AppView = Backbone.View.extend({
   el: $('body'),
 
-  events: {
-    'click .new': 'createNew',
-  },
-
   initialize: function() {
     this.listenTo(this.collection, 'blur', this.renderHome);
     this.listenTo(this.collection, 'focus', this.renderDetail);
@@ -20,16 +16,12 @@ app.AppView = Backbone.View.extend({
   renderHome: function() {
     if (this.view) this.view.remove();
     this.view = new app.HomeView({ collection: this.collection });
-    this.view.render();
+    this.$el.append(this.view.render().el);
   },
 
   renderDetail: function() {
     if (this.view) this.view.remove();
-    this.view = new app.LineView({ model: this.collection.getFocused() });
-    this.view.render();
-  },
-
-  createNew: function() {
-    app.router.navigate('new', {trigger: true});
+    this.view = new app.DetailView({ model: this.collection.getFocused() });
+    this.$el.append(this.view.render().el);
   },
 });

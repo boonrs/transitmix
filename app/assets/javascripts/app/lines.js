@@ -1,11 +1,11 @@
 app.Lines = Backbone.Collection.extend({
-  _parse_class_name: "Item",
+  _parse_class_name: 'Line',
   model: app.Line,
 
-  // Add a model to the collection, and set focus to true
+  // A specific model in the collection can be 'focused'. This lets
+  // views quickly switch between showing overview and detail.
   focus: function(model) {
-    this.isFocused = true;
-    this.focusLine = model;
+    this.focused = model;
     this.trigger('focus');
   },
 
@@ -14,6 +14,6 @@ app.Lines = Backbone.Collection.extend({
   },
 
   getFocused: function() {
-    return this.focusLine;
+    return this.focused;
   },
 });

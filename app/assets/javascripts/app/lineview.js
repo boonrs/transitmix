@@ -1,36 +1,47 @@
 app.LineView = Backbone.View.extend({
   initialize: function() {
-    this.listenTo(this.model, 'change:allCoordinates', this.updateCoordinates);
+    this.listenTo(this.model, 'change:latlngs', this.updateLatlngs);
   },
 
   render: function() {
-    var keyCoordinates = this.model.get('keyCoordinates');
-    if (keyCoordinates.length < 2) this.startDrawing();
+    var points = this.model.get('points');
+    if (points.length < 2) this.startDrawing();
 
     // draw the coordinates as a line, and the key coordinates as circles above it
-    var latlngs = this.model.get('allCoordinates');
+    var latlngs = this.model.get('latlngs');
+    var color = this.model.get('color');
 
-    var options = {
-      color: 'red',
+    this.line = L.polyline(latlngs, options = {
+      color: '#' + color,
       opacity: 1,
       weight: 10,
-    };
-
-    this.line = L.polyline(latlngs, options).addTo(app.map);
+    }).addTo(app.map);
   },
 
-  updateCoordinates: function() {
-    this.line.setLatLngs(this.model.get('allCoordinates'));
+  updateLatlngs: function() {
+    this.line.setLatLngs(this.model.get('latlngs'));
   },
 
   startDrawing: function() {
     app.map.on('click', this.addPoint, this);
-    app.map.on('mousemove', this.showPredicts, this);
+    app.map.on('mousemove', _.throttle(this.showPredicts, 300), this);
+
+    this.predictLine = L.polyline([], {
+      color: 'red',
+      opacity: 0.5,
+      weight: 10,
+    }).addTo(app.map);
+
     $('body').append('<div class="drawBall"></div>');
   },
 
   showPredicts: function(event) {
-    console.log(event);
+    if (this.model.get('points').length === 0) return;
+    
+    var predictLine = this.predictLine;
+    this.model.getRoute(event.latlng, function(latlngs) {
+      predictLine.setLatLngs(latlngs)
+    });
   },
 
   addPoint: function(event) {
@@ -51,5 +62,3 @@ app.LineView = Backbone.View.extend({
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 });
-
-

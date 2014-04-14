@@ -13,7 +13,6 @@ app.Router = Backbone.Router.extend({
   line: function(id) {
     l = new app.Line({ objectId: id });
     l.fetch({ success: _.bind(this.collection.focus, this.collection) });
-    // do advanced things here, like 
   },
 
   new: function() {
@@ -23,7 +22,7 @@ app.Router = Backbone.Router.extend({
     var success = function(model) {
       app.router.navigate('-/' + model.id);
       collection.focus(model);
-    }
+    };
 
     line.save({}, { success: success });
   },
@@ -31,9 +30,8 @@ app.Router = Backbone.Router.extend({
   home: function() {
     this.collection.fetch({
       reset: true,
-      query: { limit: 6 },
+      query: { limit: 10 },
       success: _.bind(this.collection.blur, this.collection)
     });
-    //this.collection.blur();
-  }
+  },
 });

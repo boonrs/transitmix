@@ -1,38 +1,52 @@
-// View that shows all the routes drawn,
-// and lets you jump into any of them.
-
+// View that shows all the routes drawn, and lets you jump into any of them.
+// TODO: This view is a mess. Need to clean up, seperate into files, redo CSS.
 app.HomeView = Backbone.View.extend({
+  template: _.template($('#tmpl-home-view').html()),
+  className: 'homeSidebar',
+  events: {
+    'click .newLine': 'newLine',
+  },
+
   render: function() {
+    this.$el.html(this.template({}));
+
     this.subviews = [];
     this.collection.forEach(function(line) {
       var homeLineView = new app.HomeLineView({ model: line });
       var homeBlockView = new app.HomeBlockView({ model: line });
 
       homeLineView.render();
-      $('#routes').append(homeBlockView.render().el);
+      this.$el.append(homeBlockView.render().el);
 
       this.subviews.push(homeLineView);
       this.subviews.push(homeBlockView);
     }, this);
+
+    this.$el.append('<div class="newLine">Or create a <span>new transit line...</span></div>');
+    return this;
+  },
+
+  newLine: function() {
+    app.router.navigate('new', {trigger: true});
   },
 
   remove: function() {
-    this.subviews.forEach(function(line) { line.remove(); });
+    this.subviews.forEach(function(subview) { subview.remove(); });
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 });
 
 app.HomeLineView = Backbone.View.extend({
   render: function() {
-    var coordinates = this.model.get('allCoordinates');
+    var latlngs = this.model.get('latlngs');
+    var color = '#' + this.model.get('color');
 
-    var options = {
-      color: 'red',
+    this.line = L.polyline(latlngs, {
+      color: color,
       opacity: 0.5,
       weight: 5,
-    };
+    }).addTo(app.map);
 
-    this.line = L.polyline(coordinates, options).addTo(app.map);
     this.line.on('click', this.jump, this);
   },
 
@@ -49,9 +63,19 @@ app.HomeLineView = Backbone.View.extend({
 
 app.HomeBlockView = Backbone.View.extend({
   template: _.template($('#tmpl-home-block-view').html()),
-  className: 'route block redroute',
+  className: 'lineHeader',
+
+  events: {
+    'click': 'jump',
+  },
+
   render: function() {
     this.$el.html(this.template(this.model.attributes));
+    this.$el.css('background', '#' + this.model.get('color'));
     return this;
   },
-})
+
+  jump: function() {
+    app.router.navigate('-/' + this.model.id, { trigger: true });
+  },
+});

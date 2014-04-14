@@ -1,4 +1,31 @@
+<script type="text/template" id="tmpl-detail-view">
+  <div class="nav">
+    <div class="navHome">See all lines</div>
+    <div class="navRemix">Remix</div>
+  </div>
+  <div class="lineHeader" style="background: #{{ color }}">
+    <div class="lineName" contenteditable="true">48 Bravo</div>
+    <div class="lineDescription" contenteditable="true">This line is modeled after my childhood dream of a line between the mission and golden gate park.</div>
+  </div>
+  <div class="lineVariables" style="background: #{{ color2 }}">
+    Arrives every <span class="lineFrequency" contenteditable="true">30</span> minutes,
+    traveling at <span class="lineSpeed" contenteditable="true">25</span> miles per hour,
+    from <span class="lineStartTime" contenteditable="true">8am</span> to <span class="lineEndTime" contenteditable="true">8pm</span>.
+  </div>
+  <div class="lineCalculations" style="background: #{{ color3 }}">
+    This line is <span class="lineDistance">7.6 miles</span>
+    and would cost <span class="lineCost">$17,000</span>.
+  </div>
+</script>
+
+<script type="text/template" id="tmpl-home-view">
+  <div class="homeHeader">
+    <div class="homeTitle">TransitMix</div>
+    <div class="homeDescription">Create and remix transit lines, for fun and profit. Some recent lines:</div>
+  </div>
+</script>
+
 <script type="text/template" id="tmpl-home-block-view">
-  <div class="routename">{{ name }}</div>
-  <div class="routedesc">description...</div>
+  <div class="lineName">{{ name }}</div>
+  <div class="lineDescription">{{ description }}</div>
 </script>

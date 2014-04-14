@@ -7,259 +7,177 @@ a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,c
 
 body {
   font-family: jaf-facitweb, sans-serif;
+  color: white;
+  font-size: 15px;
+  text-shadow: -1px -1px 0px rgba(49, 41, 58, 0.5);
+}
+
+/* Don't show bluebox around contenteditable in WebKit */
+[contenteditable]:focus {
+  outline: 0px solid transparent;
 }
 
 #map {
   position: absolute;
-  left: 0;
+  top: 0;
   right: 0;
   bottom: 0;
-  top: 0;
+  left: 0;
 }
 
-.ui {
-  width: 280px;
+
+/********* Detail View ***************/
+.detailSidebar {
   position: absolute;
   top: 30px;
   right: 30px;
+  width: 280px;
+}
+
+.detailSidebar>div {
+  padding: 12px 14px;
+}
+
+.nav {
+  background: #261835;
+  height: 39px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.navHome {
+  float: left;
+}
+
+.navRemix {
+  float: right;
+}
+
+.navHome, .navRemix {
+  padding-bottom: 2px;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+}
+
+.navHome:hover, .navRemix:hover {
   color: white;
-  text-shadow: -1px -1px 0px rgba(49, 41, 58, 0.5);
-}
-
-.block {
-  position: relative;
-}
-
-.hello {
-  padding: 18px 16px;
-  background: #49385A;
-  line-height: 20px;
-  font-size: 14px;
-}
-
-.hello .tagline {
-  padding-bottom: 10px;
-  font-style: italic;
-}
-
-.hello .newmix {
-  text-decoration: underline;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
   cursor: pointer;
 }
 
-.route {
-  height: 74px;
-  padding: 12px 16px;
-  border-bottom: 1px solid RGBA(100,100,100,.5);
-
+.lineHeader {
+  /*background: #AD0101;*/
 }
 
-.title {
-  padding: 18px 16px;
-  background: #261835;
-}
-
-.headline {
-  font-size: 18px;
-  margin-bottom: 10px;
-  opacity: .7;
-  font-style: italic;
-}
-
-.headline a {
-  color: white;
-  text-decoration: none;
-}
-
-.headline a:hover {
-  text-decoration: underline;
-}
-
-.mapname {
+.lineName {
+  font-size: 26px;
   font-weight: 600;
-  font-size: 28px;
-  color: #FFF;
-  outline: none;
-  line-height: 34px;
+  line-height: 36px;
 }
 
-.add {
-  text-align: right;
-  position: relative;
-  right: 0;
+.lineDescription {
   font-size: 14px;
-  display: none;
-  padding: 12px 0;
-
-}
-.add p {
-  display: inline;
-  background: #261835;
-    padding: 10px;
-
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 6px;
 }
 
-.add:hover {
+.lineName:hover, .lineDescription:hover {
+  /* TODO: make this look more editable */
   cursor: pointer;
-  text-decoration: underline;
 }
 
-.routename {
-  font-weight: 600;
+.lineVariables {
+  /*background: #750000;*/
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lineVariables span {
+  color: white;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+  padding: 0 3px;
+  margin: 0 -3px;
+}
+
+.lineVariables span:hover {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.lineFrequency {}
+.lineSpeed {}
+.lineHours {}
+
+.lineCalculations {
+  /*background: #3C0000;*/
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lineCalculations span {
+  color: white;
+}
+
+.lineDistance {}
+.lineFrequency{}
+
+
+/********* Home View ***************/
+/* TODO: Make home view's css less bad */
+.homeSidebar {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  bottom: 30px;
+  width: 280px;
+  overflow: hidden;
+}
+
+.homeSidebar>div {
+  padding: 12px 14px;
+}
+
+.homeHeader {
+  background: #261835;
+  padding: 16px 14px !important;
+}
+
+.homeTitle {
   font-size: 30px;
+  font-weight: 600;
+  line-height: 36px;
 }
 
-.routedesc {
+.homeDescription {
   font-size: 14px;
-  font-weight: 400;
-  padding-top: 6px;
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 6px;
 }
 
-input:focus { outline: none; }
-
-.newroute {
-  background: #111;
-  display: none;
-  color: white;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: none;
-  padding: 12px;
+.homeSidebar .lineHeader {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.newname {
-  border: none;
-  background: none;
-  border-bottom: 1px solid #303030;
+.homeSidebar .lineName {
   font-size: 20px;
-  margin-top: -4px;
-  width: 140px;
-  color: white;
+  line-height: 24px;
 }
 
-.newdesc {
-  border: none;
-  background: none;
-  border-bottom: 1px solid #303030;
-  font-size: 12px;
-  margin-top: 5px;
-  width: 140px;
-  color: white;
+.homeSidebar .lineDescription {
+  height: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.transittype {
+.newLine {
   position: absolute;
-  right: -9px;
-  top: 8px;
-  background: url(<%= asset_path 'typeselect.png' %>) no-repeat;
-  width: 120px;
-  height: 60px;
-  background-size: 100px 23px;
-  cursor: pointer;
-}
-
-.draw {
-  position: absolute;
-  font-size: 14px;
-  right: 10px;
-  bottom: 8px;
-  padding: 5px 30px;
-  border: 1px solid #444;
-  cursor: pointer;
-}
-
-.bus {
-  background-image: url(<%= asset_path 'bus-white.png' %>);
-  background-position: 230px 21px;
-  background-repeat: no-repeat;
-}
-
-.train {
-  background-image: url(<%= asset_path 'train-white.png' %>);
-    background-position: 230px 21px;
-  background-repeat: no-repeat;
-}
-
-/* https://stackoverflow.com/questions/16154494/retina-displays-high-res-background-images */
-@media
-only screen and (-webkit-min-device-pixel-ratio: 2),
-only screen and (   min--moz-device-pixel-ratio: 2),
-only screen and (     -o-min-device-pixel-ratio: 2/1),
-only screen and (        min-device-pixel-ratio: 2),
-only screen and (                min-resolution: 192dpi),
-only screen and (                min-resolution: 2dppx) { 
-
-  .bus {
-    background-image: url(<%= asset_path 'bus-white@2x.png' %>);
-    background-size: 29px 32px;
-  }
-
-  .train {
-    background-image: url(<%= asset_path 'train-white@2x.png' %>);
-    background-size: 26px 32px;
-  }
-}
-
-.redroute {
-  background-color: #AD0101;
-}
-
-.redroute:hover {
-  background-color: rgb(199, 3, 3);
-  cursor: pointer;
-}
-
-.blueroute {
-  background-color: #0071CA;
-}
-
-.blueroute:hover {
-  background-color: rgb(7, 127, 223);
-  cursor: pointer;
-}
-
-.greenroute {
-  background-color: #0D7215;
-  display: none;
-}
-
-.finishDrawing {
-  position: absolute;
-  background: black;
-  padding: 10px;
-  color: white;
-  margin-left: 10px;
-  margin-top: 5px;
-}
-
-.finishDrawing:hover {
-  text-decoration: underline;
-}
-
-.drawBall {
-  width: 25px;
-  height: 25px;
-  margin-left: -12px;
-  margin-top:-12px;
-  border-radius: 15px;
-  position: absolute;
+  bottom: 0;
   left: 0;
-  top: 0;
-  pointer-events: none;
+  right: 0;
+  background: #261835;
 }
 
-
-
-
-/**************************/
-
-/**************************/
-
-
-.new {
-z-index: 100;
-position: absolute;
-left: 100px;
-top: 100px;
+.newLine span {
+  border-bottom: 1px dotted #7D6992;
 }
