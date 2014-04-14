@@ -24,15 +24,16 @@ app.LineView = Backbone.View.extend({
 
   startDrawing: function() {
     app.map.on('click', this.addPoint, this);
-    app.map.on('mousemove', _.throttle(this.showPredicts, 100), this);
+    this.throttledShowPredicts =  _.throttle(this.showPredicts, 100)
+    app.map.on('mousemove', this.throttledShowPredicts, this);
 
     this.predictLine = L.polyline([], {
-      color: 'red',
+      color: '#' + this.model.get('color'),
       opacity: 0.5,
       weight: 10,
     }).addTo(app.map);
 
-    $('body').append('<div class="drawBall"></div>');
+    //$('body').append('<div class="drawBall"></div>');
   },
 
   showPredicts: function(event) {
@@ -50,7 +51,8 @@ app.LineView = Backbone.View.extend({
 
   stopDrawing: function() {
     app.map.off('click', this.addPoint, this);
-    app.map.off('mousemove', this.showPredicts, this);
+    app.map.off('mousemove', this.throttledShowPredicts, this);
+    app.map.removeLayer(this.predictLine);
   },
 
   remove: function() {
