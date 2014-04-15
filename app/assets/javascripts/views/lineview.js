@@ -32,7 +32,7 @@ app.LineView = Backbone.View.extend({
 
   startDrawing: function() {
     $(app.map._container).addClass('drawCursor');
-    
+
     app.map.on('click', this.addPoint, this);
     app.map.on('mousemove', this.throttledShowPredicts, this);
 
@@ -83,7 +83,7 @@ app.LineView = Backbone.View.extend({
     marker.on('dragend', _.bind(this.finishDrag, this));
 
     marker.index = index;
-    this.markers.push(marker);    
+    this.markers.push(marker);
   },
 
   clickMarker: function(event) {
