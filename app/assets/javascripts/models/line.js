@@ -15,51 +15,71 @@ app.Line = Backbone.Model.extend({
       startTime: '8am',
       endTime: '8pm',
       color: randomColor,
-      points: [], // [{lat: 12, lng: 12.3232}, ...]
-      latlngs: [], // [[12.232323, 12.32323232], ...]
+      coordinates: [], // A GeoJSON MultiLineString
     };
   },
 
-  // Adds a point to the model, then calculates the route that connects
-  // it to the previous point and updates the latlngs accordingly.
-  addPoint: function(point) {
-    var points = _.clone(this.get('points'));
-    var latlngs = _.clone(this.get('latlngs'));
+  // Extends the line to the given point, intelligently routing in between
+  extendLine: function(toPoint) {
+    toPoint = app.utils.cleanPoint(toPoint);
+    var coordinates = _.clone(this.get('coordinates'));
 
-    if (points.length === 0) {
-      points.push(point);
-      this.save({ points: points });
+    if (coordinates.length === 0) {
+      coordinates.push([toPoint]);
+      this.save({coordinates: coordinates});
       return;
     }
 
-    this.getRoute(point, function (route) {
-      var closestPoint = app.utils.LatlngtoPoint(_.last(route));
-      points.push(closestPoint);
-      latlngs = latlngs.concat(route);
-
-      this.save({
-        points: points,
-        latlngs: latlngs,
-      });
+    this.getRoute({
+      from: this.getLastPoint(),
+      to: toPoint,
+    }, function(route) {
+      coordinates.push(route);
+      this.save({coordinates: coordinates});
     });
   },
 
-  // Returns a set of latlngs that connect the last point to the give point
-  getRoute: function(point, callback) {
-    var last = _.last(this.get('points'));
+  rerouteLine: function(viaPoint, pointIndex) {
+    var coordinates = _.clone(this.get('coordinates'));
+    var previousPoint = _.last(coordinates[pointIndex - 1]);
+
+    this.getRoute({
+      from: previousPoint,
+      to: viaPoint,
+    }, function(route) {
+      coordinates[pointIndex] = route;
+      this.save({coordinates: coordinates});
+    })
+  },
+
+  // Returns a set of coordinates that connect between 'from' and 'to' points
+  // If no from point is given, the line's last point is assumed.
+  // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
+  getRoute: function(points, callback) {
+    var fromPoint = app.utils.cleanPoint(points.from);
+    var toPoint = app.utils.cleanPoint(points.to);
+  
     var routingUrl = "http://router.project-osrm.org/viaroute?loc=" +
-      last.lat + "," + last.lng + "&loc=" + point.lat + "," + point.lng;
+      fromPoint[0] + "," + fromPoint[1] + "&loc=" + toPoint[0] + "," + toPoint[1];
 
     callback = _.bind(callback, this);
     $.getJSON(routingUrl, function(route) {
       var geometry = route.route_geometry;
-      var latlngs = app.utils.decodeGeometry(geometry);
-      callback(latlngs);
+      var coordinates = app.utils.decodeGeometry(geometry);
+      callback(coordinates);
     });
   },
 
+  getLastPoint: function() {
+    var lastSegment = _.last(this.get('coordinates'));
+    var lastPoint = _.last(lastSegment);
+    return lastPoint;
+  },
+
   calculateDistance: function() {
-    return app.utils.calculateDistance(this.get('latlngs'));
+    var coordinates = this.get('coordinates');
+    var flat = _.flatten(coordinates, true);
+    return app.utils.calculateDistance(flat);
   },
 
   calculateCost: function() {

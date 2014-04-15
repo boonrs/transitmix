@@ -28,12 +28,10 @@ app.utils.decodeGeometry = function(encoded, precision) {
   return array;
 }
 
-// [a, b] to {lat: a, lng: b}
-app.utils.LatlngtoPoint = function(latlng) {
-  return {
-    lat: latlng[0],
-    lng: latlng[1]
-  };
+// Make sure point is in [a, b] format for consistency
+app.utils.cleanPoint = function(point) {
+  if (!_.isArray(point)) point = _.values(point);
+  return point;
 }
 
 // Calculate the distance between two latlngs.
