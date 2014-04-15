@@ -45,28 +45,6 @@ app.Line = Backbone.Model.extend({
   },
 
   rerouteLine: function(newLatLng, segmentIndex) {
-    // newLatLng = new lat/lng of point
-    // pointIndex = index of line segment w/in cordinates of moved points
-
-    // var coordinates = this.get('coordinates');
-
-    // if (pointIndex === 0) {
-    //   this.dropFirstLine(); //silent
-    //   this.prependLine(via);
-    //   return;
-    // }
-
-    // if (pointIndex === coordinates.length - 1) {
-    //   this.dropLastSegment(); //silent
-    //   this.extendLine(via);
-    //   return;
-    // }
-    /*
-    edge cases:
-      first point
-        route just from 
-      last point
-    */
     var rerouteLineStart = function(newLatLng) {
       // If the first point is moved, need to:
       //     * Move the single point in the first segment
@@ -125,7 +103,6 @@ app.Line = Backbone.Model.extend({
 
     rerouteLineMiddle = _.bind(rerouteLineMiddle, this);
 
-
     if (segmentIndex === 0) {
       rerouteLineStart(newLatLng);
     } else if (segmentIndex === this.get("coordinates").length - 1) {
@@ -133,32 +110,17 @@ app.Line = Backbone.Model.extend({
     } else {
       rerouteLineMiddle(newLatLng, segmentIndex);
     }
-    
   },
-
 
   // Returns a set of coordinates that connect between 'from' and 'to' points
   // If no from point is given, the line's last point is assumed.
   // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
   // To and From are required, via is optional
   getRoute: function(points, callback) {
-    console.log(points);
     var routingUrl = "http://router.project-osrm.org/viaroute?loc=" +
       points.from[0] + "," + points.from[1];
     if (points.via) routingUrl += "&loc=" + points.via[0] + "," + points.via[1];
     routingUrl += "&loc=" + points.to[0] + "," + points.to[1];
-    
-
-    // var routingUrl = "http://router.project-osrm.org/viaroute";
-    // // Because index doesnt work.
-    // var count = 0;
-    // _.each(points, function(point) {
-    //   if (!_.isEmpty(point)) {
-    //     var qp = count === 0 ? '?loc=' : '&loc=';
-    //     routingUrl += qp + point[0] + ',' +  point[1];
-    //     count++;
-    //   }
-    // });
 
     callback = _.bind(callback, this);
     $.getJSON(routingUrl, function(route) {
