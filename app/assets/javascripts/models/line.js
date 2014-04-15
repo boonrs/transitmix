@@ -39,6 +39,22 @@ app.Line = Backbone.Model.extend({
   },
 
   rerouteLine: function(via, pointIndex) {
+    /*
+    edge cases:
+      first point
+        route just from 
+      last point
+    */
+
+    // if (pointIndex === 0) {
+
+    // }
+
+    // if (pointIndex === coordinates.length) {
+    //   // drop the last one.
+    //   coordinates.
+    // }
+    // if (coordinates.length)
     var coordinates = _.clone(this.get('coordinates'));
     var prev = _.last(coordinates[pointIndex - 1]);
     var next = _.last(coordinates[pointIndex + 1]);
@@ -95,6 +111,11 @@ app.Line = Backbone.Model.extend({
       var coordinates = app.utils.decodeGeometry(route.route_geometry);
       callback(coordinates);
     });
+  },
+
+  getPoint: function(index) {
+    var coordinates = this.get('coordinates');
+    return _.last(coordinates[index]);
   },
 
   getLastPoint: function() {
