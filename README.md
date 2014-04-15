@@ -10,7 +10,7 @@ cd transitmix
 bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
-rails server
+bundle exec rails server
 ```
 
 ## Deploy
