@@ -97,11 +97,12 @@ app.utils.indexOfClosest = function(arr, point) {
 
   for (var i = 1; i < arr.length; i++) {
     var distance = app.utils.haversine(arr[i], point);
-    if (minDistance > distance) {
+    console.log('new distance is ' + distance);
+    if (distance < minDistance) {
       minDistance = distance;
       closest = i;
     }
   }
 
-  return i;
+  return closest;
 };
