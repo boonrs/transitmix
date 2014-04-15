@@ -83,9 +83,9 @@ app.Line = Backbone.Model.extend({
     var count = 0;
     _.each(points, function(point) {
       if (!_.isEmpty(point)) {
-	var qp = count === 0 ? '?loc=' : '&loc=';
-	routingUrl += qp + point[0] + ',' +  point[1];
-	count++;
+        var qp = count === 0 ? '?loc=' : '&loc=';
+        routingUrl += qp + point[0] + ',' +  point[1];
+        count++;
       }
     });
 

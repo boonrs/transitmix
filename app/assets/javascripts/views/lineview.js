@@ -59,7 +59,9 @@ app.LineView = Backbone.View.extend({
   addPoint: function(event) {
     var point = app.utils.cleanPoint(event.latlng);
     this.model.extendLine(point);
-    this.addMarker(point);
+    var index = this.model.get('coordinates').length - 1;
+    console.log(index);
+    this.addMarker(point, index);
   },
 
   stopDrawing: function() {
@@ -71,6 +73,7 @@ app.LineView = Backbone.View.extend({
 
   // Markers are user-clicked locations, used for dragging and editing lines
   addMarker: function(point, index) {
+    console.log('i at addmarker ' + index);
     var color = this.model.get('color');
     var icon = L.divIcon({
       className: '',
@@ -94,10 +97,11 @@ app.LineView = Backbone.View.extend({
   },
 
   dragMarker: function() {
-  
+
   },
 
   finishDrag: function(event) {
+    console.log(event);
     var point = app.utils.cleanPoint(event.target._latlng);
     this.model.rerouteLine(point, event.target.index);
   },
