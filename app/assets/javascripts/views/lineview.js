@@ -45,19 +45,21 @@ app.LineView = Backbone.View.extend({
 
   showPredicts: function(event) {
     if (this.model.get('coordinates').length === 0) return;
-    
+    var point = app.utils.cleanPoint(event.latlng);
     var predictLine = this.predictLine;
+
     this.model.getRoute({
-      from: this.model.getLastPoint,
-      to: event.latlng,
+      from: this.model.getLastPoint(),
+      to: point,
     }, function(coordinates) {
       predictLine.setLatLngs(coordinates)
     });
   },
 
   addPoint: function(event) {
-    this.model.extendLine(event.latlng);
-    this.addMarker(event.latlng);
+    var point = app.utils.cleanPoint(event.latlng);
+    this.model.extendLine(point);
+    this.addMarker(point);
   },
 
   stopDrawing: function() {
@@ -96,7 +98,8 @@ app.LineView = Backbone.View.extend({
   },
 
   finishDrag: function(event) {
-    this.model.rerouteLine(event.target._latlng, event.target.index);
+    var point = app.utils.cleanPoint(event.target._latlng);
+    this.model.rerouteLine(point, event.target.index);
   },
 
   remove: function() {

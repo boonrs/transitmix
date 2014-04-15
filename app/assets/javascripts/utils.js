@@ -88,3 +88,20 @@ app.utils.tweakColor = function(color, percent) {
 
   return(0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
 };
+
+// Given an array of latlngs, finds the index of
+// the closest location to point
+app.utils.indexOfClosest = function(arr, point) {
+  var closest = 0;
+  var minDistance = app.utils.haversine(arr[0], point);
+
+  for (var i = 1; i < arr.length; i++) {
+    var distance = app.utils.haversine(arr[i], point);
+    if (minDistance > distance) {
+      minDistance = distance;
+      closest = i;
+    }
+  }
+
+  return i;
+};

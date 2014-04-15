@@ -21,9 +21,8 @@ app.Line = Backbone.Model.extend({
 
   // Extends the line to the given point, intelligently routing in between
   extendLine: function(toPoint) {
-    toPoint = app.utils.cleanPoint(toPoint);
     var coordinates = _.clone(this.get('coordinates'));
-
+  
     if (coordinates.length === 0) {
       coordinates.push([toPoint]);
       this.save({coordinates: coordinates});
@@ -39,16 +38,32 @@ app.Line = Backbone.Model.extend({
     });
   },
 
-  rerouteLine: function(viaPoint, pointIndex) {
+  rerouteLine: function(via, pointIndex) {
     var coordinates = _.clone(this.get('coordinates'));
-    var previousPoint = _.last(coordinates[pointIndex - 1]);
+    var prev = _.last(coordinates[pointIndex - 1]);
+    var next = _.last(coordinates[pointIndex + 1]);
+    // console.log('rerroutingggg')
+    // console.log(prev)
+    // console.log(via);
+    // console.log(next)
 
     this.getRoute({
-      from: previousPoint,
-      to: viaPoint,
+      from: prev,
+      via: via,
+      to: next,
     }, function(route) {
-      coordinates[pointIndex] = route;
+      // find the closest point... somehow.
+      var index = app.utils.indexOfClosest(route, via);
+      coordinates[pointIndex] = route.slice(0, index);
+      coordinates[pointIndex + 1] = route.slice(index);
+      console.log(route);
+      console.log(index);
+      console.log(route.slice(0, index));
+      console.log(route.slice(index));
       this.save({coordinates: coordinates});
+      
+      // coordinates[pointIndex] = route;
+      // this.save({coordinates: coordinates});
     })
   },
 
@@ -56,14 +71,14 @@ app.Line = Backbone.Model.extend({
   // If no from point is given, the line's last point is assumed.
   // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
   getRoute: function(points, callback) {
-    var fromPoint = app.utils.cleanPoint(points.from);
-    var toPoint = app.utils.cleanPoint(points.to);
-  
     var routingUrl = "http://router.project-osrm.org/viaroute?loc=" +
-      fromPoint[0] + "," + fromPoint[1] + "&loc=" + toPoint[0] + "," + toPoint[1];
+      points.from[0] + "," + points.from[1];
+    if (points.via) routingUrl += "&loc=" + points.via[0] + "," + points.via[1];
+    routingUrl += "&loc=" + points.to[0] + "," + points.to[1];
 
     callback = _.bind(callback, this);
     $.getJSON(routingUrl, function(route) {
+      console.log(route);
       var geometry = route.route_geometry;
       var coordinates = app.utils.decodeGeometry(geometry);
       callback(coordinates);
