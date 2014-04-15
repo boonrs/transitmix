@@ -38,7 +38,26 @@ app.Line = Backbone.Model.extend({
     });
   },
 
+  dropLastSegment: function() {
+    var coordinates = _.clone(this.get('coordinates'));
+    coordinates.pop();
+    this.set({coordinates: coordinates});
+  },
+
   rerouteLine: function(via, pointIndex) {
+    // var coordinates = this.get('coordinates');
+
+    // if (pointIndex === 0) {
+    //   this.dropFirstLine(); //silent
+    //   this.prependLine(via);
+    //   return;
+    // }
+
+    // if (pointIndex === coordinates.length - 1) {
+    //   this.dropLastSegment(); //silent
+    //   this.extendLine(via);
+    //   return;
+    // }
     /*
     edge cases:
       first point
@@ -46,42 +65,23 @@ app.Line = Backbone.Model.extend({
       last point
     */
 
-    // if (pointIndex === 0) {
 
-    // }
-
-    // if (pointIndex === coordinates.length) {
-    //   // drop the last one.
-    //   coordinates.
-    // }
-    // if (coordinates.length)
     var coordinates = _.clone(this.get('coordinates'));
     var prev = _.last(coordinates[pointIndex - 1]);
     var next = _.last(coordinates[pointIndex + 1]);
-    // console.log('rerroutingggg')
-    // console.log(prev)
-    // console.log(via);
-    // console.log(next)
 
     this.getRoute({
       from: prev,
       via: via,
       to: next,
     }, function(route) {
-      // find the closest point... somehow.
       var index = app.utils.indexOfClosest(route, via);
       coordinates[pointIndex] = route.slice(0, index + 1);
       coordinates[pointIndex + 1] = route.slice(index);
-      console.log(route);
-      console.log(index);
-      console.log(route.slice(0, index));
-      console.log(route.slice(index));
       this.save({coordinates: coordinates});
-
-      // coordinates[pointIndex] = route;
-      // this.save({coordinates: coordinates});
     })
   },
+
 
   // Returns a set of coordinates that connect between 'from' and 'to' points
   // If no from point is given, the line's last point is assumed.

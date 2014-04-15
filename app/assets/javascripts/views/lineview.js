@@ -38,7 +38,7 @@ app.LineView = Backbone.View.extend({
 
     this.predictLine = L.polyline([], {
       color: '#' + this.model.get('color'),
-      opacity: 0.5,
+      opacity: 1,
       weight: 10,
     }).addTo(app.map);
   },
@@ -127,10 +127,12 @@ app.LineView = Backbone.View.extend({
     });
     var marker = L.marker(point, { icon: icon, draggable: true, }).addTo(app.map);
 
+    var throttledReroute = _.throttle(this.reroute, 150);
+
     marker.on('click', _.bind(this.clickMarker, this));
-    marker.on('dragstart', _.bind(this.startDrag, this));
-    marker.on('drag', _.bind(this.throttledShowPredicts, this));
-    marker.on('dragend', _.bind(this.finishDrag, this));
+    // marker.on('dragstart', _.bind(this.startDrag, this));
+    marker.on('drag', _.bind(throttledReroute, this));
+    marker.on('dragend', _.bind(this.adjustMarker, this));
 
     marker.index = index;
     this.markers.push(marker);
@@ -144,21 +146,32 @@ app.LineView = Backbone.View.extend({
   },
 
   startDrag: function() {
-    this.predictLine = L.polyline([], {
-      color: '#' + this.model.get('color'),
-      opacity: 0.3,
-      weight: 10,
-    }).addTo(app.map);
+    // this.predictLine = L.polyline([], {
+    //   color: '#' + this.model.get('color'),
+    //   opacity: 0.3,
+    //   weight: 10,
+    // }).addTo(app.map);
   },
 
-  dragMarker: function(event) {
-    this.showPredicts(event);
+  reroute: function(event) {
+    var point = app.utils.cleanPoint(event.target._latlng);
+    this.model.rerouteLine(point, event.target.index)
+  },
+
+  adjustMarker: function(event) {
+    var marker = event.target;
+    var index = marker.index;
+    var point = this.model.getPoint(index);
+    setTimeout(function() {
+      marker.setLatLng(point);
+    }, 300);
   },
 
   finishDrag: function(event) {
-    app.map.removeLayer(this.predictLine);
-    var point = app.utils.cleanPoint(event.target._latlng);
-    this.model.rerouteLine(point, event.target.index);
+    // OK new plan. let's just reroute live. boom.
+    //app.map.removeLayer(this.predictLine);
+    //var point = app.utils.cleanPoint(event.target._latlng);
+    //this.model.rerouteLine(point, event.target.index);
   },
 
   remove: function() {
