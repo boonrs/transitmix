@@ -99,6 +99,14 @@ app.Line = Backbone.Model.extend({
     })
   },
 
+  // Adds a new point in the middle of the line
+  addMidpoint: function(newLatLng) {
+    var coordinates = this.get('coordinates')
+    var closestLineSegment = app.utils.closestLineSegment(coordinates, newLatLng);
+    console.log(coordinates);
+    console.log('closest idx', closestLineSegment);
+  },
+
   // Returns a set of coordinates that connect between 'from' and 'to' points
   // If no from point is given, the line's last point is assumed.
   // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)

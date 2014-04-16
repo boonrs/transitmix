@@ -37,6 +37,7 @@ app.LineView = Backbone.View.extend({
 
     var throttledHandler = _.throttle(this.updateMidpointMarker, 5);
     this.line.on("mouseover mousemove mouseout", throttledHandler, this);
+    this.midpointMarker.on("click", this.addMidpoint, this);
 
     // Jump into drawing mode for newly created lines
     if (coordinates.length < 2) this.startDrawing();
@@ -53,6 +54,13 @@ app.LineView = Backbone.View.extend({
     }
 
     this.midpointMarker.setLatLng(event.latlng);
+  },
+
+  addMidpoint: function(event) {
+    console.log(event);
+    var newPoint = app.utils.cleanPoint(event.latlng);
+
+    this.model.addMidpoint(newPoint);
   },
 
   startDrawing: function() {

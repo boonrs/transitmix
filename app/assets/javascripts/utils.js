@@ -66,6 +66,23 @@ app.utils.haversine = (function() {
   }
 })();
 
+// www.movable-type.co.uk/scripts/latlong.html
+app.utils.azimuth = function(start, end) {
+  var toRad = function(num) {
+    return num * Math.PI / 180
+  }
+
+  var dLat = toRad(end[0] - start[0]);
+  var dLon = toRad(end[1] - start[1]);
+  var lat1 = toRad(start[0]);
+  var lat2 = toRad(end[0]);
+
+  var x = Math.sin(dLon) * Math.cos(lat2);
+  var y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)*Math.cos(dLon);
+
+  return Math.atan2(y, x);
+}
+
 // Calculate the distance from an array of latlngs
 app.utils.calculateDistance = function(latlngs) {
   var haversine = app.utils.haversine;
@@ -105,3 +122,37 @@ app.utils.indexOfClosest = function(arr, point) {
 
   return closest;
 };
+
+// Given an array of line segments and a point, find the index of 
+// the line segment the point most closely fits
+app.utils.closestLineSegment = function(segments, point) {
+  // is there a way to do this that assumes the world isn't flat?
+
+  // TODO: this fn does something that's kind of but not at all right.
+  // It should walk through each consecutive pair of points, checking to see
+  // if our clicked point lies between them. If so, it should return the index
+  // of the line segment + the two points
+  var closest = -1;
+  var minDiff = Infinity;
+
+  for (var i = 0; i < segments.length; i++) {
+    var segment = segments[i];
+
+    if (segment.length == 0) continue;
+
+    var firstPoint = segment[0];
+    var lastPoint = _.last(segment);
+
+    var lineAzimuth = app.utils.azimuth(firstPoint, lastPoint);
+    var pointAzimuth = app.utils.azimuth(firstPoint, point);
+
+    var azimuthDiff = Math.abs(lineAzimuth-pointAzimuth);
+
+    if (azimuthDiff < minDiff) {
+      minDiff = azimuthDiff;
+      closest = i;
+    }
+  }
+
+  return closest;
+}
