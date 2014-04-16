@@ -1,4 +1,5 @@
 app.LineView = Backbone.View.extend({
+
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
     this.throttledShowPredicts = _.throttle(this.showPredicts, 150);
@@ -22,6 +23,21 @@ app.LineView = Backbone.View.extend({
       this.addMarker(_.last(segment), index);
     }, this);
 
+
+    // Marker for point to be added in the middle
+    var markerIcon = L.divIcon({
+      className: '',
+      html: '<div class="mapMarker" style="background:#' + color + '"></div>'
+    });
+
+    this.midpointMarker = L.marker([0,0], {
+      opacity: 0,
+      icon: markerIcon
+    }).addTo(app.map);
+
+    var throttledHandler = _.throttle(this.updateMidpointMarker, 5);
+    this.line.on("mouseover mousemove mouseout", throttledHandler, this);
+
     // Jump into drawing mode for newly created lines
     if (coordinates.length < 2) this.startDrawing();
   },
@@ -29,6 +45,14 @@ app.LineView = Backbone.View.extend({
   updateCoordinates: function() {
     var coordinates = this.model.get('coordinates');
     this.line.setLatLngs(coordinates);
+  },
+
+  updateMidpointMarker: function(event) {
+    if (event.type == "mouseover") {
+      this.midpointMarker.setOpacity(0.6);
+    }
+
+    this.midpointMarker.setLatLng(event.latlng);
   },
 
   startDrawing: function() {
