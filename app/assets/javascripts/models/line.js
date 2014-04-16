@@ -38,78 +38,65 @@ app.Line = Backbone.Model.extend({
     });
   },
 
-  dropLastSegment: function() {
-    var coordinates = _.clone(this.get('coordinates'));
-    coordinates.pop();
-    this.set({coordinates: coordinates});
+  rerouteLine: function(newLatLng, segmentIndex) {
+    if (segmentIndex === 0) {
+      this._rerouteLineStart(newLatLng);
+    } else if (segmentIndex === this.get('coordinates').length - 1) {
+      this._rerouteLineEnd(newLatLng);
+    } else {
+      this._rerouteLineMiddle(newLatLng, segmentIndex);
+    }
   },
 
-  rerouteLine: function(newLatLng, segmentIndex) {
-    var rerouteLineStart = function(newLatLng) {
-      // If the first point is moved, need to:
-      //     * Move the single point in the first segment
-      //     * Reroute the second segment
-      var coordinates = _.clone(this.get('coordinates'));
-      var firstFullSegment = coordinates[1]; // since first segment only has first point
+  _rerouteLineStart: function(newLatLng) {
+    // If the first point is moved, need to:
+    //     * Move the single point in the first segment
+    //     * Reroute the second segment
+    var coordinates = _.clone(this.get('coordinates'));
+    var firstFullSegment = coordinates[1]; // since first segment only has first point
 
-      this.getRoute({
-        from: newLatLng,
-        to: _.last(firstFullSegment)
-      }, function(route) {
-        // first segment is only the first point
-        // second segment is path from first point to second point
-        coordinates[0] = [route[0]];
-        coordinates[1] = route;
-        this.save({coordinates: coordinates});
-      });
+    this.getRoute({
+      from: newLatLng,
+      to: _.last(firstFullSegment)
+    }, function(route) {
+      // first segment is only the first point
+      // second segment is path from first point to second point
+      coordinates[0] = [route[0]];
+      coordinates[1] = route;
+      this.save({coordinates: coordinates});
+    });
+  },
 
-    };
+  _rerouteLineMiddle: function(newLatLng, segmentIndex) {
+    var coordinates = _.clone(this.get('coordinates'));
 
-    rerouteLineStart = _.bind(rerouteLineStart, this);
+    var prev = _.last(coordinates[segmentIndex - 1]);
+    var next = _.last(coordinates[segmentIndex + 1]);
 
-    var rerouteLineEnd = function(newLatLng) {
-      var coordinates = _.clone(this.get('coordinates'));
-      var lastSegment = _.last(coordinates);
+    this.getRoute({
+      from: prev,
+      via: newLatLng,
+      to: next,
+    }, function(route) {
+      var index = app.utils.indexOfClosest(route, newLatLng);
+      coordinates[segmentIndex] = route.slice(0, index + 1);
+      coordinates[segmentIndex + 1] = route.slice(index);
+      this.save({coordinates: coordinates});
+    });
+  },
 
-      this.getRoute({
-        from: lastSegment[0],
-        to: newLatLng
-      }, function(route) {
-        var lastIndex = coordinates.length - 1;
-        coordinates[lastIndex] = route;
-        this.save({coordinates: coordinates});
-      })
-    };
+  _rerouteLineEnd: function(newLatLng) {
+    var coordinates = _.clone(this.get('coordinates'));
+    var lastSegment = _.last(coordinates);
 
-    rerouteLineEnd = _.bind(rerouteLineEnd, this);
-
-    var rerouteLineMiddle = function(newLatLng, segmentIndex) {
-      var coordinates = _.clone(this.get('coordinates'));
-
-      var prev = _.last(coordinates[segmentIndex - 1]);
-      var next = _.last(coordinates[segmentIndex + 1]);
-
-      this.getRoute({
-        from: prev,
-        via: newLatLng,
-        to: next,
-      }, function(route) {
-        var index = app.utils.indexOfClosest(route, newLatLng);
-        coordinates[segmentIndex] = route.slice(0, index + 1);
-        coordinates[segmentIndex + 1] = route.slice(index);
-        this.save({coordinates: coordinates});
-      });
-    };
-
-    rerouteLineMiddle = _.bind(rerouteLineMiddle, this);
-
-    if (segmentIndex === 0) {
-      rerouteLineStart(newLatLng);
-    } else if (segmentIndex === this.get("coordinates").length - 1) {
-      rerouteLineEnd(newLatLng);
-    } else {
-      rerouteLineMiddle(newLatLng, segmentIndex);
-    }
+    this.getRoute({
+      from: lastSegment[0],
+      to: newLatLng
+    }, function(route) {
+      var lastIndex = coordinates.length - 1;
+      coordinates[lastIndex] = route;
+      this.save({coordinates: coordinates});
+    })
   },
 
   // Returns a set of coordinates that connect between 'from' and 'to' points
@@ -117,10 +104,10 @@ app.Line = Backbone.Model.extend({
   // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
   // To and From are required, via is optional
   getRoute: function(points, callback) {
-    var routingUrl = "http://router.project-osrm.org/viaroute?loc=" +
-      points.from[0] + "," + points.from[1];
-    if (points.via) routingUrl += "&loc=" + points.via[0] + "," + points.via[1];
-    routingUrl += "&loc=" + points.to[0] + "," + points.to[1];
+    var routingUrl = 'http://router.project-osrm.org/viaroute?loc=' +
+      points.from[0] + ',' + points.from[1];
+    if (points.via) routingUrl += '&loc=' + points.via[0] + ',' + points.via[1];
+    routingUrl += '&loc=' + points.to[0] + ',' + points.to[1];
 
     callback = _.bind(callback, this);
     $.getJSON(routingUrl, function(route) {
@@ -136,8 +123,7 @@ app.Line = Backbone.Model.extend({
 
   getLastPoint: function() {
     var lastSegment = _.last(this.get('coordinates'));
-    var lastPoint = _.last(lastSegment);
-    return lastPoint;
+    return _.last(lastSegment);
   },
 
   calculateDistance: function() {
