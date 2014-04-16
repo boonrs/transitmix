@@ -38,10 +38,10 @@ app.HomeView = Backbone.View.extend({
 
 app.HomeLineView = Backbone.View.extend({
   render: function() {
-    var latlngs = this.model.get('latlngs');
+    var coordinates = this.model.get('coordinates');
     var color = '#' + this.model.get('color');
 
-    this.line = L.polyline(latlngs, {
+    this.line = L.multiPolyline(coordinates, {
       color: color,
       opacity: 0.5,
       weight: 5,
