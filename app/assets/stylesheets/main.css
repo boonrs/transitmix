@@ -190,3 +190,7 @@ body {
 .newLine span {
   border-bottom: 1px dotted #7D6992;
 }
+
+.midpointIcon {
+  pointer-events: none;
+}

@@ -100,11 +100,46 @@ app.Line = Backbone.Model.extend({
   },
 
   // Adds a new point in the middle of the line
-  addMidpoint: function(newLatLng) {
-    var coordinates = this.get('coordinates')
-    var closestLineSegment = app.utils.closestLineSegment(coordinates, newLatLng);
-    console.log(coordinates);
-    console.log('closest idx', closestLineSegment);
+  insertPoint: function(newPoint, segmentIndex) {
+    var coordinates = _.clone(this.get('coordinates'));
+
+    var startPoint = _.first(coordinates[segmentIndex]);
+
+    var newSegment = [startPoint, newPoint];
+
+    coordinates.splice(segmentIndex, 0, newSegment);
+    
+    this.set({coordinates: coordinates}, {silent: true});
+    this.rerouteLine(newPoint, segmentIndex);
+
+  },
+
+  // Deletes a point
+  removePoint: function(segmentIndex) {
+    var coordinates = _.clone(this.get('coordinates'));
+
+    if (segmentIndex === 0) {
+      // Drop the first segment, make the second segment just the last point
+      coordinates.splice(0, 1);
+      var firstPoint = _.last(coordinates[0]);
+      coordinates[0] = [firstPoint];
+
+      this.save({coordinates: coordinates});
+      return;
+    }
+
+    if (segmentIndex === coordinates.length - 1) {
+      // Just drop the last segment
+      coordinates.splice(segmentIndex, 1);
+      this.save({coordinates: coordinates});
+      return;
+    }
+
+    coordinates.splice(segmentIndex, 1);
+    this.set({coordinates: coordinates}, {silent: true});
+
+    var newLastPoint = _.last(coordinates[segmentIndex]);
+    this.rerouteLine(newLastPoint, segmentIndex);
   },
 
   // Returns a set of coordinates that connect between 'from' and 'to' points
@@ -127,6 +162,11 @@ app.Line = Backbone.Model.extend({
   getPoint: function(index) {
     var coordinates = this.get('coordinates');
     return _.last(coordinates[index]);
+  },
+
+  getPoints: function() {
+    var coordinates = this.get('coordinates');
+    return _.map(coordinates, _.last);
   },
 
   getLastPoint: function() {

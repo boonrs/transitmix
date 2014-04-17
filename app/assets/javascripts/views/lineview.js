@@ -4,6 +4,8 @@ app.LineView = Backbone.View.extend({
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
     this.throttledShowPredicts = _.throttle(this.showPredicts, 150);
     this.throttledReroute = _.throttle(this.reroute, 150);
+    this.isDrawing = false;
+    this.markers = [];
   },
 
   render: function() {
@@ -17,27 +19,24 @@ app.LineView = Backbone.View.extend({
       weight: 10,
     }).addTo(app.map);
 
-    // Markers at each user-added point. Used for editing.
-    this.markers = [];
-    coordinates.forEach(function(segment, index) {
-      this.addMarker(_.last(segment), index);
-    }, this);
-
+    this.redrawMarkers();
 
     // Marker for point to be added in the middle
-    var markerIcon = L.divIcon({
-      className: '',
-      html: '<div class="mapMarker" style="background:#' + color + '"></div>'
+    /*var markerIcon = L.divIcon({
+      className: 'midpointIcon',
+      html: '<div class="mapMarker" style="pointer-events: none; background:#' + color + '"></div>'
     });
 
     this.midpointMarker = L.marker([0,0], {
       opacity: 0,
       icon: markerIcon
-    }).addTo(app.map);
+    }).addTo(app.map);*/
 
-    var throttledHandler = _.throttle(this.updateMidpointMarker, 5);
-    this.line.on("mouseover mousemove mouseout", throttledHandler, this);
-    this.midpointMarker.on("click", this.addMidpoint, this);
+    //var throttledHandler = _.throttle(this.updateMidpointMarker, 5);
+    //this.line.on("mouseover mousemove mouseout", this.updateMidpointMarker, this);
+    this.line.getLayers().forEach(function(layer) {
+      layer.on("mousedown", this.addMidpoint, this);
+    }, this);
 
     // Jump into drawing mode for newly created lines
     if (coordinates.length < 2) this.startDrawing();
@@ -46,6 +45,19 @@ app.LineView = Backbone.View.extend({
   updateCoordinates: function() {
     var coordinates = this.model.get('coordinates');
     this.line.setLatLngs(coordinates);
+
+  },
+
+  redrawMarkers: function() {
+    // Markers at each user-added point. Used for editing.
+    this.markers.forEach(function(marker) {
+      app.map.removeLayer(marker);
+    })
+
+    var points = this.model.getPoints();
+    points.forEach(function(point, segmentIndex) {
+      this.addMarker(point, segmentIndex);
+    }, this);
   },
 
   updateMidpointMarker: function(event) {
@@ -53,6 +65,7 @@ app.LineView = Backbone.View.extend({
       this.midpointMarker.setOpacity(0.6);
     }
 
+    console.log(event, this.line);
     this.midpointMarker.setLatLng(event.latlng);
   },
 
@@ -60,10 +73,26 @@ app.LineView = Backbone.View.extend({
     console.log(event);
     var newPoint = app.utils.cleanPoint(event.latlng);
 
-    this.model.addMidpoint(newPoint);
+    // Index of the segment that was clicked in
+    var segmentIndex = this._getIndexOfLayerInLine(event.target, this.line);
+    this.model.insertPoint(newPoint, segmentIndex);
+    this.addMarker(newPoint, segmentIndex);
+    
+    this.redrawMarkers();
+  },
+
+  _getIndexOfLayerInLine: function(layer, line) {
+    console.log(layer, line, line.getLayers());
+    var lineLayers = line.getLayers();
+    for (var i = 0; i < lineLayers.length; i++) {
+      if (layer === lineLayers[i]) {
+        return i;
+      }
+    }
   },
 
   startDrawing: function() {
+    this.isDrawing = true;
     $(app.map._container).addClass('drawCursor');
 
     app.map.on('click', this.addPoint, this);
@@ -100,6 +129,7 @@ app.LineView = Backbone.View.extend({
   },
 
   stopDrawing: function() {
+    this.isDrawing = false;
     $(app.map._container).removeClass('drawCursor');
     app.map.off('click', this.addPoint, this);
     app.map.off('mousemove', this.throttledShowPredicts, this);
@@ -118,15 +148,21 @@ app.LineView = Backbone.View.extend({
     marker.on('click', _.bind(this.clickMarker, this));
     marker.on('drag', _.bind(this.throttledReroute, this));
     marker.on('dragend', _.bind(this.adjustMarker, this));
+    marker.on('mousedown', function() { console.log("mousedown on marker");});
 
     marker.index = index;
     this.markers.push(marker);
   },
 
   clickMarker: function(event) {
+    console.log(event.target.index);
     var marker = event.target;
-    if (marker === _.first(this.markers) || marker === _.last(this.markers)) {
+    var firstOrLastMarker = marker === _.first(this.markers) || marker === _.last(this.markers);
+    if (this.isDrawing && firstOrLastMarker) {
       this.stopDrawing();
+    } else {
+      console.log('delete this point');
+      this.model.removePoint(marker.index);
     }
   },
 
