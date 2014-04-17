@@ -124,7 +124,7 @@ app.LineView = Backbone.View.extend({
   addPoint: function(event) {
     var point = app.utils.cleanPoint(event.latlng);
     this.model.extendLine(point);
-    var index = this.model.get('coordinates').length - 1;
+    var index = this.markers.length;
     this.addMarker(point, index);
   },
 
