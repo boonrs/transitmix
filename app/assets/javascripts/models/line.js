@@ -87,10 +87,10 @@ app.Line = Backbone.Model.extend({
 
   _rerouteLineEnd: function(newLatLng) {
     var coordinates = _.clone(this.get('coordinates'));
-    var lastSegment = _.last(coordinates);
+    var secondToLastSegment = coordinates[coordinates.length - 2];
 
     this.getRoute({
-      from: lastSegment[0],
+      from: _.last(secondToLastSegment),
       to: newLatLng
     }, function(route) {
       var lastIndex = coordinates.length - 1;
