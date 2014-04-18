@@ -3,10 +3,10 @@ app.LineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
 
-    _.bindAll(this, 'addPoint', 'updatePoint', 'removePoint', 'redrawMarkers',
-      'delayedRedrawMarkers', 'showDrawingLine', 'showInsert', 'beginInsert',
-      'updateInsert','finishInsert', 'hideInsert');
-    this.throttledUpdatePoint = _.throttle(this.updatePoint, 150);
+    _.bindAll(this, 'addWaypoint', 'updateWaypoint', 'removeWaypoint',
+      'redrawMarkers', 'delayedRedrawMarkers', 'showDrawingLine',
+      'showInsert', 'beginInsert', 'updateInsert','finishInsert', 'hideInsert');
+    this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
     this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
     this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
 
@@ -33,10 +33,13 @@ app.LineView = Backbone.View.extend({
     this.line.setLatLngs(this.model.get('coordinates'));
   },
 
+  // Markers & Marker Events
+  // -----------------------
   // Markers are the small circles added on top of the line, letting users
   // drag and click to reroute the transit line. They each know their 
-  // pointIndex, allowing them to interact with the underlying model.
-  addMarker: function(latlng, pointIndex) {
+  // waypointIndex, allowing them to interact with the underlying model.
+
+  addMarker: function(latlng, waypointIndex) {
     var color = this.model.get('color');
     var html = '<div class="mapMarker" style="background:' + color + '"></div>';
     var icon = L.divIcon({ className: '',  html: html });
@@ -46,9 +49,9 @@ app.LineView = Backbone.View.extend({
       draggable: true,
     }).addTo(app.map);
 
-    marker.pointIndex = pointIndex;
-    marker.on('click', _.bind(this.removePoint, this));
-    marker.on('drag', this.throttledUpdatePoint);
+    marker.waypointIndex = waypointIndex;
+    marker.on('click', _.bind(this.removeWaypoint, this));
+    marker.on('drag', this.throttledUpdateWaypoint);
     marker.on('dragend', this.delayedRedrawMarkers);
 
     this.markers.push(marker);
@@ -59,9 +62,9 @@ app.LineView = Backbone.View.extend({
       app.map.removeLayer(marker);
     });
 
-    var points = this.model.getPoints();
-    points.forEach(function(latlng, pointIndex) {
-      this.addMarker(latlng, pointIndex);
+    var waypoints = this.model.getWaypoints();
+    waypoints.forEach(function(latlng, waypointIndex) {
+      this.addMarker(latlng, waypointIndex);
     }, this);
   },
 
@@ -69,19 +72,17 @@ app.LineView = Backbone.View.extend({
     _.delay(this.redrawMarkers, 500);
   },
 
-  // The functions below react to events on the markers to modify
-  // the underlying model.
-  addPoint: function(event) {
-    this.model.addPoint(event.latlng);
+  addWaypoint: function(event) {
+    this.model.addWaypoint(event.latlng);
     this.addMarker(event.latlng, this.markers.length);
   },
 
-  updatePoint: function(event) {
-    this.model.updatePoint(event.target._latlng, event.target.pointIndex);
+  updateWaypoint: function(event) {
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
   },
 
-  removePoint: function(event) {
-    // Removes a point when clicked. There's an exception: in drawing mode
+  removeWaypoint: function(event) {
+    // Removes a waypoint when clicked. There's an exception: in drawing mode
     // we  allow the user to click the first or last marker to end drawing.
     var marker = event.target;
     var firstMarker = marker === _.first(this.markers);
@@ -90,7 +91,7 @@ app.LineView = Backbone.View.extend({
     if (this.isDrawing) {
       if (firstMarker || lastMarker) this.stopDrawing();
     } else {
-      this.model.removePoint(marker.pointIndex);
+      this.model.removeWaypoint(marker.waypointIndex);
       this.redrawMarkers();
     }
 
@@ -99,13 +100,16 @@ app.LineView = Backbone.View.extend({
     this.hideInsert();
   },
 
+  // Drawing
+  // -------
   // When a transit line is first created, it is in drawing mode. Anywhere
-  // a user clicks a point is added, and the connecting line is always shown
+  // a user clicks a waypoint is added, and the connecting line is always shown
+
   startDrawing: function() {
     this.isDrawing = true;
     $(app.map._container).addClass('drawCursor');
 
-    app.map.on('click', this.addPoint);
+    app.map.on('click', this.addWaypoint);
     app.map.on('mousemove', this.throttledShowDrawingLine);
 
     this.drawingLine = L.polyline([], {
@@ -120,7 +124,7 @@ app.LineView = Backbone.View.extend({
     if (coordinates.length === 0) return;
 
     app.utils.getRoute({
-      from: _.last(this.model.getPoints()),
+      from: _.last(this.model.getWaypoints()),
       to: _.values(event.latlng),
     }, function(coordinates) {
       this.drawingLine.setLatLngs(coordinates);
@@ -131,14 +135,17 @@ app.LineView = Backbone.View.extend({
     this.isDrawing = false;
     $(app.map._container).removeClass('drawCursor');
 
-    app.map.off('click', this.addPoint, this);
+    app.map.off('click', this.addWaypoint, this);
     app.map.off('mousemove', this.throttledShowDrawingLine, this);
     if (this.drawingLine) app.map.removeLayer(this.drawingLine);
   },
 
+  // Inserting Waypoints
+  // -------------------
   // When a user hovers over the line, we show a new marker, and allow
-  // them to drag it to insert a new point. The following functions 
+  // them to drag it to insert a new waypoint. The following functions 
   // support this.
+
   hookupInsert: function() {
     // Insert requires a careful dance of DOM events. On mouseover, 
     // we show the UI. We hide it when the mouse moves over the map, so
@@ -157,7 +164,7 @@ app.LineView = Backbone.View.extend({
 
     if (this.insertMarker) {
       this.insertMarker.setLatLng(event.latlng);
-      this.insertMarker.pointIndex = this._findPointIndex(event.layer);
+      this.insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
       return;
     }
 
@@ -170,7 +177,7 @@ app.LineView = Backbone.View.extend({
       draggable: true,
     }).addTo(app.map);
 
-    insertMarker.pointIndex = this._findPointIndex(event.layer);
+    insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
     insertMarker.on('dragstart', this.beginInsert);
     insertMarker.on('drag', this.throttledUpdateInsert);
     insertMarker.on('dragend', this.finishInsert);
@@ -187,16 +194,16 @@ app.LineView = Backbone.View.extend({
 
   beginInsert: function(event) {
     this.isInserting = true;
-    this.model.insertPoint(event.target._latlng, event.target.pointIndex);
+    this.model.insertWaypoint(event.target._latlng, event.target.waypointIndex);
   },
 
   updateInsert: function(event) {
-    this.model.updatePoint(event.target._latlng, event.target.pointIndex);
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
   },
 
   finishInsert: function(event) {
     this.isInserting = false;
-    this.model.updatePoint(event.target._latlng, event.target.pointIndex);
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
     this.delayedRedrawMarkers();
     this.hideInsert();
   },
@@ -217,7 +224,7 @@ app.LineView = Backbone.View.extend({
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 
-  _findPointIndex: function(layer) {
+  _findWaywaypointIndex: function(layer) {
     var lineLayers = this.line.getLayers();
     for (var i = 0; i < lineLayers.length; i++) {
       if (layer === lineLayers[i]) return i;
