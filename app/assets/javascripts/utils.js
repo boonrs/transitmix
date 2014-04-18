@@ -41,44 +41,38 @@ app.utils.decodeGeometry = function(encoded, precision) {
     array.push( [lat * precision, lng * precision] );
   }
   return array;
-}
-
-// Make sure point is in [a, b] format for consistency
-app.utils.cleanPoint = function(point) {
-  if (!_.isArray(point)) point = _.values(point);
-  return point;
-}
+};
 
 // Calculate the distance between two latlngs.
 // e.g. haversine([12.33, 78.99], [13.192, 79.11])
 // https://github.com/niix/haversine/blob/master/haversine.js
 app.utils.haversine = (function() {
   var toRad = function(num) {
-    return num * Math.PI / 180
-  }
+    return num * Math.PI / 180;
+  };
 
   return function haversine(start, end, options) {
-    var miles = 3960
-    var km    = 6371
-    options   = options || {}
+    var miles = 3960;
+    var km    = 6371;
+    options   = options || {};
 
-    var R = options.unit === 'km' ? km : miles
+    var R = options.unit === 'km' ? km : miles;
 
-    var dLat = toRad(end[0] - start[0])
-    var dLon = toRad(end[1] - start[1])
-    var lat1 = toRad(start[0])
-    var lat2 = toRad(end[0])
+    var dLat = toRad(end[0] - start[0]);
+    var dLon = toRad(end[1] - start[1]);
+    var lat1 = toRad(start[0]);
+    var lat2 = toRad(end[0]);
 
     var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2)
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
     if (options.threshold) {
-      return options.threshold > (R * c)
+      return options.threshold > (R * c);
     } else {
-      return R * c
+      return R * c;
     }
-  }
+  };
 })();
 
 // Calculate the distance from an array of latlngs
@@ -120,31 +114,3 @@ app.utils.indexOfClosest = function(arr, point) {
 
   return closest;
 };
-
-app.utils.closestLatLngOnSegment = function(p, p1, p2) {
-  p = {x: p[0], y: p[1]};
-  p1 = {x: p1[0], y: p1[1]};
-  p2 = {x: p2[0], y: p2[1]};
-
-  var x = p1.x,
-    y = p1.y,
-    dx = p2.x - x,
-    dy = p2.y - y,
-    dot = dx * dx + dy * dy,
-    t;
-
-  if (dot > 0) {
-    t = ((p.x - x) * dx + (p.y - y) * dy) / dot;
-
-    if (t > 1) {
-      x = p2.x;
-      y = p2.y;
-    } else if (t > 0) {
-      x += dx * t;
-      y += dy * t;
-    }
-  }
-
-return [x, y];
-
-}
