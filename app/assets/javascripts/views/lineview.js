@@ -2,93 +2,101 @@ app.LineView = Backbone.View.extend({
 
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
-    this.throttledShowPredicts = _.throttle(this.showPredicts, 150);
+    //this.throttledShowPredicts = _.throttle(this.showPredicts, 150);
     this.throttledReroute = _.throttle(this.reroute, 150);
     this.isDrawing = false;
     this.markers = [];
   },
 
   render: function() {
-    var coordinates = this.model.get('coordinates');
     var color = this.model.get('color');
 
     // A line showing the main proposed transit route .
-    this.line = L.multiPolyline(coordinates, options = {
+    this.line = L.multiPolyline({}, {
       color: '#' + color,
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
 
+    this.updateCoordinates();
     this.redrawMarkers();
 
-    // Marker for point to be added in the middle
-    /*var markerIcon = L.divIcon({
-      className: 'midpointIcon',
-      html: '<div class="mapMarker" style="pointer-events: none; background:#' + color + '"></div>'
-    });
+    // this.line.on('mouseover', this.showInsertionMarker, this);
 
-    this.midpointMarker = L.marker([0,0], {
-      opacity: 0,
-      icon: markerIcon
-    }).addTo(app.map);*/
-
-    //var throttledHandler = _.throttle(this.updateMidpointMarker, 5);
-    //this.line.on("mouseover mousemove mouseout", this.updateMidpointMarker, this);
-    this.line.getLayers().forEach(function(layer) {
-      layer.on("mousedown", this.addMidpoint, this);
-    }, this);
-
-    // Jump into drawing mode for newly created lines
+    var coordinates = this.model.get('coordinates');
     if (coordinates.length < 2) this.startDrawing();
   },
 
-  updateCoordinates: function() {
-    var coordinates = this.model.get('coordinates');
-    this.line.setLatLngs(coordinates);
+  // showInsertionMarker: function(event) {
+  //   if (this.insertionMarker) return;
+  //   var segmentIndex = this._getIndexOfLayerInLine(event.layer);
 
+  //    var icon = L.divIcon({
+  //     className: '',
+  //     html: '<div class="mapMarker" style="background:#' + this.model.get('color') + '"></div>'
+  //   });
+
+  //   var a = this.model.getPoint(segmentIndex - 1);
+  //   var b = this.model.getPoint(segmentIndex);
+  //   var onLine = this.closestOnSegment(app.map, app.utils.cleanPoint(event.latlng), a, b);
+  //   console.log(event);
+
+  //   this.insertionMarker = L.marker(onLine, {
+  //     opacity: 0.5,
+  //     icon: icon,
+  //     draggable: true,
+  //   }).addTo(app.map);
+
+  //   this.insertionMarker.index = segmentIndex;
+  //   var throttled = _.throttle(_.bind(this.model.updatePoint, this.model), 100);
+  //   // this.insertionMarker.on('mouseout', this.removeInsertionMarker, this);
+  //   this.insertionMarker.on('dragstart', _.bind(function(event) {
+  //     console.log()
+  //     var point = app.utils.cleanPoint(event.target._latlng);
+  //     this.model.insertPoint(point, segmentIndex)
+  //   }, this));
+  //   this.insertionMarker.on('drag', _.bind(function(event) {
+  //     var point = app.utils.cleanPoint(event.target._latlng);
+  //     // this.model.updatePoint(point, segmentIndex);
+  //     throttled(point, segmentIndex);
+  //   }, this));
+
+  //   this.insertionMarker.on('dragend', _.bind(function() {
+  //     this.redrawMarkers();
+  //   }, this));
+  // },
+
+  // updateInsertionMarker: function(event) {
+  //   if (!this.insertionMarker) return;
+  //   this.insertionMarker.setLatLng(event.latlng);
+  // },
+
+  // removeInsertionMarker: function(event) {
+  //   if (!this.insertionMarker) return;
+  //   app.map.removeLayer(this.insertionMarker);
+  // },
+
+  updateCoordinates: function() {
+    this.line.setLatLngs(this.model.get('coordinates'));
   },
 
   redrawMarkers: function() {
-    // Markers at each user-added point. Used for editing.
     this.markers.forEach(function(marker) {
       app.map.removeLayer(marker);
-    })
+    });
 
     var points = this.model.getPoints();
-    points.forEach(function(point, segmentIndex) {
-      this.addMarker(point, segmentIndex);
+    points.forEach(function(point, pointIndex) {
+      this.addMarker(point, pointIndex);
     }, this);
   },
 
-  updateMidpointMarker: function(event) {
-    if (event.type == "mouseover") {
-      this.midpointMarker.setOpacity(0.6);
-    }
-
-    console.log(event, this.line);
-    this.midpointMarker.setLatLng(event.latlng);
-  },
-
-  addMidpoint: function(event) {
-    console.log(event);
-    var newPoint = app.utils.cleanPoint(event.latlng);
-
-    // Index of the segment that was clicked in
-    var segmentIndex = this._getIndexOfLayerInLine(event.target, this.line);
-    this.model.insertPoint(newPoint, segmentIndex);
-    this.addMarker(newPoint, segmentIndex);
-    
-    this.redrawMarkers();
-  },
-
-  _getIndexOfLayerInLine: function(layer, line) {
-    console.log(layer, line, line.getLayers());
-    var lineLayers = line.getLayers();
+  _getIndexOfLayerInLine: function(layer) {
+    var lineLayers = this.line.getLayers();
     for (var i = 0; i < lineLayers.length; i++) {
-      if (layer === lineLayers[i]) {
-        return i;
-      }
+      if (layer === lineLayers[i]) return i;
     }
+    return -1;
   },
 
   startDrawing: function() {
@@ -96,7 +104,7 @@ app.LineView = Backbone.View.extend({
     $(app.map._container).addClass('drawCursor');
 
     app.map.on('click', this.addPoint, this);
-    app.map.on('mousemove', this.throttledShowPredicts, this);
+    //app.map.on('mousemove', this.throttledShowPredicts, this);
 
     this.predictLine = L.polyline([], {
       color: '#' + this.model.get('color'),
@@ -105,25 +113,25 @@ app.LineView = Backbone.View.extend({
     }).addTo(app.map);
   },
 
-  showPredicts: function(event) {
-    var coordinates = this.model.get('coordinates');
-    if (coordinates.length === 0) return;
+  // showPredicts: function(event) {
+  //   // var coordinates = this.model.get('coordinates');
+  //   // if (coordinates.length === 0) return;
 
-    var mousePoint = app.utils.cleanPoint(event.latlng);
-    var points = {
-      from: this.model.getLastPoint(),
-      to: mousePoint,
-    };
+  //   // var mousePoint = app.utils.cleanPoint(event.latlng);
+  //   // var points = {
+  //   //   from: this.model.getLastPoint(),
+  //   //   to: mousePoint,
+  //   // };
 
-    var predictLine = this.predictLine;
-    this.model.getRoute(points, function(coordinates) {
-      predictLine.setLatLngs(coordinates);
-    });
-  },
+  //   // var predictLine = this.predictLine;
+  //   // this.model.getRoute(points, function(coordinates) {
+  //   //   predictLine.setLatLngs(coordinates);
+  //   // });
+  // },
 
   addPoint: function(event) {
     var point = app.utils.cleanPoint(event.latlng);
-    this.model.extendLine(point);
+    this.model.addPoint(point);
     var index = this.markers.length;
     this.addMarker(point, index);
   },
@@ -132,7 +140,7 @@ app.LineView = Backbone.View.extend({
     this.isDrawing = false;
     $(app.map._container).removeClass('drawCursor');
     app.map.off('click', this.addPoint, this);
-    app.map.off('mousemove', this.throttledShowPredicts, this);
+    //app.map.off('mousemove', this.throttledShowPredicts, this);
     if (this.predictLine) app.map.removeLayer(this.predictLine);
   },
 
@@ -147,44 +155,33 @@ app.LineView = Backbone.View.extend({
 
     marker.on('click', _.bind(this.clickMarker, this));
     marker.on('drag', _.bind(this.throttledReroute, this));
-    marker.on('dragend', _.bind(this.adjustMarker, this));
-    marker.on('mousedown', function() { console.log("mousedown on marker");});
+    marker.on('dragend', _.bind(this.redrawMarkers, this)); // TODO: add a delay, so the server response can come back first
 
     marker.index = index;
     this.markers.push(marker);
   },
 
   clickMarker: function(event) {
-    console.log(event.target.index);
     var marker = event.target;
     var firstOrLastMarker = marker === _.first(this.markers) || marker === _.last(this.markers);
+
     if (this.isDrawing && firstOrLastMarker) {
       this.stopDrawing();
     } else {
-      console.log('delete this point');
       this.model.removePoint(marker.index);
+      this.redrawMarkers();
     }
   },
 
   reroute: function(event) {
     var marker = event.target;
     var point = app.utils.cleanPoint(marker._latlng);
-    this.model.rerouteLine(point, marker.index);
-  },
-
-  adjustMarker: function(event) {
-    var marker = event.target;
-    var index = marker.index;
-    var point = this.model.getPoint(index);
-
-    setTimeout(function() {
-      marker.setLatLng(point);
-    }, 300);
+    this.model.updatePoint(point, marker.index);
   },
 
   remove: function() {
     this.stopDrawing();
-    this.markers.forEach(function(m) { app.map.removeLayer(m) });
+    this.markers.forEach(function(m) { app.map.removeLayer(m); });
     app.map.removeLayer(this.line);
     Backbone.View.prototype.remove.apply(this, arguments);
   },

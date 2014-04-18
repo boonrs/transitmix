@@ -1,5 +1,20 @@
 app.utils = app.utils || {};
 
+// Returns a set of coordinates that connect between 'from' and 'to' latlngs
+// If an point.via is provided, the route will go through that point
+// E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
+app.utils.getRoute = function(latlngs, callback, context) {
+  var routingUrl = 'http://router.project-osrm.org/viaroute?loc=' +
+    latlngs.from[0] + ',' + latlngs.from[1];
+  if (latlngs.via) routingUrl += '&loc=' + latlngs.via[0] + ',' + latlngs.via[1];
+  routingUrl += '&loc=' + latlngs.to[0] + ',' + latlngs.to[1];
+
+  $.getJSON(routingUrl, function(route) {
+    var coordinates = app.utils.decodeGeometry(route.route_geometry);
+    callback.call(context || this, coordinates);
+  });
+};
+
 // Takes an encoded geometry and returns a set of latlngs
 app.utils.decodeGeometry = function(encoded, precision) {
   precision = precision || 6;
@@ -66,23 +81,6 @@ app.utils.haversine = (function() {
   }
 })();
 
-// www.movable-type.co.uk/scripts/latlong.html
-app.utils.azimuth = function(start, end) {
-  var toRad = function(num) {
-    return num * Math.PI / 180
-  }
-
-  var dLat = toRad(end[0] - start[0]);
-  var dLon = toRad(end[1] - start[1]);
-  var lat1 = toRad(start[0]);
-  var lat2 = toRad(end[0]);
-
-  var x = Math.sin(dLon) * Math.cos(lat2);
-  var y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2)*Math.cos(dLon);
-
-  return Math.atan2(y, x);
-}
-
 // Calculate the distance from an array of latlngs
 app.utils.calculateDistance = function(latlngs) {
   var haversine = app.utils.haversine;
@@ -123,36 +121,30 @@ app.utils.indexOfClosest = function(arr, point) {
   return closest;
 };
 
-// Given an array of line segments and a point, find the index of 
-// the line segment the point most closely fits
-app.utils.closestLineSegment = function(segments, point) {
-  // is there a way to do this that assumes the world isn't flat?
+app.utils.closestLatLngOnSegment = function(p, p1, p2) {
+  p = {x: p[0], y: p[1]};
+  p1 = {x: p1[0], y: p1[1]};
+  p2 = {x: p2[0], y: p2[1]};
 
-  // TODO: this fn does something that's kind of but not at all right.
-  // It should walk through each consecutive pair of points, checking to see
-  // if our clicked point lies between them. If so, it should return the index
-  // of the line segment + the two points
-  var closest = -1;
-  var minDiff = Infinity;
+  var x = p1.x,
+    y = p1.y,
+    dx = p2.x - x,
+    dy = p2.y - y,
+    dot = dx * dx + dy * dy,
+    t;
 
-  for (var i = 0; i < segments.length; i++) {
-    var segment = segments[i];
+  if (dot > 0) {
+    t = ((p.x - x) * dx + (p.y - y) * dy) / dot;
 
-    if (segment.length == 0) continue;
-
-    var firstPoint = segment[0];
-    var lastPoint = _.last(segment);
-
-    var lineAzimuth = app.utils.azimuth(firstPoint, lastPoint);
-    var pointAzimuth = app.utils.azimuth(firstPoint, point);
-
-    var azimuthDiff = Math.abs(lineAzimuth-pointAzimuth);
-
-    if (azimuthDiff < minDiff) {
-      minDiff = azimuthDiff;
-      closest = i;
+    if (t > 1) {
+      x = p2.x;
+      y = p2.y;
+    } else if (t > 0) {
+      x += dx * t;
+      y += dy * t;
     }
   }
 
-  return closest;
+return [x, y];
+
 }
