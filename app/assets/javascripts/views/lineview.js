@@ -190,6 +190,10 @@ app.LineView = Backbone.View.extend({
       app.map.off('mousemove', this.removeInsert);
       L.DomEvent.removeListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
     });
+
+    // Edge case: click & don't drag. We only want to count click-and-drags,
+    // so let's just hide the insertMarker when this happens.
+    insertMarker.on('click', this.hideInsert);
   },
 
   beginInsert: function(event) {
