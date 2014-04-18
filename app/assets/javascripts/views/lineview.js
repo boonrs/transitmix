@@ -4,24 +4,27 @@ app.LineView = Backbone.View.extend({
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
 
     _.bindAll(this, 'addPoint', 'updatePoint', 'removePoint', 'redrawMarkers',
-      'delayedRedrawMarkers', 'showDrawingLine');
+      'delayedRedrawMarkers', 'showDrawingLine', 'showInsert', 'beginInsert',
+      'updateInsert','finishInsert', 'hideInsert');
     this.throttledUpdatePoint = _.throttle(this.updatePoint, 150);
     this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
+    this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
 
-    this.isDrawing = false;
     this.markers = [];
+    this.isDrawing = false;
+    this.isInserting = false;
   },
 
   render: function() {
     var coordinates = this.model.get('coordinates');
-    var color = this.model.get('color');
 
     this.line = L.multiPolyline(coordinates, {
-      color: color,
+      color: this.model.get('color'),
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
 
+    this.hookupInsert();
     this.redrawMarkers();
     if (coordinates.length < 2) this.startDrawing();
   },
@@ -77,13 +80,9 @@ app.LineView = Backbone.View.extend({
     this.model.updatePoint(event.target._latlng, event.target.pointIndex);
   },
 
-  insertPoint: function(event) {
-    // ????
-  },
-
   removePoint: function(event) {
     // Removes a point when clicked. There's an exception: in drawing mode
-    // we instead allow the user to click the first or last marker to end drawing.
+    // we  allow the user to click the first or last marker to end drawing.
     var marker = event.target;
     var firstMarker = marker === _.first(this.markers);
     var lastMarker = marker === _.last(this.markers);
@@ -94,6 +93,10 @@ app.LineView = Backbone.View.extend({
       this.model.removePoint(marker.pointIndex);
       this.redrawMarkers();
     }
+
+    // Edge case where you hover to insert, then click a nearby
+    // marker to delete, leaving the insertMarker stranded
+    this.hideInsert();
   },
 
   // When a transit line is first created, it is in drawing mode. Anywhere
@@ -133,6 +136,79 @@ app.LineView = Backbone.View.extend({
     if (this.drawingLine) app.map.removeLayer(this.drawingLine);
   },
 
+  // When a user hovers over the line, we show a new marker, and allow
+  // them to drag it to insert a new point. The following functions 
+  // support this.
+  hookupInsert: function() {
+    // Insert requires a careful dance of DOM events. On mouseover, 
+    // we show the UI. We hide it when the mouse moves over the map, so
+    // we have to silence mousemove on the line, and the insertMarker itself.
+    // BUT, we need mousemove to understand drag, so we re-enable it as 
+    // soon as we hear a mousedown. See showInsert for the full set of events.
+    this.line.on('mouseover', this.showInsert);
+    this.line.on('mousemove', function(event) {
+      L.DomEvent.stop(event.originalEvent);
+    });
+  },
+
+  showInsert: function(event) {
+    if (this.isDrawing) return;
+    if (this.isInserting) return;
+
+    if (this.insertMarker) {
+      this.insertMarker.setLatLng(event.latlng);
+      this.insertMarker.pointIndex = this._findPointIndex(event.layer);
+      return;
+    }
+
+    var color = this.model.get('color');
+    var html = '<div class="mapMarker" style="background:' + color + '"></div>';
+    var icon = L.divIcon({ className: '',  html: html });
+
+    var insertMarker = this.insertMarker = L.marker(event.latlng, {
+      icon: icon,
+      draggable: true,
+    }).addTo(app.map);
+
+    insertMarker.pointIndex = this._findPointIndex(event.layer);
+    insertMarker.on('dragstart', this.beginInsert);
+    insertMarker.on('drag', this.throttledUpdateInsert);
+    insertMarker.on('dragend', this.finishInsert);
+
+    // Prevent mousemove from propagating to the map, but re-enable it on
+    // mousedown for drag support. See hookupInsert for full description.
+    app.map.on('mousemove', this.hideInsert);
+    L.DomEvent.addListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
+    L.DomEvent.addListener(insertMarker._icon, 'mousedown', function() {
+      app.map.off('mousemove', this.removeInsert);
+      L.DomEvent.removeListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
+    });
+  },
+
+  beginInsert: function(event) {
+    this.isInserting = true;
+    this.model.insertPoint(event.target._latlng, event.target.pointIndex);
+  },
+
+  updateInsert: function(event) {
+    this.model.updatePoint(event.target._latlng, event.target.pointIndex);
+  },
+
+  finishInsert: function(event) {
+    this.isInserting = false;
+    this.model.updatePoint(event.target._latlng, event.target.pointIndex);
+    this.delayedRedrawMarkers();
+    this.hideInsert();
+  },
+
+  hideInsert: function() {
+    if (this.insertMarker) {
+      app.map.removeLayer(this.insertMarker);
+      this.insertMarker = false;
+      app.map.off('mousemove', this.removeInsert);
+    }
+  },
+
   // Utility functions
   remove: function() {
     this.stopDrawing();
@@ -141,60 +217,11 @@ app.LineView = Backbone.View.extend({
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 
-  // _getIndexOfLayerInLine: function(layer) {
-  //   var lineLayers = this.line.getLayers();
-  //   for (var i = 0; i < lineLayers.length; i++) {
-  //     if (layer === lineLayers[i]) return i;
-  //   }
-  //   return -1;
-  // },
+  _findPointIndex: function(layer) {
+    var lineLayers = this.line.getLayers();
+    for (var i = 0; i < lineLayers.length; i++) {
+      if (layer === lineLayers[i]) return i;
+    }
+    return -1;
+  },
 });
-
-  // showInsertionMarker: function(event) {
-  //   if (this.insertionMarker) return;
-  //   var segmentIndex = this._getIndexOfLayerInLine(event.layer);
-
-  //    var icon = L.divIcon({
-  //     className: '',
-  //     html: '<div class="mapMarker" style="background:' + this.model.get('color') + '"></div>'
-  //   });
-
-  //   var a = this.model.getPoint(segmentIndex - 1);
-  //   var b = this.model.getPoint(segmentIndex);
-  //   var onLine = this.closestOnSegment(app.map, app.utils.cleanPoint(event.latlng), a, b);
-  //   console.log(event);
-
-  //   this.insertionMarker = L.marker(onLine, {
-  //     opacity: 0.5,
-  //     icon: icon,
-  //     draggable: true,
-  //   }).addTo(app.map);
-
-  //   this.insertionMarker.index = segmentIndex;
-  //   var throttled = _.throttle(_.bind(this.model.updatePoint, this.model), 100);
-  //   // this.insertionMarker.on('mouseout', this.removeInsertionMarker, this);
-  //   this.insertionMarker.on('dragstart', _.bind(function(event) {
-  //     console.log()
-  //     var point = app.utils.cleanPoint(event.target._latlng);
-  //     this.model.insertPoint(point, segmentIndex)
-  //   }, this));
-  //   this.insertionMarker.on('drag', _.bind(function(event) {
-  //     var point = app.utils.cleanPoint(event.target._latlng);
-  //     // this.model.updatePoint(point, segmentIndex);
-  //     throttled(point, segmentIndex);
-  //   }, this));
-
-  //   this.insertionMarker.on('dragend', _.bind(function() {
-  //     this.redrawMarkers();
-  //   }, this));
-  // },
-
-  // updateInsertionMarker: function(event) {
-  //   if (!this.insertionMarker) return;
-  //   this.insertionMarker.setLatLng(event.latlng);
-  // },
-
-  // removeInsertionMarker: function(event) {
-  //   if (!this.insertionMarker) return;
-  //   app.map.removeLayer(this.insertionMarker);
-  // },
