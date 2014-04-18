@@ -17,7 +17,7 @@ app.LineView = Backbone.View.extend({
     var color = this.model.get('color');
 
     this.line = L.multiPolyline(coordinates, {
-      color: '#' + color,
+      color: color,
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
@@ -35,7 +35,7 @@ app.LineView = Backbone.View.extend({
   // pointIndex, allowing them to interact with the underlying model.
   addMarker: function(latlng, pointIndex) {
     var color = this.model.get('color');
-    var html = '<div class="mapMarker" style="background:#' + color + '"></div>';
+    var html = '<div class="mapMarker" style="background:' + color + '"></div>';
     var icon = L.divIcon({ className: '',  html: html });
 
     var marker = L.marker(latlng, {
@@ -106,7 +106,7 @@ app.LineView = Backbone.View.extend({
     app.map.on('mousemove', this.throttledShowDrawingLine);
 
     this.drawingLine = L.polyline([], {
-      color: '#' + this.model.get('color'),
+      color: this.model.get('color'),
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
@@ -156,7 +156,7 @@ app.LineView = Backbone.View.extend({
 
   //    var icon = L.divIcon({
   //     className: '',
-  //     html: '<div class="mapMarker" style="background:#' + this.model.get('color') + '"></div>'
+  //     html: '<div class="mapMarker" style="background:' + this.model.get('color') + '"></div>'
   //   });
 
   //   var a = this.model.getPoint(segmentIndex - 1);

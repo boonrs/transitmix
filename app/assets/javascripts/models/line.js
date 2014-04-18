@@ -4,7 +4,7 @@ app.Line = Backbone.Model.extend({
   defaults: function() {
     // For now, just randomly assign each line a color.
     // Colors are: red, green, purple, blue
-    var colors = ['AD0101', '0D7215', '4E0963', '0071CA'];
+    var colors = ['#AD0101', '#0D7215', '#4E0963', '#0071CA'];
     var randomColor = _.sample(colors);
 
     return {
