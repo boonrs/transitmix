@@ -1,10 +1,14 @@
+// A line is an always-routed set of latlngs, stored in a 'coordinates'
+// field, using a GeoJSON multilinestring represntation. Just give it a set
+// of waypoints to navigate through, and it'll handle the rest.
+
 app.Line = Backbone.Model.extend({
   _parse_class_name: 'Line',
 
   defaults: function() {
     // For now, just randomly assign each line a color.
     // Colors are: red, green, purple, blue
-    var colors = ['AD0101', '0D7215', '4E0963', '0071CA'];
+    var colors = ['#AD0101', '#0D7215', '#4E0963', '#0071CA'];
     var randomColor = _.sample(colors);
 
     return {
@@ -19,111 +23,121 @@ app.Line = Backbone.Model.extend({
     };
   },
 
-  // Extends the line to the given point, intelligently routing in between
-  extendLine: function(toPoint) {
+  // Extends the line to the given latlng, routing in-between
+  addWaypoint: function(latlng) {
+    latlng = _.values(latlng);
     var coordinates = _.clone(this.get('coordinates'));
 
     if (coordinates.length === 0) {
-      coordinates.push([toPoint]);
-      this.save({coordinates: coordinates});
+      coordinates.push([latlng]);
+      this.save({ coordinates: coordinates });
       return;
     }
 
-    this.getRoute({
-      from: this.getLastPoint(),
-      to: toPoint,
+    app.utils.getRoute({
+      from: _.last(this.getWaypoints()),
+      to: latlng,
     }, function(route) {
       coordinates.push(route);
-      this.save({coordinates: coordinates});
-    });
+      this.save({ coordinates: coordinates });
+    }, this);
   },
 
-  rerouteLine: function(newLatLng, segmentIndex) {
-    if (segmentIndex === 0) {
-      this._rerouteLineStart(newLatLng);
-    } else if (segmentIndex === this.get('coordinates').length - 1) {
-      this._rerouteLineEnd(newLatLng);
+  updateWaypoint: function(latlng, index) {
+    latlng = _.values(latlng);
+
+    if (index === 0) {
+      this._updateFirstWaypoint(latlng);
+    } else if (index === this.get('coordinates').length - 1) {
+      this._updateLastWaypoint(latlng);
     } else {
-      this._rerouteLineMiddle(newLatLng, segmentIndex);
+      this._updateMiddleWaypoint(latlng, index);
     }
   },
 
-  _rerouteLineStart: function(newLatLng) {
-    // If the first point is moved, need to:
-    //     * Move the single point in the first segment
-    //     * Reroute the second segment
+  _updateFirstWaypoint: function(latlng) {
     var coordinates = _.clone(this.get('coordinates'));
-    var firstFullSegment = coordinates[1]; // since first segment only has first point
+    var secondWaypoint = _.last(coordinates[1]);
 
-    this.getRoute({
-      from: newLatLng,
-      to: _.last(firstFullSegment)
+    app.utils.getRoute({
+      from: latlng,
+      to: secondWaypoint,
     }, function(route) {
-      // first segment is only the first point
-      // second segment is path from first point to second point
       coordinates[0] = [route[0]];
       coordinates[1] = route;
-      this.save({coordinates: coordinates});
-    });
+      this.save({ coordinates: coordinates });
+    }, this);
   },
 
-  _rerouteLineMiddle: function(newLatLng, segmentIndex) {
+  _updateMiddleWaypoint: function(latlng, index) {
+    var coordinates = _.clone(this.get('coordinates'));
+    var prevWaypoint = _.last(coordinates[index - 1]);
+    var nextWaypoint = _.last(coordinates[index + 1]);
+
+    app.utils.getRoute({
+      from: prevWaypoint,
+      via: latlng,
+      to: nextWaypoint,
+    }, function(route) {
+      var closest = app.utils.indexOfClosest(route, latlng);
+      coordinates[index] = route.slice(0, closest + 1);
+      coordinates[index + 1] = route.slice(closest);
+      this.save({ coordinates: coordinates });
+    }, this);
+  },
+
+  _updateLastWaypoint: function(latlng) {
+    var coordinates = _.clone(this.get('coordinates'));
+    var penultimateWaypoint = _.last(coordinates[coordinates.length - 2]);
+
+    app.utils.getRoute({
+      from: penultimateWaypoint,
+      to: latlng
+    }, function(route) {
+      coordinates[coordinates.length - 1] = route;
+      this.save({ coordinates: coordinates });
+    }, this);
+  },
+
+  insertWaypoint: function(latlng, index) {
+    var coordinates = _.clone(this.get('coordinates'));
+    var prevWaypoint = _.last(coordinates[index - 1]);
+    var newSegment = [prevWaypoint, latlng];
+
+    coordinates.splice(index, 0, newSegment);
+    this.set({ coordinates: coordinates }, { silent: true });
+    this.updateWaypoint(latlng, index);
+  },
+
+  removeWaypoint: function(index) {
     var coordinates = _.clone(this.get('coordinates'));
 
-    var prev = _.last(coordinates[segmentIndex - 1]);
-    var next = _.last(coordinates[segmentIndex + 1]);
+    // Drop the first segment, make the second segment just the last waypoint
+    if (index === 0) {
+      var secondWaypoint = _.last(coordinates[1]);
+      coordinates.splice(0, 2, [secondWaypoint]);
+      this.save({ coordinates: coordinates });
+      return;
+    }
 
-    this.getRoute({
-      from: prev,
-      via: newLatLng,
-      to: next,
-    }, function(route) {
-      var index = app.utils.indexOfClosest(route, newLatLng);
-      coordinates[segmentIndex] = route.slice(0, index + 1);
-      coordinates[segmentIndex + 1] = route.slice(index);
-      this.save({coordinates: coordinates});
-    });
+    // Just drop the last segment
+    if (index === coordinates.length - 1) {
+      coordinates.splice(index, 1);
+      this.save({ coordinates: coordinates });
+      return;
+    }
+
+    // For middle waypoints, we drop the segment, then route 
+    // the next waypoint, keep it's current location. 
+    var nextWaypoint = _.last(coordinates[index + 1]);
+    coordinates.splice(index, 1);
+    this.set({ coordinates: coordinates }, { silent: true });
+    this.updateWaypoint(nextWaypoint, index);
   },
 
-  _rerouteLineEnd: function(newLatLng) {
-    var coordinates = _.clone(this.get('coordinates'));
-    var lastSegment = _.last(coordinates);
-
-    this.getRoute({
-      from: lastSegment[0],
-      to: newLatLng
-    }, function(route) {
-      var lastIndex = coordinates.length - 1;
-      coordinates[lastIndex] = route;
-      this.save({coordinates: coordinates});
-    })
-  },
-
-  // Returns a set of coordinates that connect between 'from' and 'to' points
-  // If no from point is given, the line's last point is assumed.
-  // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
-  // To and From are required, via is optional
-  getRoute: function(points, callback) {
-    var routingUrl = 'http://router.project-osrm.org/viaroute?loc=' +
-      points.from[0] + ',' + points.from[1];
-    if (points.via) routingUrl += '&loc=' + points.via[0] + ',' + points.via[1];
-    routingUrl += '&loc=' + points.to[0] + ',' + points.to[1];
-
-    callback = _.bind(callback, this);
-    $.getJSON(routingUrl, function(route) {
-      var coordinates = app.utils.decodeGeometry(route.route_geometry);
-      callback(coordinates);
-    });
-  },
-
-  getPoint: function(index) {
+  getWaypoints: function() {
     var coordinates = this.get('coordinates');
-    return _.last(coordinates[index]);
-  },
-
-  getLastPoint: function() {
-    var lastSegment = _.last(this.get('coordinates'));
-    return _.last(lastSegment);
+    return _.map(coordinates, _.last);
   },
 
   calculateDistance: function() {

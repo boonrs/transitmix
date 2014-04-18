@@ -39,7 +39,7 @@ app.HomeView = Backbone.View.extend({
 app.HomeLineView = Backbone.View.extend({
   render: function() {
     var coordinates = this.model.get('coordinates');
-    var color = '#' + this.model.get('color');
+    var color = this.model.get('color');
 
     this.line = L.multiPolyline(coordinates, {
       color: color,
@@ -71,7 +71,7 @@ app.HomeBlockView = Backbone.View.extend({
 
   render: function() {
     this.$el.html(this.template(this.model.attributes));
-    this.$el.css('background', '#' + this.model.get('color'));
+    this.$el.css('background', this.model.get('color'));
     return this;
   },
 

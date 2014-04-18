@@ -1,123 +1,238 @@
 app.LineView = Backbone.View.extend({
+
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
-    this.throttledShowPredicts = _.throttle(this.showPredicts, 150);
-    this.throttledReroute = _.throttle(this.reroute, 150);
+
+    _.bindAll(this, 'addWaypoint', 'updateWaypoint', 'removeWaypoint',
+      'redrawMarkers', 'delayedRedrawMarkers', 'showDrawingLine',
+      'showInsert', 'beginInsert', 'updateInsert','finishInsert', 'hideInsert');
+    this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
+    this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
+    this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
+
+    this.markers = [];
+    this.isDrawing = false;
+    this.isInserting = false;
   },
 
   render: function() {
     var coordinates = this.model.get('coordinates');
-    var color = this.model.get('color');
 
-    // A line showing the main proposed transit route .
-    this.line = L.multiPolyline(coordinates, options = {
-      color: '#' + color,
+    this.line = L.multiPolyline(coordinates, {
+      color: this.model.get('color'),
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
 
-    // Markers at each user-added point. Used for editing.
-    this.markers = [];
-    coordinates.forEach(function(segment, index) {
-      this.addMarker(_.last(segment), index);
-    }, this);
-
-    // Jump into drawing mode for newly created lines
+    this.hookupInsert();
+    this.redrawMarkers();
     if (coordinates.length < 2) this.startDrawing();
   },
 
   updateCoordinates: function() {
-    var coordinates = this.model.get('coordinates');
-    this.line.setLatLngs(coordinates);
+    this.line.setLatLngs(this.model.get('coordinates'));
   },
 
+  // Markers & Marker Events
+  // -----------------------
+  // Markers are the small circles added on top of the line, letting users
+  // drag and click to reroute the transit line. They each know their 
+  // waypointIndex, allowing them to interact with the underlying model.
+
+  addMarker: function(latlng, waypointIndex) {
+    var color = this.model.get('color');
+    var html = '<div class="mapMarker" style="background:' + color + '"></div>';
+    var icon = L.divIcon({ className: '',  html: html });
+
+    var marker = L.marker(latlng, {
+      icon: icon,
+      draggable: true,
+    }).addTo(app.map);
+
+    marker.waypointIndex = waypointIndex;
+    marker.on('click', _.bind(this.removeWaypoint, this));
+    marker.on('drag', this.throttledUpdateWaypoint);
+    marker.on('dragend', this.delayedRedrawMarkers);
+
+    this.markers.push(marker);
+  },
+
+  redrawMarkers: function() {
+    this.markers.forEach(function(marker) {
+      app.map.removeLayer(marker);
+    });
+
+    var waypoints = this.model.getWaypoints();
+    waypoints.forEach(function(latlng, waypointIndex) {
+      this.addMarker(latlng, waypointIndex);
+    }, this);
+  },
+
+  delayedRedrawMarkers: function() {
+    _.delay(this.redrawMarkers, 500);
+  },
+
+  addWaypoint: function(event) {
+    this.model.addWaypoint(event.latlng);
+    this.addMarker(event.latlng, this.markers.length);
+  },
+
+  updateWaypoint: function(event) {
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
+  },
+
+  removeWaypoint: function(event) {
+    // Removes a waypoint when clicked. There's an exception: in drawing mode
+    // we  allow the user to click the first or last marker to end drawing.
+    var marker = event.target;
+    var firstMarker = marker === _.first(this.markers);
+    var lastMarker = marker === _.last(this.markers);
+
+    if (this.isDrawing) {
+      if (firstMarker || lastMarker) this.stopDrawing();
+    } else {
+      this.model.removeWaypoint(marker.waypointIndex);
+      this.redrawMarkers();
+    }
+
+    // Edge case where you hover to insert, then click a nearby
+    // marker to delete, leaving the insertMarker stranded
+    this.hideInsert();
+  },
+
+  // Drawing
+  // -------
+  // When a transit line is first created, it is in drawing mode. Anywhere
+  // a user clicks a waypoint is added, and the connecting line is always shown
+
   startDrawing: function() {
+    this.isDrawing = true;
     $(app.map._container).addClass('drawCursor');
 
-    app.map.on('click', this.addPoint, this);
-    app.map.on('mousemove', this.throttledShowPredicts, this);
+    app.map.on('click', this.addWaypoint);
+    app.map.on('mousemove', this.throttledShowDrawingLine);
 
-    this.predictLine = L.polyline([], {
-      color: '#' + this.model.get('color'),
+    this.drawingLine = L.polyline([], {
+      color: this.model.get('color'),
       opacity: 1,
       weight: 10,
     }).addTo(app.map);
   },
 
-  showPredicts: function(event) {
+  showDrawingLine: function(event) {
     var coordinates = this.model.get('coordinates');
     if (coordinates.length === 0) return;
 
-    var mousePoint = app.utils.cleanPoint(event.latlng);
-    var points = {
-      from: this.model.getLastPoint(),
-      to: mousePoint,
-    };
-
-    var predictLine = this.predictLine;
-    this.model.getRoute(points, function(coordinates) {
-      predictLine.setLatLngs(coordinates);
-    });
-  },
-
-  addPoint: function(event) {
-    var point = app.utils.cleanPoint(event.latlng);
-    this.model.extendLine(point);
-    var index = this.model.get('coordinates').length - 1;
-    this.addMarker(point, index);
+    app.utils.getRoute({
+      from: _.last(this.model.getWaypoints()),
+      to: _.values(event.latlng),
+    }, function(coordinates) {
+      this.drawingLine.setLatLngs(coordinates);
+    }, this);
   },
 
   stopDrawing: function() {
+    this.isDrawing = false;
     $(app.map._container).removeClass('drawCursor');
-    app.map.off('click', this.addPoint, this);
-    app.map.off('mousemove', this.throttledShowPredicts, this);
-    if (this.predictLine) app.map.removeLayer(this.predictLine);
+
+    app.map.off('click', this.addWaypoint, this);
+    app.map.off('mousemove', this.throttledShowDrawingLine, this);
+    if (this.drawingLine) app.map.removeLayer(this.drawingLine);
   },
 
-  // Markers are user-clicked locations, used for dragging and editing lines
-  addMarker: function(point, index) {
-    var color = this.model.get('color');
-    var icon = L.divIcon({
-      className: '',
-      html: '<div class="mapMarker" style="background:#' + color + '"></div>'
+  // Inserting Waypoints
+  // -------------------
+  // When a user hovers over the line, we show a new marker, and allow
+  // them to drag it to insert a new waypoint. The following functions 
+  // support this.
+
+  hookupInsert: function() {
+    // Insert requires a careful dance of DOM events. On mouseover, 
+    // we show the UI. We hide it when the mouse moves over the map, so
+    // we have to silence mousemove on the line, and the insertMarker itself.
+    // BUT, we need mousemove to understand drag, so we re-enable it as 
+    // soon as we hear a mousedown. See showInsert for the full set of events.
+    this.line.on('mouseover', this.showInsert);
+    this.line.on('mousemove', function(event) {
+      L.DomEvent.stop(event.originalEvent);
     });
-    var marker = L.marker(point, { icon: icon, draggable: true, }).addTo(app.map);
-
-    marker.on('click', _.bind(this.clickMarker, this));
-    marker.on('drag', _.bind(this.throttledReroute, this));
-    marker.on('dragend', _.bind(this.adjustMarker, this));
-
-    marker.index = index;
-    this.markers.push(marker);
   },
 
-  clickMarker: function(event) {
-    var marker = event.target;
-    if (marker === _.first(this.markers) || marker === _.last(this.markers)) {
-      this.stopDrawing();
+  showInsert: function(event) {
+    if (this.isDrawing) return;
+    if (this.isInserting) return;
+
+    if (this.insertMarker) {
+      this.insertMarker.setLatLng(event.latlng);
+      this.insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
+      return;
+    }
+
+    var color = this.model.get('color');
+    var html = '<div class="mapMarker" style="background:' + color + '"></div>';
+    var icon = L.divIcon({ className: '',  html: html });
+
+    var insertMarker = this.insertMarker = L.marker(event.latlng, {
+      icon: icon,
+      draggable: true,
+    }).addTo(app.map);
+
+    insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
+    insertMarker.on('dragstart', this.beginInsert);
+    insertMarker.on('drag', this.throttledUpdateInsert);
+    insertMarker.on('dragend', this.finishInsert);
+
+    // Prevent mousemove from propagating to the map, but re-enable it on
+    // mousedown for drag support. See hookupInsert for full description.
+    app.map.on('mousemove', this.hideInsert);
+    L.DomEvent.addListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
+    L.DomEvent.addListener(insertMarker._icon, 'mousedown', function() {
+      app.map.off('mousemove', this.removeInsert);
+      L.DomEvent.removeListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
+    });
+
+    // Edge case: click & don't drag. We only want to count click-and-drags,
+    // so let's just hide the insertMarker when this happens.
+    insertMarker.on('click', this.hideInsert);
+  },
+
+  beginInsert: function(event) {
+    this.isInserting = true;
+    this.model.insertWaypoint(event.target._latlng, event.target.waypointIndex);
+  },
+
+  updateInsert: function(event) {
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
+  },
+
+  finishInsert: function(event) {
+    this.isInserting = false;
+    this.model.updateWaypoint(event.target._latlng, event.target.waypointIndex);
+    this.delayedRedrawMarkers();
+    this.hideInsert();
+  },
+
+  hideInsert: function() {
+    if (this.insertMarker) {
+      app.map.removeLayer(this.insertMarker);
+      this.insertMarker = false;
+      app.map.off('mousemove', this.removeInsert);
     }
   },
 
-  reroute: function(event) {
-    var marker = event.target;
-    var point = app.utils.cleanPoint(marker._latlng);
-    this.model.rerouteLine(point, marker.index);
-  },
-
-  adjustMarker: function(event) {
-    var marker = event.target;
-    var index = marker.index;
-    var point = this.model.getPoint(index);
-
-    setTimeout(function() {
-      marker.setLatLng(point);
-    }, 300);
-  },
-
+  // Utility functions
   remove: function() {
     this.stopDrawing();
-    this.markers.forEach(function(m) { app.map.removeLayer(m) });
+    this.markers.forEach(function(m) { app.map.removeLayer(m); });
     app.map.removeLayer(this.line);
     Backbone.View.prototype.remove.apply(this, arguments);
+  },
+
+  _findWaywaypointIndex: function(layer) {
+    var lineLayers = this.line.getLayers();
+    for (var i = 0; i < lineLayers.length; i++) {
+      if (layer === lineLayers[i]) return i;
+    }
+    return -1;
   },
 });
