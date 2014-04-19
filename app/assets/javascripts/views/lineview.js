@@ -164,7 +164,7 @@ app.LineView = Backbone.View.extend({
 
     if (this.insertMarker) {
       this.insertMarker.setLatLng(event.latlng);
-      this.insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
+      this.insertMarker.waypointIndex = this._findWaypointIndex(event.layer);
       return;
     }
 
@@ -177,7 +177,7 @@ app.LineView = Backbone.View.extend({
       draggable: true,
     }).addTo(app.map);
 
-    insertMarker.waypointIndex = this._findWaywaypointIndex(event.layer);
+    insertMarker.waypointIndex = this._findWaypointIndex(event.layer);
     insertMarker.on('dragstart', this.beginInsert);
     insertMarker.on('drag', this.throttledUpdateInsert);
     insertMarker.on('dragend', this.finishInsert);
@@ -228,7 +228,7 @@ app.LineView = Backbone.View.extend({
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 
-  _findWaywaypointIndex: function(layer) {
+  _findWaypointIndex: function(layer) {
     var lineLayers = this.line.getLayers();
     for (var i = 0; i < lineLayers.length; i++) {
       if (layer === lineLayers[i]) return i;
