@@ -10,7 +10,7 @@ _.templateSettings = {
 // and related information like name and frequency. A shared collection
 // is created here that all views and the router use to render the app.
 $(document).ready(function() {
-  var lines = new app.Lines;
+  var lines = new app.Lines();
 
   app.view = new app.AppView({ collection: lines });
   app.router = new app.Router({ collection: lines });
