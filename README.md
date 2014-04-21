@@ -1,4 +1,4 @@
-# TransitMix
+# TransitMix [![Build Status](https://travis-ci.org/codeforamerica/transitmix.svg?branch=lines-backend)](https://travis-ci.org/codeforamerica/transitmix)
 
 ## Setup
 
