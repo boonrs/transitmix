@@ -7,27 +7,34 @@ class LineSearch
   end
 
   def all
-    paginate! if paginate?
-    order! if order?
+    paginate!
+    order!
 
     @rel
   end
 
   def paginate!
-    @rel = @rel.page(@params[:page])
-    @rel = @rel.per(@params[:per]) if @params[:per]
-  end
-
-  def paginate?
-    @params[:page].present?
+    @rel = @rel.page(page)
+    @rel = @rel.per(per)
   end
 
   def order!
-    @rel = @rel.order("#{@params[:order_by]} #{@params[:direction]}")
+    @rel = @rel.order("#{order_by} #{direction}")
   end
 
-  def order?
-    Line.column_names.include?(@params[:order_by].downcase) &&
-      DIRECTIONS.include?(@params[:direction].downcase)
+  def page
+    @params[:page] || 1
+  end
+
+  def per
+    @params[:per] || 20
+  end
+
+  def order_by
+    @params[:order_by] || :created_at
+  end
+
+  def direction
+    @params[:direction] || :desc
   end
 end
