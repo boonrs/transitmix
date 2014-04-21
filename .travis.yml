@@ -1,0 +1,8 @@
+language: ruby
+rvm:
+  - ruby-2.1.1
+script:
+  - bundle install --deployment
+  - gem install brakeman
+  - brakeman -q -z
+  - bundle exec rake
