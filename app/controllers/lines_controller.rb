@@ -20,6 +20,8 @@ class LinesController < ApplicationController
   # PATCH/PUT /lines/1.json
   def update
     line = Line.find(params[:id])
+    # TODO: will need to conditionally return errors once
+    # validations are put in place.
     line.update(line_params)
     render json: { status: :ok, location: line }
   end
