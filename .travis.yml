@@ -5,6 +5,6 @@ script:
   - bundle install --deployment
   - gem cert --add <(curl -Ls https://raw.github.com/presidentbeef/brakeman/master/brakeman-public_cert.pem)
   - gem install brakeman -P MediumSecurity
-  - brakeman -q -z
+  - brakeman -q
   - bundle exec rake db:create db:migrate
   - bundle exec rake
