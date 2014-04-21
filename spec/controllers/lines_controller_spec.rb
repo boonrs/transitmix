@@ -10,7 +10,8 @@ describe LinesController do
       page: 2,
       per: 2,
       order_by: 'created_at',
-      direction: 'desc'
+      direction: 'desc',
+      format: :json
     }}
     let!(:lines) { create_list(:line, 4) }
 
