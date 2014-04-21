@@ -58,6 +58,9 @@ GEM
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     json (1.8.1)
+    kaminari (0.15.1)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     kgio (2.9.2)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -151,6 +154,7 @@ DEPENDENCIES
   ffaker
   jbuilder (~> 2.0)
   jquery-rails
+  kaminari (~> 0.15)
   minitest
   pg
   quiet_assets
