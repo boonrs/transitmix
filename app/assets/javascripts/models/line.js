@@ -11,11 +11,14 @@ app.Line = Backbone.Model.extend({
     var colors = ['#AD0101', '#0D7215', '#4E0963', '#0071CA'];
     var randomColor = _.sample(colors);
 
+    var names = app.DEFAULT_LINE_NAMES;
+    var randomName = _.random(10, 99) + ' ' + _.sample(names);
+
     return {
-      name: 'Untitled Line',
+      name: randomName,
       description: 'Click to add description.',
       frequency: 30,
-      speed: 25,
+      speed: 10,
       startTime: '8am',
       endTime: '8pm',
       color: randomColor,
@@ -112,6 +115,12 @@ app.Line = Backbone.Model.extend({
   removeWaypoint: function(index) {
     var coordinates = _.clone(this.get('coordinates'));
 
+    // If we only have one point, just reset coordinates to an empty array.
+    if (coordinates.length === 1) {
+      this.model.clearWaypoints();
+      return;
+    }
+
     // Drop the first segment, make the second segment just the last waypoint
     if (index === 0) {
       var secondWaypoint = _.last(coordinates[1]);
@@ -135,18 +144,57 @@ app.Line = Backbone.Model.extend({
     this.updateWaypoint(nextWaypoint, index);
   },
 
+  clearWaypoints: function() {
+    // TODO: This fails in strange ways if we're in the middle of waiting
+    // for the ajax call for a waypoint update. Need to figure out a
+    // way to cancel existing ajax calls.
+    this.save({ coordinates: [] });
+  },
+
   getWaypoints: function() {
     var coordinates = this.get('coordinates');
     return _.map(coordinates, _.last);
   },
 
-  calculateDistance: function() {
+  getCalculations: function() {
     var coordinates = this.get('coordinates');
     var flat = _.flatten(coordinates, true);
-    return app.utils.calculateDistance(flat);
-  },
 
-  calculateCost: function() {
+    var distance = app.utils.calculateDistance(flat);
+    var speed = this.get('speed') / 60; // Miles per minute
+    var frequency = this.get('frequency');
 
+    // TODO: Deal with javascript's lack of good date libs in a better way...
+    // This doens't handle overnight hours, or probably a dozen other cases.
+    // But Eric Ries told me this is a-ok.
+    var minutesIntoDay = function(time) {
+      var hours = parseInt(time.split(':')[0], 10);
+      if (time.indexOf('pm') > -1) hours += 12;
+      var minutes = 0;
+      if (time.indexOf(':') > -1) minutes = parseInt(time.split(':')[1], 10);
+      return hours * 60 + minutes;
+    };
+
+    var startTime = this.get('startTime');
+    var endTime = this.get('endTime');
+    var hoursPerDay = (minutesIntoDay(endTime) - minutesIntoDay(startTime)) / 60;
+
+
+    // Hardcoded assumptions. 
+    // TODO: Allow users to config these numbers, at some level. 
+    var LAYOVER_PERCENTAGE = 0.10;
+    var COST_PER_REVENUE_HOUR = 125;
+    var SERVICE_DAYS = 255;
+
+    var roundTripTime = (distance / speed) * (1 + LAYOVER_PERCENTAGE);
+    // Can you have half a bus? Do we need to ceiling this next value?
+    var busesRequired = roundTripTime / frequency; 
+    var revenueHoursPerDay = busesRequired * hoursPerDay;
+    var yearlyCost = revenueHoursPerDay * SERVICE_DAYS * COST_PER_REVENUE_HOUR;
+
+    return {
+      distance: distance,
+      cost: yearlyCost,
+    };
   },
 });

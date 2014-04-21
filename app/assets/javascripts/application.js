@@ -17,6 +17,7 @@
 //= require backbone-stickit-0.7.0
 //= require transitmix
 //= require utils
+//= require_tree ./data
 //= require_tree ./models
 //= require_tree ./collections
 //= require_tree ./views
