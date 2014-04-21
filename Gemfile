@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 
 ruby '2.1.1'
 
-gem 'jbuilder', '~> 2.0'
 gem 'jquery-rails'
 gem 'kaminari', '~> 0.15'
 gem 'pg'
