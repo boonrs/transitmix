@@ -19,7 +19,7 @@ class LineSearch
   end
 
   def paginate?
-    @params[:page]
+    @params[:page].present?
   end
 
   def order!
@@ -27,6 +27,7 @@ class LineSearch
   end
 
   def order?
-    Line.column_names.include?(@params[:order_by]) && DIRECTIONS.include?(@params[:direction])
+    Line.column_names.include?(@params[:order_by].downcase) &&
+      DIRECTIONS.include?(@params[:direction].downcase)
   end
 end
