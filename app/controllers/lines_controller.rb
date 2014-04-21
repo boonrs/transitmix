@@ -1,4 +1,5 @@
 class LinesController < ApplicationController
+  # TODO: should be passing an authenticity token with json requests
   skip_before_action :verify_authenticity_token
 
   # GET /lines.json
