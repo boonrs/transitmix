@@ -32,6 +32,8 @@ class LinesController < ApplicationController
   private
 
   def line_params
+    # Using serialized columns for development. Brakeman will correctly warn of mass assignment
+    # vulnerability. Once the data settles, we'll break out individual columns and PostGIS types.
     params.require(:line).permit!
   end
 
