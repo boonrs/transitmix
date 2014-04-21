@@ -5,4 +5,5 @@ script:
   - bundle install --deployment
   - gem install brakeman
   - brakeman -q -z
+  - bundle exec rake db:create db:migrate
   - bundle exec rake
