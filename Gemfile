@@ -15,6 +15,7 @@ group :production do
 end
 
 group :development do
+	gem 'rspec-rails'
   gem 'quiet_assets'
   gem 'spring'
 end
