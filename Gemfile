@@ -18,3 +18,20 @@ group :development do
   gem 'quiet_assets'
   gem 'spring'
 end
+
+group :development, :test do
+  gem 'annotate'
+  gem 'debugger'
+  gem 'factory_girl_rails', '~> 4.4'
+  gem 'ffaker'
+end
+
+group :test do
+  gem 'database_cleaner', '~> 1.2'
+  gem 'rspec-rails', '~> 2.14'
+  # Here to silence annoying warnings
+  # must come before shoulda-matchers
+  # https://github.com/thoughtbot/shoulda-matchers/issues/408#issuecomment-37011141
+  gem 'minitest'
+  gem 'shoulda-matchers', '~> 2.5'
+end
