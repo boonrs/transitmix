@@ -3,7 +3,8 @@ rvm:
   - ruby-2.1.1
 script:
   - bundle install --deployment
-  - gem install brakeman
+  - gem cert --add <(curl -Ls https://raw.github.com/presidentbeef/brakeman/master/brakeman-public_cert.pem)
+  - gem install brakeman -P MediumSecurity
   - brakeman -q -z
   - bundle exec rake db:create db:migrate
   - bundle exec rake
