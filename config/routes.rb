@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
-  resources :lines, only: [:index, :show, :create, :update, :destroy]
+  scope :api do
+    resources :lines, only: [:index, :show, :create, :update, :destroy]
+  end
+
   root to: 'main#index'
 end
