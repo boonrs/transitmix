@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140421005732) do
+ActiveRecord::Schema.define(version: 20140421025736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20140421005732) do
     t.time    "end"
     t.string  "color"
     t.decimal "coordinates", array: true
+    t.decimal "marker",      array: true
   end
 
 end
