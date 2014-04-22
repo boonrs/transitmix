@@ -2,6 +2,8 @@ class LinesController < ApplicationController
   # TODO: should be passing an authenticity token with json requests
   skip_before_action :verify_authenticity_token
 
+  rescue_from ActiveRecord::RecordNotFound, ActiveRecord::StatementInvalid, with: :not_found
+
   # GET /lines.json
   def index
     render json: LineSearch.new(query_params).all
@@ -42,5 +44,9 @@ class LinesController < ApplicationController
 
   def query_params
     params.permit(:page, :per, :order_by, :direction)
+  end
+
+  def not_found
+    render json: { errors: 'not-found' }, status: 404
   end
 end

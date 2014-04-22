@@ -74,6 +74,23 @@ describe LinesController do
       get :show, params
       expect(response_body['coordinates']).to eq line.coordinates
     end
+
+    context 'NOT FOUND' do
+      it 'returns 404 NOT FOUND' do
+        get :show, id: SecureRandom.uuid
+        expect(response.code).to eq "404"
+      end
+
+      it 'explains the error' do
+        get :show, id: SecureRandom.uuid
+        expect(response_body['errors']).to eq 'not-found'
+      end
+
+      it 'treats malformed uuids as missing' do
+        get :show, id: 'missing-id'
+        expect(response_body['errors']).to eq 'not-found'
+      end
+    end
   end
 
   describe 'POST create' do
