@@ -87,9 +87,8 @@ app.Line = Backbone.Model.extend({
       route.splice(closestPointInfo.index, 0, closestPointInfo.point);
 
       // Update the route to have two paths on either side
-      var closest = app.utils.indexOfClosest(route, latlng);
-      coordinates[index] = route.slice(0, closest + 1);
-      coordinates[index + 1] = route.slice(closest);
+      coordinates[index] = route.slice(0, closestPointInfo.index + 1);
+      coordinates[index + 1] = route.slice(closestPointInfo.index);
       this.save({ coordinates: coordinates });
     }, this);
   },
