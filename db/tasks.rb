@@ -86,7 +86,7 @@ namespace :db do
   end
 
   task :console do
-    DB = database
+    require './db/config'
     require 'irb'
     ARGV.clear
     IRB.start
