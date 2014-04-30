@@ -18,6 +18,14 @@ module TransitMix
 
     namespace :api do
       resource :lines do
+        helpers do
+          def line_params
+            Line::PERMITTED.each_with_object({}) { |model_params, attr|
+              model_params[attr] = params[attr] if params[attr]
+            }
+          end
+        end
+
         params do
           requires :id, type: String
         end
@@ -48,17 +56,17 @@ module TransitMix
         end
 
         post do
-          Line.create({
-            name: params[:name],
-            description: params[:description],
-            start_time: params[:start_time],
-            end_time: params[:end_time],
-            frequency: params[:frequency],
-            speed: params[:speed],
-            color: params[:color],
-            color2: params[:color2],
-            color3: params[:color3]
-          })
+          Line.create(line_params)
+        end
+
+        params do
+          requires :id, type: String
+        end
+
+        put '/:id' do
+          line = Line.where(id: params[:id]).first
+          line.update(line_params)
+          line
         end
       end # resource :lines
     end # namespace :api

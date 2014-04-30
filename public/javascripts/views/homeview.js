@@ -51,7 +51,7 @@ app.HomeLineView = Backbone.View.extend({
   },
 
   jump: function() {
-    app.router.navigate('-/' + this.model.id, { trigger: true });
+    app.router.navigate('lines/' + this.model.id, { trigger: true });
   },
 
   remove: function() {
@@ -76,6 +76,6 @@ app.HomeBlockView = Backbone.View.extend({
   },
 
   jump: function() {
-    app.router.navigate('-/' + this.model.id, { trigger: true });
+    app.router.navigate('lines/' + this.model.id, { trigger: true });
   },
 });

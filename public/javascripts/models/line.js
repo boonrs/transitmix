@@ -21,8 +21,8 @@ app.Line = Backbone.Model.extend({
       description: 'Click to add description.',
       frequency: 30,
       speed: 10,
-      startTime: '8am',
-      endTime: '8pm',
+      start_time: '8am',
+      end_time: '8pm',
       color: randomColor,
       coordinates: [], // A GeoJSON MultiLineString
     };
@@ -177,8 +177,8 @@ app.Line = Backbone.Model.extend({
       return hours * 60 + minutes;
     };
 
-    var startTime = this.get('startTime');
-    var endTime = this.get('endTime');
+    var startTime = this.get('start_time');
+    var endTime = this.get('end_time');
     var hoursPerDay = (minutesIntoDay(endTime) - minutesIntoDay(startTime)) / 60;
 
 

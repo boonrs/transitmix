@@ -1,8 +1,8 @@
 app.Router = Backbone.Router.extend({
   routes: {
     'new': 'new',
-    '-/new': 'new',
-    '-/:id': 'line',
+    'lines/new': 'new',
+    'lines/:id': 'line',
     '*default': 'home'
   },
 
@@ -11,7 +11,7 @@ app.Router = Backbone.Router.extend({
   },
 
   line: function(id) {
-    l = new app.Line({ objectId: id });
+    l = new app.Line({ id: id });
     l.fetch({ success: _.bind(this.collection.focus, this.collection) });
   },
 
@@ -20,7 +20,7 @@ app.Router = Backbone.Router.extend({
     var collection = this.collection;
 
     var success = function(model) {
-      app.router.navigate('-/' + model.id);
+      app.router.navigate('lines/' + model.id);
       collection.focus(model);
     };
 
