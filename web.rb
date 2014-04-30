@@ -5,6 +5,10 @@ require 'grape'
 Dir['./lib/models/**/*.rb'].each { |f| require(f) }
 Dir['./lib/validators/**/*.rb'].each { |f| require(f) }
 
+configure do
+  set :server, :puma
+end
+
 module TransitMix
   class Home < Sinatra::Base
     get '/' do
@@ -20,8 +24,9 @@ module TransitMix
       resource :lines do
         helpers do
           def line_params
-            Line::PERMITTED.each_with_object({}) { |model_params, attr|
+            Line::PERMITTED.reduce({}) { |model_params, attr|
               model_params[attr] = params[attr] if params[attr]
+              model_params
             }
           end
         end
