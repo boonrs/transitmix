@@ -116,3 +116,64 @@ app.utils.indexOfClosest = function(arr, point) {
 
   return closest;
 };
+
+// Given a line defined by two points, and a third point,
+// find the distance between the point and the line
+app.utils.distanceToLine = function(latlng1, latlng2, point) {
+    // source: http://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    var x0 = latlng1[1];
+    var x1 = latlng2[1];
+    var y0 = latlng1[0];
+    var y1 = latlng2[0];
+
+    // y = mx + b (slope of a line)
+    var m = (y1-y0)/(x1-x0);
+    var b = y0 - m * x0;
+
+    // distance(mx - y + b = 0)
+    var distance = Math.abs(m*point[1] - point[0] + b)/Math.sqrt(m*m + 1);
+    return distance;
+};
+
+// Given an array of latlngs, finds the point within the line
+// closest to the point given, and returns that point and the
+// index it would belong in the line
+app.utils.closestPointInRoute = function(arr, point) {
+    var closestDistance = Infinity;
+    var closestIndex = -1;
+
+    // for each point in arr, check distance from point to
+    // the line from arr[i] -> arr[i+1]
+    for (var i = 0; i < arr.length - 1; i++) {
+        var newDistance = app.utils.distanceToLine(arr[i], arr[i+1], point);
+        if (newDistance < closestDistance) {
+            closestDistance = newDistance;
+            closestIndex = i + 1;
+        }
+    }
+
+    var closestPointInLine = function(latlng1, latlng2, point) {
+        // find the coordinates closest to point on the line defined by
+        // points latlng1 and latlng2
+        // source: http://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+        var x0 = latlng1[1];
+        var x1 = latlng2[1];
+        var y0 = latlng1[0];
+        var y1 = latlng2[0];
+
+        // y = mx + b (slope of a line)
+        var m = (y1-y0)/(x1-x0);
+        var b = y0 - m * x0;
+
+        var new_lat = (m*(point[1] + m*point[0]) + b) / (m*m+1);
+        var new_lng = (-1*(-1*point[1] - m*point[0]) - m*b) / (m*m+1);
+
+        return [new_lat, new_lng];
+    };
+
+    var closestPoint = closestPointInLine(arr[closestIndex-1], arr[closestIndex], point);
+    return {
+        point: closestPoint,
+        index: closestIndex
+    };
+};
