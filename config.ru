@@ -1,2 +1,5 @@
-require './api.rb'
-run TransitMix::API
+require './web.rb'
+run Rack::Cascade.new([
+  TransitMix::Home.new,
+  TransitMix::API.new
+])

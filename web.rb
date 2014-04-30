@@ -6,12 +6,17 @@ Dir['./lib/models/**/*.rb'].each { |f| require(f) }
 Dir['./lib/validators/**/*.rb'].each { |f| require(f) }
 
 module TransitMix
+  class Home < Sinatra::Base
+    get '/' do
+      erb :index
+    end
+  end # Home
+
   class API < ::Grape::API
     version 'v1', using: :header, vendor: 'transitmix'
     format :json
 
     namespace :api do
-
       resource :lines do
         params do
           requires :id, type: String
@@ -55,9 +60,8 @@ module TransitMix
             color3: params[:color3]
           })
         end
-      end
-
-    end
+      end # resource :lines
+    end # namespace :api
 
   end # API
 end # TransitMix
