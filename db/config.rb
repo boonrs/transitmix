@@ -11,3 +11,6 @@ Sequel::Migrator.check_current(DB, 'db/migrations')
 
 # enable pagination
 Sequel::Model.db.extension :pagination
+
+# require model files
+Dir['./lib/models/**/*.rb'].each { |f| require(f) }

@@ -2,7 +2,6 @@ require './db/config'
 require 'sinatra'
 require 'grape'
 
-Dir['./lib/models/**/*.rb'].each { |f| require(f) }
 Dir['./lib/validators/**/*.rb'].each { |f| require(f) }
 
 configure do
