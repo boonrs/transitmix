@@ -8,7 +8,7 @@ configure do
   set :server, :puma
 end
 
-module TransitMix
+module Transitmix
   class Home < Sinatra::Base
     get '/' do
       erb :index
@@ -80,4 +80,4 @@ module TransitMix
     format :json
     get('/.well-known/status') { Status.new }
   end # Status
-end # TransitMix
+end # Transitmix
