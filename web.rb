@@ -55,8 +55,6 @@ module TransitMix
           optional :frequency, type: Integer
           optional :speed, type: Integer
           optional :color, type: String
-          optional :color2, type: String
-          optional :color3, type: String
         end
 
         post do
