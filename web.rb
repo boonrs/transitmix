@@ -76,4 +76,9 @@ module TransitMix
     end # namespace :api
 
   end # API
+
+  class StatusAPI < Grape::API
+    format :json
+    get('/.well-known/status') { Status.new }
+  end # Status
 end # TransitMix
