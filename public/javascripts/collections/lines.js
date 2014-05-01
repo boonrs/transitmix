@@ -1,5 +1,5 @@
 app.Lines = Backbone.Collection.extend({
-  _parse_class_name: 'Line',
+  url: 'api/lines',
   model: app.Line,
 
   // A specific model in the collection can be 'focused'. This lets

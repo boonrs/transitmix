@@ -3,7 +3,9 @@
 // of waypoints to navigate through, and it'll handle the rest.
 
 app.Line = Backbone.Model.extend({
-  _parse_class_name: 'Line',
+  url: function() {
+    return this.id ? 'api/lines/'+this.id : 'api/lines';
+  },
 
   defaults: function() {
     // For now, just randomly assign each line a color.
@@ -19,8 +21,8 @@ app.Line = Backbone.Model.extend({
       description: 'Click to add description.',
       frequency: 30,
       speed: 10,
-      startTime: '8am',
-      endTime: '8pm',
+      start_time: '8am',
+      end_time: '8pm',
       color: randomColor,
       coordinates: [], // A GeoJSON MultiLineString
     };
@@ -82,13 +84,9 @@ app.Line = Backbone.Model.extend({
       via: latlng,
       to: nextWaypoint,
     }, function(route) {
-      // Add a new point closest to the given lat/lng
-      var closestPointInfo = app.utils.closestPointInRoute(route, latlng);
-      route.splice(closestPointInfo.index, 0, closestPointInfo.point);
-
-      // Update the route to have two paths on either side
-      coordinates[index] = route.slice(0, closestPointInfo.index + 1);
-      coordinates[index + 1] = route.slice(closestPointInfo.index);
+      var closest = app.utils.indexOfClosest(route, latlng);
+      coordinates[index] = route.slice(0, closest + 1);
+      coordinates[index + 1] = route.slice(closest);
       this.save({ coordinates: coordinates });
     }, this);
   },
@@ -179,8 +177,8 @@ app.Line = Backbone.Model.extend({
       return hours * 60 + minutes;
     };
 
-    var startTime = this.get('startTime');
-    var endTime = this.get('endTime');
+    var startTime = this.get('start_time');
+    var endTime = this.get('end_time');
     var hoursPerDay = (minutesIntoDay(endTime) - minutesIntoDay(startTime)) / 60;
 
 
