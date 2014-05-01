@@ -50,6 +50,7 @@ module TransitMix
         params do
           requires :name, type: String
           requires :description, type: String
+          requires :coordinates, type: Array
           optional :start_time, type: String
           optional :end_time, type: String
           optional :frequency, type: Integer
