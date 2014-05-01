@@ -9,6 +9,7 @@ TODO: What is this?
 ```console
 git clone https://github.com/codeforamerica/transitmix.git
 cd transitmix
+cp .env.sample .env
 bundle install
 rake db:create db:migrate
 bundle exec rackup
