@@ -1,9 +1,13 @@
 # TransitMix
 
+TODO: What is this?
+
 ## Setup
 
+[Install PostgreSQL](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md).
+
 ```console
-git clone ...
+git clone https://github.com/codeforamerica/transitmix.git
 cd transitmix
 bundle install
 rake db:create db:migrate
