@@ -11,6 +11,20 @@ describe Transitmix::API do
     JSON.parse(last_response.body)
   end
 
+  describe 'GET /api/lines/:id' do
+    let(:line) { create(:line) }
+
+    it 'is successful' do
+      get "/api/lines/#{line.id}"
+      expect(last_response.status).to eq 200
+    end
+
+    it 'returns the record' do
+      get "/api/lines/#{line.id}"
+      expect(last_response.body).to eq line.to_json
+    end
+  end
+
   describe 'POST /api/lines' do
     let(:params) { attributes_for(:line) }
 
