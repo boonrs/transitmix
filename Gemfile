@@ -8,3 +8,12 @@ gem 'pg'
 gem 'puma'
 gem 'sequel'
 gem 'sinatra'
+
+group :test do
+  gem 'database_cleaner'
+  gem 'debugger'
+  gem 'factory_girl'
+  gem 'ffaker'
+  gem 'rack-test'
+  gem 'rspec'
+end

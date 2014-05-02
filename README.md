@@ -12,6 +12,7 @@ cd transitmix
 cp .env.sample .env
 bundle install
 rake db:create db:migrate
+rake db:create db:migrate DATABASE_URL=postgres://localhost/transitmix_test
 bundle exec rackup
 ```
 
