@@ -1,4 +1,4 @@
-# TransitMix
+# Transitmix
 
 TODO: What is this?
 
