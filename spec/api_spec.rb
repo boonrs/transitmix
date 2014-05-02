@@ -11,6 +11,19 @@ describe Transitmix::API do
     JSON.parse(last_response.body)
   end
 
+  describe 'POST /api/lines' do
+    let(:params) { attributes_for(:line) }
+
+    it 'is successful' do
+      post '/api/lines', params
+      expect(last_response.status).to eq 201
+    end
+
+    it 'creates a new record' do
+      expect { post '/api/lines', params }.to change{ Line.count }.by(+1)
+    end
+  end
+
   describe 'GET /api/lines' do
     it 'is sucessful' do
       get '/api/lines'
