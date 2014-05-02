@@ -1,6 +1,7 @@
 FactoryGirl.define do
   factory :line, class: Line do
     name { Faker::Lorem.words.join(' ') }
+    description { Faker::Lorem.paragraph }
     color { ['red', 'green', 'blue'].sample }
     coordinates {
       Array.new(2) {
