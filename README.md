@@ -1,23 +1,26 @@
 # TransitMix
 
+TODO: What is this?
+
 ## Setup
 
-TODO: setup test suite and add readme instructions.
+[Install PostgreSQL](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md).
 
 ```console
-git clone git@github.com:codeforamerica/transitmix.git
+git clone https://github.com/codeforamerica/transitmix.git
 cd transitmix
+cp .env.sample .env
 bundle install
-bundle exec rake db:create
-bundle exec rake db:migrate
-bundle exec rails server
+rake db:create db:migrate
+rake db:create db:migrate DATABASE_URL=postgres://localhost/transitmix_test
+bundle exec rackup
 ```
 
 ## Deploy
 
 ```console
-heroku create my-app-name
-heroku config:set SECRET_KEY_BASE=`bundle exec rake secret`
+heroku create <app name>
+heroku addons:add heroku-postgresql
 git push heroku master
 heroku run rake db:migrate
 heroku open

@@ -2,19 +2,18 @@ source 'https://rubygems.org'
 
 ruby '2.1.1'
 
-gem 'jbuilder', '~> 2.0'
-gem 'jquery-rails'
+gem 'dotenv'
+gem 'grape'
 gem 'pg'
-gem 'rails', '4.1.0'
-gem 'sass-rails', '~> 4.0.3'
-gem 'uglifier', '>= 1.3.0'
-gem 'unicorn'
+gem 'puma'
+gem 'sequel'
+gem 'sinatra'
 
-group :production do
-  gem 'rails_12factor'
-end
-
-group :development do
-  gem 'quiet_assets'
-  gem 'spring'
+group :test do
+  gem 'database_cleaner'
+  gem 'debugger'
+  gem 'factory_girl'
+  gem 'ffaker'
+  gem 'rack-test'
+  gem 'rspec'
 end
