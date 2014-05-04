@@ -7,7 +7,9 @@ gem 'grape'
 gem 'pg'
 gem 'puma'
 gem 'sequel'
+gem 'sinatra-assetpack', :require => 'sinatra/assetpack'
 gem 'sinatra'
+gem 'uglifier'
 
 group :test do
   gem 'database_cleaner'

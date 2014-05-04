@@ -11,7 +11,7 @@
   <script>try{Typekit.load();}catch(e){}</script>
   <!-- MapBox -->
   <link href="http://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.css" rel="stylesheet" />
-  <link rel="stylesheet" type="text/css" href="stylesheets/main.css">
+  <%= css :app %>
 </head>
 <body>
   <div id="map"></div>
@@ -52,16 +52,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.stickit/0.7.0/backbone.stickit.min.js"></script>
-  <script src="http://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.uncompressed.js"></script>
-  <script src="/javascripts/transitmix.js"></script>
-  <script src="/javascripts/utils.js"></script>
-  <script src="/javascripts/data/names.js"></script>
-  <script src="/javascripts/models/line.js"></script>
-  <script src="/javascripts/collections/lines.js"></script>
-  <script src="/javascripts/views/appview.js"></script>
-  <script src="/javascripts/views/homeview.js"></script>
-  <script src="/javascripts/views/detailview.js"></script>
-  <script src="/javascripts/views/lineview.js"></script>
-  <script src="/javascripts/routers/router.js"></script>
+  <script src="//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.uncompressed.js"></script>
+  <%= js :app %>
 </body>
 </html>
