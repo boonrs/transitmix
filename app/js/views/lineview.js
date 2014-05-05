@@ -40,14 +40,15 @@ app.LineView = Backbone.View.extend({
   // waypointIndex, allowing them to interact with the underlying model.
 
   addMarker: function(latlng, waypointIndex) {
-    var color = app.utils.tweakColor(this.model.get('color'), -30);
-    var html = '<div class="mapMarker" style="border-color:' + color + '"></div>';
-    var icon = L.divIcon({ className: 'mapMarkerWrapper showMarkerTooltip',  html: html });
-
-    var marker = L.marker(latlng, {
-      icon: icon,
+    var markerView = new app.MarkerView({
+      color: this.model.get('color'),
+      latlng: latlng,
+      classNames: 'mapMarkerWrapper showMarkerTooltip',
       draggable: true,
-    }).addTo(app.map);
+      bordered: true
+    })
+    markerView.render();
+    var marker = markerView.model;
 
     marker.waypointIndex = waypointIndex;
     marker.on('mousedown', function() {
@@ -135,12 +136,17 @@ app.LineView = Backbone.View.extend({
     var prev = _.last(this.markers);
     if (prev) L.DomUtil.removeClass(prev._icon, 'showDrawingTooltip');
 
-    var color = app.utils.tweakColor(this.model.get('color'), -30);
-    var html = '<div class="mapMarker" style="border-color:' + color + '"></div>';
     var classNames = 'mapMarkerWrapper';
     if (this.markers.length > 0) classNames += ' showDrawingTooltip';
-    var icon = L.divIcon({ className: classNames,  html: html });
-    var marker = L.marker(event.latlng, { icon: icon }).addTo(app.map);
+    var markerView = new app.MarkerView({
+      color: this.model.get('color'),
+      latlng: event.latlng,
+      classNames: classNames,
+      draggable: false,
+      bordered: true
+    })
+    markerView.render();
+    var marker = markerView.model;
 
     // Click any marker, but preferably the last one, to finish drawing.
     marker.on('click', this.stopDrawing);
@@ -201,13 +207,15 @@ app.LineView = Backbone.View.extend({
       return;
     }
 
-    var html = '<div class="mapMarker"></div>';
-    var icon = L.divIcon({ className: 'mapMarkerWrapper',  html: html });
-
-    var insertMarker = this.insertMarker = L.marker(event.latlng, {
-      icon: icon,
+    var markerView = new app.MarkerView({
+      color: this.model.get('color'),
+      latlng: event.latlng,
+      classNames: 'mapMarkerWrapper',
       draggable: true,
-    }).addTo(app.map);
+      bordered: false
+    })
+    markerView.render();
+    var insertMarker = this.insertMarker = markerView.model;
 
     insertMarker.waypointIndex = this._findWaypointIndex(event.layer);
     insertMarker.on('dragstart', this.beginInsert);
