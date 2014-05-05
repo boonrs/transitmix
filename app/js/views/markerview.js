@@ -14,9 +14,7 @@ app.MarkerView = Backbone.View.extend({
 
   render: function() {
     var color = app.utils.tweakColor(this.color, -30);
-    var html = (this.bordered)
-      ? '<div class="mapMarker" style="border-color:' + color + '"></div>'
-      : '<div class="mapMarker"></div>';
+    var html = '<div class="mapMarker"></div>';
     var icon = L.divIcon({ className: this.classNames, html: html });
 
     this.model = L.marker(this.latlng, {

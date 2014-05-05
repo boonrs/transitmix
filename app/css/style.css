@@ -29,21 +29,30 @@ body {
 
 .mapMarkerWrapper {
   /* overide default styles for leaflet markers */
-  background: #ffffff;
+  background: #333;
   width: 16px !important;
   height: 16px !important;
   border-radius: 16px;
+  border: 2px solid #333;
 }
 
 .mapMarker {
-  border-radius: 10px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 11px solid #333;
+  margin-left: 2px;
+  background: #ffffff;
+
+/*  border-radius: 10px;
   height: 10px;
   width: 10px;
   border: 3px solid #999;
   padding: 4px;
   margin: 1px;
   background: #ffffff;
-}
+*/}
 
 .showMarkerTooltip:hover:after {
   position: absolute;
