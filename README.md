@@ -25,3 +25,12 @@ git push heroku master
 heroku run rake db:migrate
 heroku open
 ```
+
+### Various Setup Notes
+* Install PostGres via `brew install postgres`, event if you have Postgres.app otherwise bundle install will keep failing.
+* If you wish to work on Sinatra and want auto-reload per file change:
+
+```
+gem install rerun
+rerun 'bundle exec rackup'
+```
