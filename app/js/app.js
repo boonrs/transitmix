@@ -15,5 +15,4 @@ $(document).ready(function() {
   app.view = new app.AppView({ collection: lines });
   app.router = new app.Router({ collection: lines });
 
-  Backbone.history.start();
 });
