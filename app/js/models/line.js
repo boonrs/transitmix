@@ -4,7 +4,7 @@
 
 app.Line = Backbone.Model.extend({
   url: function() {
-    return this.id ? 'api/lines/'+this.id : 'api/lines';
+    return this.id ? '/api/lines/'+this.id : '/api/lines';
   },
 
   defaults: function() {
