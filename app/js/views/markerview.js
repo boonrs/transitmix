@@ -7,14 +7,17 @@ app.MarkerView = Backbone.View.extend({
       'latlng',
       'draggable',
       'classNames',
-      'bordered'
+      'bordered',
+      'arrow'
     ];
     _.extend(this, _.pick(options, markerOptions));
   },
 
   render: function() {
     var color = app.utils.tweakColor(this.color, -30);
-    var html = '<div class="mapMarker"></div>';
+    var html = (this.arrow)
+      ? '<div class="mapMarker" style="-webkit-transform:rotate(45deg)"></div>'
+      : '<div class="mapMarker"></div>';
     var icon = L.divIcon({ className: this.classNames, html: html });
 
     this.model = L.marker(this.latlng, {

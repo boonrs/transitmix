@@ -45,7 +45,8 @@ app.LineView = Backbone.View.extend({
       latlng: latlng,
       classNames: 'mapMarkerWrapper showMarkerTooltip',
       draggable: true,
-      bordered: true
+      bordered: true,
+      arrow: true
     })
     markerView.render();
     var marker = markerView.model;
@@ -143,7 +144,8 @@ app.LineView = Backbone.View.extend({
       latlng: event.latlng,
       classNames: classNames,
       draggable: false,
-      bordered: true
+      bordered: true,
+      arrow: true
     })
     markerView.render();
     var marker = markerView.model;
@@ -212,7 +214,8 @@ app.LineView = Backbone.View.extend({
       latlng: event.latlng,
       classNames: 'mapMarkerWrapper',
       draggable: true,
-      bordered: false
+      bordered: false,
+      arrow: false
     })
     markerView.render();
     var insertMarker = this.insertMarker = markerView.model;
