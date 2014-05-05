@@ -1,5 +1,6 @@
 require './db/config'
-require 'sinatra'
+require 'sinatra/base'
+require 'sinatra/assetpack'
 require 'grape'
 
 Dir['./lib/validators/**/*.rb'].each { |f| require(f) }
@@ -10,6 +11,29 @@ end
 
 module Transitmix
   class Home < Sinatra::Base
+    set :root, File.dirname(__FILE__)
+    
+    register Sinatra::AssetPack
+
+    assets do
+      js :app, [
+        '/js/app.js',
+        '/js/utils.js',
+        '/js/data/*.js',
+        '/js/models/*.js',
+        '/js/collections/*.js',
+        '/js/views/*.js',
+        '/js/routers/*.js',
+      ]
+
+      css :app, [
+        '/css/style.css'
+       ]
+
+      js_compression :uglify
+      css_compression :simple
+    end
+
     get '/' do
       erb :index
     end
