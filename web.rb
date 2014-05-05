@@ -12,7 +12,7 @@ end
 module Transitmix
   class Home < Sinatra::Base
     set :root, File.dirname(__FILE__)
-    
+
     register Sinatra::AssetPack
 
     assets do
@@ -37,6 +37,15 @@ module Transitmix
     get '/' do
       erb :index
     end
+
+    get '/*' do
+      if params[:splat].first[0,3] == 'api'
+        pass
+      else
+        redirect to("##{params[:splat].first}"), 303
+      end
+    end
+
   end # Home
 
   class API < ::Grape::API
