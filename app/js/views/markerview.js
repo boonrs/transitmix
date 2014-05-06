@@ -11,15 +11,18 @@ app.MarkerView = Backbone.View.extend({
 
   render: function() {
     this.point = this.findPoint();
-    if (this.isNew || this.point.isLast) {
+    if (this.isNew || this.point.isFirst || this.point.isLast) {
       this.$el.hide();
     } else {
       this.rotate();
+      this.$el.css('border-left-color', this.line.get('color'));
     }
 
     var icon = L.divIcon({ className: this.classNames, html: this.el.outerHTML });
     this.model.setIcon(icon);
     this.model.addTo(app.map);
+    $('.mapMarkerWrapper').css('border-color', this.line.get('color'));
+
     return this;
   },
 
@@ -28,6 +31,7 @@ app.MarkerView = Backbone.View.extend({
     var points = _.flatten(coordinates, true);
     var latlng = this.model.getLatLng();
     var index = app.utils.indexOfClosest(points, [latlng.lat, latlng.lng]);
+    var isFirst = index === 0;
     var isLast = index === points.length - 1;
 
     // TODO - Figure out the reason for this hack.
@@ -40,6 +44,7 @@ app.MarkerView = Backbone.View.extend({
     return {
       current: points[index],
       next: (!isLast) ? points[index + 1] : null,
+      isFirst: isFirst,
       isLast: isLast
     }
   },
