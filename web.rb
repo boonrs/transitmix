@@ -42,7 +42,7 @@ module Transitmix
       if params[:splat].first[0,3] == 'api'
         pass
       else
-        redirect to("##{params[:splat].first}"), 303
+        erb :index
       end
     end
 
