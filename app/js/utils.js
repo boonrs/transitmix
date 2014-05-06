@@ -177,3 +177,24 @@ app.utils.closestPointInRoute = function(arr, point) {
         index: closestIndex
     };
 };
+
+app.utils.toRadians = function (degrees) { return degrees * Math.PI / 180; };
+
+app.utils.toDegrees = function (radians) { return radians * 180 / Math.PI; };
+
+app.utils.calculateBearing = function(latlng1, latlng2) {
+    var lat1 = app.utils.toRadians(latlng1[0]);
+    var lng1 = app.utils.toRadians(latlng1[1]);
+    var lat2 = app.utils.toRadians(latlng2[0]);
+    var lng2 = app.utils.toRadians(latlng2[1]);
+
+    var lngDiff = (lng2 - lng1);
+    var y = Math.sin(lngDiff) * Math.cos(lat2);
+    var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lngDiff);
+    var radians = Math.atan2(y, x);
+
+    var degrees = app.utils.toDegrees(radians);
+    var mappingBearing = (degrees + 360) % 360;
+    var cssBearing = mappingBearing - 90;
+    return cssBearing;
+}

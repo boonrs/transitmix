@@ -4,13 +4,14 @@ app.MarkerView = Backbone.View.extend({
 
   initialize: function(options) {
     options || (options = {});
-    _.extend(this, _.pick(options, ['draggable', 'classNames']));
+    _.extend(this, _.pick(options, ['line', 'classNames', 'isNew']));
 
     _.bindAll(this, 'addToMap', 'rotate');
   },
 
   render: function() {
-    if (!this.isNew) this.rotate();
+    if (!this.isNew && !this.isLast()) this.rotate();
+    if (this.isLast()) this.$el.hide();
     this.addToMap();
     return this;
   },
@@ -29,6 +30,22 @@ app.MarkerView = Backbone.View.extend({
   },
 
   calculateBearing: function () {
-    return 90;
-  }
+    var coordinates = this.line.get('coordinates');
+    var points = _.flatten(coordinates, true);
+    var latlng = this.model.getLatLng();
+    var index = app.utils.indexOfClosest(points, [latlng.lat, latlng.lng]);
+    // TODO - First and second points seem to be almost equal and therefore the bearing
+    // of index 0 is no good. Also, it appears waypoints are repeated therefore always
+    // skip ahead 1.
+    index++;
+    return app.utils.calculateBearing(points[index], points[index + 1]);
+  },
+
+  isLast: function () {
+    var coordinates = this.line.get('coordinates');
+    var points = _.flatten(coordinates, true);
+    var latlng = this.model.getLatLng();
+    var index = app.utils.indexOfClosest(points, [latlng.lat, latlng.lng]);
+    return index === points.length - 1;
+  },
 });
