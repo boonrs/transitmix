@@ -51,7 +51,7 @@ app.LineView = Backbone.View.extend({
 
     this.markers.push(marker);
 
-    var markerView = new app.MarkerView({
+    new app.MarkerView({
       model: marker,
       line: this.model,
       classNames: 'mapMarkerWrapper showMarkerTooltip',
@@ -144,11 +144,11 @@ app.LineView = Backbone.View.extend({
 
     this.markers.push(marker);
 
-    var markerView = new app.MarkerView({
+    new app.MarkerView({
       model: marker,
       line: this.model,
       classNames: classNames,
-      isNew: false
+      isNew: true
     }).render();
   },
 
@@ -216,7 +216,7 @@ app.LineView = Backbone.View.extend({
     // so let's just hide the insertMarker when this happens.
     insertMarker.on('click', this.removeInsert);
 
-    var markerView = new app.MarkerView({
+    new app.MarkerView({
       model: insertMarker,
       line: this.model,
       classNames: 'mapMarkerWrapper',
