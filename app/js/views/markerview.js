@@ -1,28 +1,34 @@
 app.MarkerView = Backbone.View.extend({
 
+  className: 'mapMarker',
+
   initialize: function(options) {
     options || (options = {});
-    var markerOptions = [
-      'color',
-      'latlng',
-      'draggable',
-      'classNames',
-      'bordered',
-      'arrow'
-    ];
-    _.extend(this, _.pick(options, markerOptions));
+    _.extend(this, _.pick(options, ['draggable', 'classNames']));
+
+    _.bindAll(this, 'addToMap', 'rotate');
   },
 
   render: function() {
-    var color = app.utils.tweakColor(this.color, -30);
-    var html = (this.arrow)
-      ? '<div class="mapMarker" style="-webkit-transform:rotate(45deg)"></div>'
-      : '<div class="mapMarker"></div>';
-    var icon = L.divIcon({ className: this.classNames, html: html });
-
-    this.model = L.marker(this.latlng, {
-      icon: icon,
-      draggable: this.draggable,
-    }).addTo(app.map);
+    if (!this.isNew) this.rotate();
+    this.addToMap();
+    return this;
   },
+
+  addToMap: function () {
+    var icon = L.divIcon({ className: this.classNames, html: this.el.outerHTML });
+    this.model.setIcon(icon);
+    this.model.addTo(app.map);
+  },
+
+  rotate: function () {
+    var degrees = this.calculateBearing();
+    this.$el.css('transform', 'rotate('+ degrees + 'deg)')
+    this.$el.css('-webkit-transform', 'rotate('+ degrees + 'deg)')
+    this.$el.css('-ms-transform', 'rotate('+ degrees + 'deg)')
+  },
+
+  calculateBearing: function () {
+    return 90;
+  }
 });

@@ -40,17 +40,7 @@ app.LineView = Backbone.View.extend({
   // waypointIndex, allowing them to interact with the underlying model.
 
   addMarker: function(latlng, waypointIndex) {
-    var markerView = new app.MarkerView({
-      color: this.model.get('color'),
-      latlng: latlng,
-      classNames: 'mapMarkerWrapper showMarkerTooltip',
-      draggable: true,
-      bordered: true,
-      arrow: true
-    })
-    markerView.render();
-    var marker = markerView.model;
-
+    var marker = new L.marker(latlng, { draggable: true });
     marker.waypointIndex = waypointIndex;
     marker.on('mousedown', function() {
       L.DomUtil.removeClass(marker._icon, 'showMarkerTooltip');
@@ -60,6 +50,13 @@ app.LineView = Backbone.View.extend({
     marker.on('dragend', this.delayedRedrawMarkers);
 
     this.markers.push(marker);
+
+    var markerView = new app.MarkerView({
+      model: marker,
+      line: this.model,
+      classNames: 'mapMarkerWrapper showMarkerTooltip',
+      isNew: false
+    }).render();
   },
 
   redrawMarkers: function() {
@@ -139,20 +136,20 @@ app.LineView = Backbone.View.extend({
 
     var classNames = 'mapMarkerWrapper';
     if (this.markers.length > 0) classNames += ' showDrawingTooltip';
-    var markerView = new app.MarkerView({
-      color: this.model.get('color'),
-      latlng: event.latlng,
-      classNames: classNames,
-      draggable: false,
-      bordered: true,
-      arrow: true
-    })
-    markerView.render();
-    var marker = markerView.model;
+
+    var marker = new L.marker(event.latlng, { draggable: false });
 
     // Click any marker, but preferably the last one, to finish drawing.
     marker.on('click', this.stopDrawing);
+
     this.markers.push(marker);
+
+    var markerView = new app.MarkerView({
+      model: marker,
+      line: this.model,
+      classNames: classNames,
+      isNew: false
+    }).render();
   },
 
   showDrawingLine: function(event) {
@@ -209,21 +206,22 @@ app.LineView = Backbone.View.extend({
       return;
     }
 
-    var markerView = new app.MarkerView({
-      color: this.model.get('color'),
-      latlng: event.latlng,
-      classNames: 'mapMarkerWrapper',
-      draggable: true,
-      bordered: false,
-      arrow: false
-    })
-    markerView.render();
-    var insertMarker = this.insertMarker = markerView.model;
-
+    var insertMarker = this.insertMarker = new L.marker(event.latlng, { draggable: true });
     insertMarker.waypointIndex = this._findWaypointIndex(event.layer);
     insertMarker.on('dragstart', this.beginInsert);
     insertMarker.on('drag', this.throttledUpdateInsert);
     insertMarker.on('dragend', this.finishInsert);
+
+    // Edge case: click & don't drag. We only want to count click-and-drags,
+    // so let's just hide the insertMarker when this happens.
+    insertMarker.on('click', this.removeInsert);
+
+    var markerView = new app.MarkerView({
+      model: insertMarker,
+      line: this.model,
+      classNames: 'mapMarkerWrapper',
+      isNew: true
+    }).render();
 
     // Prevent mousemove from propagating to the map, but re-enable it on
     // mousedown for drag support. See hookupInsert for full description.
@@ -233,10 +231,6 @@ app.LineView = Backbone.View.extend({
       app.map.off('mousemove', this.removeInsert);
       L.DomEvent.removeListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
     });
-
-    // Edge case: click & don't drag. We only want to count click-and-drags,
-    // so let's just hide the insertMarker when this happens.
-    insertMarker.on('click', this.removeInsert);
   },
 
   beginInsert: function(event) {
