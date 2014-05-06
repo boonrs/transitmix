@@ -8,6 +8,7 @@ app.Router = Backbone.Router.extend({
 
   initialize: function(options) {
     this.collection = options.collection;
+    Backbone.history.start({ pushState: true, root: '/' });
   },
 
   line: function(id) {
