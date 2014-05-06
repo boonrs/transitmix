@@ -1,40 +1,62 @@
 app.Router = Backbone.Router.extend({
   routes: {
-    'new': 'new',
-    'lines/new': 'new',
-    'lines/:id': 'line',
-    '*default': 'home'
-  },
-
-  initialize: function(options) {
-    this.collection = options.collection;
-  },
-
-  line: function(id) {
-    l = new app.Line({ id: id });
-    l.fetch({ success: _.bind(this.collection.focus, this.collection) });
-  },
-
-  new: function() {
-    var line = new app.Line();
-    var collection = this.collection;
-
-    var success = function(model) {
-      app.router.navigate('lines/' + model.id);
-      collection.focus(model);
-    };
-
-    line.save({}, { success: success });
+    ':mapid/:lineid(/)': 'focusedMap',
+    ':mapid(/)': 'blurredMap',
+    '': 'home',
+    '*default': 'error'
   },
 
   home: function() {
-    this.collection.fetch({
-      reset: true,
-      data: { per: 10 },
-      success: _.bind(this.collection.blur, this.collection),
-      error: function(model, error) {
-        console.log(model, error)
-      },
+    // If we want to load recent routes and show them on the homepage...
+    // var renderHome = function renderHome(collection) {
+    //   if (this.view) this.view.remove();
+    //   this.view = new app.HomeView({ collection: collection }).render();
+    // };
+
+    // var maps = new app.Maps();
+    // maps.fetch({
+    //   query: { limit: 10 },
+    //   success: _.bind(renderHome, this)
+  // });
+
+    if (this.view) this.view.remove();
+    this.view = new app.HomeView();
+    $('body').append(this.view.render().el);
+  },
+
+  blurredMap: function(mapId) {
+    this._loadMap(mapId, function(model) {
+      model.blur();
     });
+  },
+
+  focusedMap: function(mapId, lineId) {
+    this._loadMap(mapId, function(model) {
+      model.focus(lineId);
+    });
+  },
+
+  _loadMap: function(mapId, callback) {
+    // If we already have a view with the apropriate model, we just need
+    // to handle the blur/focus events, and skip data load / view rendering.
+    if (this.view && this.view.model && this.view.model.id === mapId) {
+      callback(this.view.model);
+      return;
+    }
+
+    var renderMap = function(model) {
+      if (this.view) this.view.remove();
+      this.view = new app.MapView({ model: model });
+      $('body').append(this.view.render().el);
+      callback(model);
+    };
+
+    var map = new app.Map({ id: mapId });
+    map.fetch({ success: _.bind(renderMap, this)});
+  },
+
+  error: function() {
+    console.log('Route not found. Mild moment of panic.');
+    this.navigate('', { trigger: true });
   },
 });

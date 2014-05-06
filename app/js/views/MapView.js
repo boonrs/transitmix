@@ -1,27 +1,57 @@
-app.AppView = Backbone.View.extend({
-  el: $('body'),
-
+app.MapView = Backbone.View.extend({
   initialize: function() {
-    this.listenTo(this.collection, 'blur', this.renderHome);
-    this.listenTo(this.collection, 'focus', this.renderDetail);
+    this.listenTo(this.model, 'blur', this.renderBlur);
+    this.listenTo(this.model, 'focus', this.renderFocus);
+    this.listenTo(this.model.get('lines'), 'add', this.renderBlurredLine);
 
-    var center = [37.778733, -122.421467];
-    var defaultZoomLevel = 14;
-    var options = { tileLayer: { detectRetina: true } };
+    app.leaflet.setView(this.model.get('center'), this.model.get('zoomLevel'));
 
-    var map = app.map = L.mapbox.map('map', 'codeforamerica.h6mlbj75', options)
-      .setView(center, defaultZoomLevel);
+    this.blurredLines = [];
   },
 
-  renderHome: function() {
-    if (this.view) this.view.remove();
-    this.view = new app.HomeView({ collection: this.collection });
-    this.$el.append(this.view.render().el);
+  render: function() {
+    var lines = this.model.get('lines');
+    lines.forEach(this.renderBlurredLine, this);
+
+    if (this.model.getFocused()) {
+      this.renderFocus();
+    } else {
+      this.renderBlur();
+    }
+
+    return this;
   },
 
-  renderDetail: function() {
-    if (this.view) this.view.remove();
-    this.view = new app.DetailView({ model: this.collection.getFocused() });
-    this.$el.append(this.view.render().el);
+  renderBlurredLine: function(line) {
+    var view = new app.BlurredLineView({ model: line });
+    view.render();
+    this.blurredLines.push(view);
   },
+
+  renderBlur: function() {
+    if (this.sidebar) this.sidebar.remove();
+    this.sidebar = new app.BlurredSidebarView({ model: this.model });
+    this.$el.html(this.sidebar.render().el);
+
+    if (this.focusedLine) this.focusedLine.remove();
+  },
+
+  renderFocus: function() {
+    var line = this.model.getFocused();
+
+    if (this.sidebar) this.sidebar.remove();
+    this.sidebar = new app.FocusedSidebarView({ model: line });
+    this.$el.html(this.sidebar.render().el);
+
+    if (this.focusedLine) this.focusedLine.remove();
+    this.focusedLine = new app.FocusedLineView({ model: line });
+    this.focusedLine.render();
+  },
+
+  remove: function() {
+    this.blurredLines.forEach(function(view) { view.remove(); });
+    if (this.focusedLine) this.focusedLine.remove();
+    if (this.sidebar) this.sidebar.remove();
+    Backbone.View.prototype.remove.apply(this, arguments);
+  }
 });

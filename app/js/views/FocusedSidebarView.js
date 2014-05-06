@@ -1,6 +1,6 @@
-app.DetailView = Backbone.View.extend({
+app.FocusedSidebarView = Backbone.View.extend({
   className: 'detailSidebar',
-  template: _.template($('#tmpl-detail-view').html()),
+  template: _.template($('#tmpl-focused-sidebar-view').html()),
 
   bindings: {
     '.lineName': 'name',
@@ -35,9 +35,6 @@ app.DetailView = Backbone.View.extend({
   },
 
   render: function() {
-    this.lineView = new app.LineView({ model: this.model });
-    this.lineView.render();
-
     // Compute several shades of color for the UI
     var color = this.model.get('color');
     var attrs = _.extend(this.model.attributes, {
@@ -69,7 +66,7 @@ app.DetailView = Backbone.View.extend({
   },
 
   home: function() {
-    app.router.navigate('', { trigger: true });
+    app.router.navigate('' + this.model.get('mapId'), { trigger: true });
   },
 
   remix: function() {
@@ -94,7 +91,6 @@ app.DetailView = Backbone.View.extend({
 
   remove: function() {
     this.model.save();
-    this.lineView.remove();
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 });

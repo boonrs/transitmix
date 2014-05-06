@@ -16,7 +16,34 @@
 <body>
   <div id="map"></div>
 
-  <script type="text/template" id="tmpl-detail-view">
+  <script type="text/template" id="tmpl-home-view">
+    <div class="homeTitle">Transitmix</div>
+    <div class="homeDescription">Design, remix, and share your pefect transit system. First, choose a city:</div>
+    <div class="homeCityWrapper">
+      <span class="homeCity" contenteditable="true">San Francisco, CA</span>
+      <span class="homeStartButton">Start</span>
+    </div>
+  </script>
+
+  <script type="text/template" id="tmpl-blurred-sidebar-view">
+    <div class="blurredSidebarHeader">
+      <div class="blurredSidebarTitle">{{ name }}</div>
+      <div class="homeDescription">Create and remix transit lines, for fun and profit.</div>
+    </div>
+    <div class="blurredSidebarLines"></div>
+    <div class="blurredSidebarNew">Or create a <span>new transit line...</span></div>
+  </script>
+
+  <script type="text/template" id="tmpl-blurred-sidebar-line-view">
+    <div class="blurredSidebarLine" style="background:{{ color }}">
+      <a href="#{{ mapId }}/{{ id }}">
+        <div class="lineName">{{ name }}</div>
+        <div class="lineDescription">{{ description }}</div>
+      </a>
+    </div>
+  </script>
+
+  <script type="text/template" id="tmpl-focused-sidebar-view">
     <div class="nav">
       <div class="navHome">See all lines</div>
       <div class="navRemix">Remix</div>
@@ -34,18 +61,6 @@
       This line is <span class="lineDistance">0 miles</span><br/>
       and would cost <span class="lineCost">$0</span>.
     </div>
-  </script>
-
-  <script type="text/template" id="tmpl-home-view">
-    <div class="homeHeader">
-      <div class="homeTitle">TransitMix</div>
-      <div class="homeDescription">Create and remix transit lines, for fun and profit. Some recent lines:</div>
-    </div>
-  </script>
-
-  <script type="text/template" id="tmpl-home-block-view">
-    <div class="lineName">{{ name }}</div>
-    <div class="lineDescription">{{ description }}</div>
   </script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
