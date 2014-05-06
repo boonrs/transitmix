@@ -7,7 +7,15 @@ app.Router = Backbone.Router.extend({
   },
 
   initialize: function(options) {
+    this.bind('all', this._trackPageview);
     Backbone.history.start({ pushState: true, root: '/' });
+  },
+
+  _trackPageview: function() {
+    if (typeof ga !== "undefined") {
+      var url = Backbone.history.getFragment();
+      ga('send', 'pageview', {'page': "/" + url});
+    }
   },
 
   home: function() {
