@@ -1,7 +1,6 @@
 // A line is an always-routed set of latlngs, stored in a 'coordinates'
 // field, using a GeoJSON multilinestring represntation. Just give it a set
 // of waypoints to navigate through, and it'll handle the rest.
-
 app.Line = Backbone.Model.extend({
   urlRoot: '/api/lines',
 

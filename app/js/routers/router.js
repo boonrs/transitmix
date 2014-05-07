@@ -1,7 +1,7 @@
 app.Router = Backbone.Router.extend({
   routes: {
-    ':mapid/:lineid(/)': 'focusedMap',
-    ':mapid(/)': 'blurredMap',
+    ':mapid/:lineid(/)': 'line',
+    ':mapid(/)': 'map',
     '': 'home',
     '*default': 'error'
   },
@@ -24,21 +24,21 @@ app.Router = Backbone.Router.extend({
     $('body').append(this.view.render().el);
   },
 
-  blurredMap: function(mapId) {
+  map: function(mapId) {
     this._loadMap(mapId, function(model) {
-      model.blur();
+      model.unselect();
     });
   },
 
-  focusedMap: function(mapId, lineId) {
+  line: function(mapId, lineId) {
     this._loadMap(mapId, function(model) {
-      model.focus(lineId);
+      model.select(lineId);
     });
   },
 
   _loadMap: function(mapId, callback) {
     // If we already have a view with the apropriate model, we just need
-    // to handle the blur/focus events, and skip data load / view rendering.
+    // to handle the select/unselect events, and skip data load / view rendering
     if (this.view && this.view.model && this.view.model.id === mapId) {
       callback(this.view.model);
       return;

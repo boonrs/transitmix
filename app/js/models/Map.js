@@ -30,22 +30,22 @@ app.Map = Backbone.Model.extend({
 
   // A specific model in the collection can be 'focused'. This lets
   // views quickly switch between showing overview and detail.
-  focus: function(lineId) {
-    if (this.focused && lineId === this.focused.id) return;
+  select: function(lineId) {
+    if (this.selected && lineId === this.selected.id) return;
 
     var lines =  this.get('lines');
-    this.focused = lines.get(lineId);
-    this.trigger('focus');
+    this.selected = lines.get(lineId);
+    this.trigger('select');
   },
 
-  blur: function() {
-    if (!this.focused) return;
+  unselect: function() {
+    if (!this.selected) return;
 
-    this.focused = false;
-    this.trigger('blur');
+    this.selected = false;
+    this.trigger('unselect');
   },
 
-  getFocused: function() {
-    return this.focused;
+  getSelected: function() {
+    return this.selected;
   },
 });

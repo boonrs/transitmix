@@ -1,56 +1,56 @@
 app.MapView = Backbone.View.extend({
   initialize: function() {
-    this.listenTo(this.model, 'blur', this.renderBlur);
-    this.listenTo(this.model, 'focus', this.renderFocus);
-    this.listenTo(this.model.get('lines'), 'add', this.renderBlurredLine);
+    this.listenTo(this.model, 'select', this.renderSelect);
+    this.listenTo(this.model, 'unselect', this.renderUnselect);
+    this.listenTo(this.model.get('lines'), 'add', this.renderLines);
 
     app.leaflet.setView(this.model.get('center'), this.model.get('zoomLevel'));
 
-    this.blurredLines = [];
+    this.lines = [];
   },
 
   render: function() {
     var lines = this.model.get('lines');
-    lines.forEach(this.renderBlurredLine, this);
+    lines.forEach(this.renderLines, this);
 
-    if (this.model.getFocused()) {
-      this.renderFocus();
+    if (this.model.getSelected()) {
+      this.renderSelect();
     } else {
-      this.renderBlur();
+      this.renderUnselect();
     }
 
     return this;
   },
 
-  renderBlurredLine: function(line) {
-    var view = new app.BlurredLineView({ model: line });
+  renderLines: function(line) {
+    var view = new app.LineView({ model: line });
     view.render();
-    this.blurredLines.push(view);
+    this.lines.push(view);
   },
 
-  renderBlur: function() {
+  renderUnselect: function() {
     if (this.sidebar) this.sidebar.remove();
-    this.sidebar = new app.BlurredSidebarView({ model: this.model });
+    this.sidebar = new app.MapSidebarView({ model: this.model });
     this.$el.html(this.sidebar.render().el);
 
-    if (this.focusedLine) this.focusedLine.remove();
+    if (this.selectedLine) this.selectedLine.remove();
   },
 
-  renderFocus: function() {
-    var line = this.model.getFocused();
+  renderSelect: function() {
+    var line = this.model.getSelected();
 
     if (this.sidebar) this.sidebar.remove();
-    this.sidebar = new app.FocusedSidebarView({ model: line });
+    this.sidebar = new app.LineSidebarView({ model: line });
     this.$el.html(this.sidebar.render().el);
 
-    if (this.focusedLine) this.focusedLine.remove();
-    this.focusedLine = new app.FocusedLineView({ model: line });
-    this.focusedLine.render();
+    if (this.selectedLine) this.selectedLine.remove();
+    this.selectedLine = new app.SelectedLineView({ model: line });
+    this.selectedLine.render();
   },
 
   remove: function() {
-    this.blurredLines.forEach(function(view) { view.remove(); });
-    if (this.focusedLine) this.focusedLine.remove();
+    this.lines.forEach(function(view) { view.remove(); });
+    if (this.selectedLine) this.selectedLine.remove();
     if (this.sidebar) this.sidebar.remove();
     Backbone.View.prototype.remove.apply(this, arguments);
   }

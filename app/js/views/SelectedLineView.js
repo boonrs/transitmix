@@ -1,9 +1,8 @@
-app.FocusedLineView = Backbone.View.extend({
-
+app.SelectedLineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
 
-    _.bindAll(this, 'blur', 'updateWaypoint', 'removeWaypoint','redrawMarkers', 
+    _.bindAll(this, 'unselect', 'updateWaypoint', 'removeWaypoint','redrawMarkers', 
       'delayedRedrawMarkers', 'draw', 'showDrawingLine', 'stopDrawing',
       'showInsert', 'beginInsert', 'updateInsert','finishInsert', 'removeInsert');
     this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
@@ -14,8 +13,8 @@ app.FocusedLineView = Backbone.View.extend({
     this.isDrawing = false;
     this.isInserting = false;
 
-    // Click anywhere on the map to blur focus
-    app.leaflet.on('click', this.blur);
+    // Click anywhere on the map to unselect focus
+    app.leaflet.on('click', this.unselect);
   },
 
   render: function() {
@@ -36,7 +35,7 @@ app.FocusedLineView = Backbone.View.extend({
     this.line.setLatLngs(this.model.get('coordinates'));
   },
 
-  blur: function() {
+  unselect: function() {
     if (this.isDrawing) return;
     app.router.navigate('' + this.model.get('mapId'), { trigger: true });
   },
@@ -267,7 +266,7 @@ app.FocusedLineView = Backbone.View.extend({
     this.removeDrawing();
     this.markers.forEach(function(m) { app.leaflet.removeLayer(m); });
     app.leaflet.removeLayer(this.line);
-    app.leaflet.off('click', this.blur);
+    app.leaflet.off('click', this.unselect);
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 

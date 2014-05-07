@@ -1,6 +1,6 @@
-app.FocusedSidebarView = Backbone.View.extend({
+app.LineSidebarView = Backbone.View.extend({
   className: 'detailSidebar',
-  template: _.template($('#tmpl-focused-sidebar-view').html()),
+  template: _.template($('#tmpl-line-sidebar-view').html()),
 
   bindings: {
     '.lineName': 'name',

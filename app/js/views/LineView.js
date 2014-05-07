@@ -1,4 +1,4 @@
-app.BlurredLineView = Backbone.View.extend({
+app.LineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
   },
