@@ -3,6 +3,8 @@
 app.MapSidebarView = Backbone.View.extend({
   template: _.template($('#tmpl-map-sidebar-view').html()),
 
+  emptyTemplate: _.template($('#tmpl-map-sidebar-empty-view').html()),
+
   lineTemplate: _.template($('#tmpl-map-sidebar-subview').html()),
 
   className: 'mapSidebarView',
@@ -17,11 +19,15 @@ app.MapSidebarView = Backbone.View.extend({
     // Create fragments for each individual line and
     // calculate total costs for the summary
     var lines = this.model.get('lines');
-    var html = '';
+    if (lines.length === 0) {
+      this.$el.html(this.emptyTemplate(this.model.toJSON()));
+      return this;
+    }
 
     var totalDistance = 0;
     var totalCost = 0;
 
+    var html = '';
     lines.forEach(function(line) {
       var calcs = line.getCalculations();
       var attrs = _.clone(line.toJSON());

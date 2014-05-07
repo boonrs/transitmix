@@ -154,11 +154,12 @@ body {
    margin-left: 10px;
 }
 
-.mapSidebarActions span {
+.mapSidebarView span {
   border-bottom: 1px dotted #7D6992;
+  color: white;
 }
 
-.mapSidebarActions span:hover {
+.mapSidebarView span:hover {
   cursor: pointer;
   border-bottom: 1px dotted #F9F4FF;
 }
@@ -180,14 +181,6 @@ body {
 .mapSidebarLine {
 }
 
-
-.mapSidebarNew {
-  background: #261835;
-}
-
-.mapSidebarNew span {
-  border-bottom: 1px dotted #7D6992;
-}
 
 /********* Selected Line View ***************/
 
