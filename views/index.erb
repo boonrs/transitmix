@@ -3,19 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>TransitMix</title>
-  <meta name="description" content="For those who want to remix more than streets.">
+  <meta name="description" content="Design, remix, and share your pefect transit system.">
   <meta name="viewport" content="width=device-width">
-  <!-- TypeKit -->
+  
+  <title>Transitmix</title>
+
+  <!-- typekit -->
   <script src="http://use.typekit.net/xkd8pzb.js"></script>
   <script>try{Typekit.load();}catch(e){}</script>
-  <!-- MapBox -->
+
+  <!-- mapbox css -->
   <link href="http://api.tiles.mapbox.com/mapbox.js/v1.6.1/mapbox.css" rel="stylesheet" />
+
+  <!-- our fresh styles -->
   <%= css :app %>
 </head>
 <body>
   <div id="map"></div>
 
+  <!-- underscore templates -->
   <script type="text/template" id="tmpl-home-view">
     <div class="homeTitle">Transitmix</div>
     <div class="homeDescription">Design, remix, and share your pefect transit system. First, choose a city:</div>
@@ -48,26 +54,32 @@
       <div class="navHome">See all lines</div>
       <div class="navRemix">Remix</div>
     </div>
+
     <div class="lineHeader" style="background: {{ color }}">
       <div class="lineName" contenteditable="true">48 Bravo</div>
       <div class="lineDescription" contenteditable="true">This line is modeled after my childhood dream of a line between the mission and golden gate park.</div>
     </div>
+
     <div class="lineVariables" style="background: {{ color2 }}">
       Arrives every <span class="lineFrequency" contenteditable="true">30</span> minutes,<br/>
       traveling at <span class="lineSpeed" contenteditable="true">25</span> miles per hour,<br/>
       from <span class="lineStartTime" contenteditable="true">8am</span> to <span class="lineEndTime" contenteditable="true">8pm</span>.
     </div>
+
     <div class="lineCalculations" style="background: {{ color3 }}">
       This line is <span class="lineDistance">0 miles</span><br/>
       and would cost <span class="lineCost">$0</span>.
     </div>
   </script>
 
+  <!-- libs -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.stickit/0.7.0/backbone.stickit.min.js"></script>
   <script src="//api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.uncompressed.js"></script>
+
+  <!-- the finest quality javascripts -->
   <%= js :app %>
 </body>
 </html>
