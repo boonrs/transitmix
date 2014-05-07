@@ -5,14 +5,16 @@ app.MapSidebarView = Backbone.View.extend({
 
   emptyTemplate: _.template($('#tmpl-map-sidebar-empty-view').html()),
 
-  lineTemplate: _.template($('#tmpl-map-sidebar-subview').html()),
-
   className: 'mapSidebarView',
 
   events: {
     'click .addLine': 'addLine',
     'click .share': 'share',
     'click .remix': 'remix',
+  },
+
+  initialize: function() {
+    this.subviews = [];
   },
 
   render: function() {
@@ -24,33 +26,30 @@ app.MapSidebarView = Backbone.View.extend({
       return this;
     }
 
+    var frag = document.createDocumentFragment();
     var totalDistance = 0;
     var totalCost = 0;
 
-    var html = '';
     lines.forEach(function(line) {
       var calcs = line.getCalculations();
-      var attrs = _.clone(line.toJSON());
 
       // TODO: Give the map model a function to compute it's summary statistics
       totalDistance += calcs.distance;
       totalCost += calcs.cost;
 
-      _.extend(attrs, calcs);
-      attrs.distance = attrs.distance.toFixed(2);
-      html += this.lineTemplate(attrs);
+      var subview = new app.mapSidebarSubview({ model: line });
+      this.subviews.push(subview);
+      frag.appendChild(subview.render().el);
     }, this);
 
-    // Render the main view with the summary stats
-    var attrs = _.clone(this.model.toJSON());
-    _.extend(attrs, {
+    var attrs = this.model.toJSON();
+    _.extend(attrs, { 
       lineCount: lines.length,
-      distance: totalDistance.toFixed(2),
       cost: app.utils.addCommas(totalCost),
+      distance: totalDistance.toFixed(2),
     });
-
     this.$el.html(this.template(attrs));
-    this.$('.mapSidebarLines').html(html);
+    this.$('.mapSidebarLines').append(frag);
 
     return this;
   },
@@ -79,6 +78,32 @@ app.MapSidebarView = Backbone.View.extend({
   },
 
   remove: function() {
+    this.subviews.map(function(subview) { subview.remove(); });
     Backbone.View.prototype.remove.apply(this, arguments);
   },
+});
+
+
+app.mapSidebarSubview = Backbone.View.extend({
+  template: _.template($('#tmpl-map-sidebar-subview').html()),
+
+  events: {
+    'click': 'select',
+  },
+
+  render: function() {
+    var attrs = _.clone(this.model.toJSON());
+    var calcs = this.model.getCalculations();
+
+    calcs.distance = calcs.distance.toFixed(2);
+    _.extend(attrs, calcs);
+
+    this.$el.html(this.template(attrs));
+    return this;
+  },
+
+  select: function() {
+    var fragment = 'map/' + this.model.get('mapId') + '/line/' + this.model.id;
+    app.router.navigate(fragment, { trigger: true });
+  }
 });

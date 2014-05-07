@@ -48,5 +48,5 @@ app.Map = Backbone.Model.extend({
 
   getSelected: function() {
     return this.selected;
-  },
+  }
 });

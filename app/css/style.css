@@ -128,6 +128,16 @@ body {
   padding: 12px 14px;
 }
 
+.mapSidebarView span {
+  border-bottom: 1px dotted #7D6992;
+  color: white;
+}
+
+.mapSidebarView span:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
 .mapSidebarHeader {
   background: #261835;
   padding: 16px 14px !important;
@@ -151,19 +161,8 @@ body {
 }
 
 .mapSidebarActions .right span {
-   margin-left: 10px;
+  margin-left: 10px;
 }
-
-.mapSidebarView span {
-  border-bottom: 1px dotted #7D6992;
-  color: white;
-}
-
-.mapSidebarView span:hover {
-  cursor: pointer;
-  border-bottom: 1px dotted #F9F4FF;
-}
-
 
 .mapSidebarLines {
   padding: 0 !important;
@@ -172,15 +171,6 @@ body {
 .mapSidebarLine {
   padding: 12px 14px;
 }
-
-.mapSidebarLine a {
-  text-decoration: none;
-  color: white;
-}
-
-.mapSidebarLine {
-}
-
 
 /********* Selected Line View ***************/
 
