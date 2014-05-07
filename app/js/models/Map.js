@@ -8,6 +8,7 @@ app.Map = Backbone.Model.extend({
     zoomLevel: 14,
   },
 
+  // TODO: Drop the parse and toJSON when we switch to camelcase
   parse: function(response) {
     return {
       id: response.id,
@@ -28,8 +29,8 @@ app.Map = Backbone.Model.extend({
     };
   },
 
-  // A specific model in the collection can be 'focused'. This lets
-  // views quickly switch between showing overview and detail.
+  // A specific model in the collection can be selected. This lets
+  // views quickly switch between the map the details of a single line.
   select: function(lineId) {
     if (this.selected && lineId === this.selected.id) return;
 

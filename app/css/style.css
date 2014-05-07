@@ -37,6 +37,12 @@ body {
   padding: 18px 24px;
 }
 
+.homeTitle {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
 .homeDescription {
   font-size: 14px;
   line-height: 24px;
@@ -100,12 +106,18 @@ body {
   text-decoration: underline;
 }
 
-/********* Map View ***************/
-/* Composed of blurredSidebar, blurredLine, focusedSidebar, and focusedLine */
+/****************** Map View ***************/
 
-/********* Blurred Sidebar View ***************/
-/* TODO: Make css less bad */
-.blurredSidebarView {
+/* 
+  Subviews:
+  MapSidebarView
+  LineSidebarView
+  LineView
+  SelectedLine
+*/
+
+/********* Map Sidebar View ***************/
+.mapSidebarView {
   position: absolute;
   top: 30px;
   right: 30px;
@@ -114,46 +126,46 @@ body {
   overflow: hidden;
 }
 
-.blurredSidebarView>div {
+.mapSidebarView>div {
   padding: 12px 14px;
 }
 
-.blurredSidebarHeader {
+.mapSidebarHeader {
   background: #261835;
   padding: 16px 14px !important;
 }
 
-.blurredSidebarTitle {
+.mapSidebarTitle {
   font-size: 30px;
   font-weight: 600;
   line-height: 36px;
 }
 
-.blurredSidebarLines {
+.mapSidebarLines {
   padding: 0 !important;
 }
 
-.blurredSidebarLine {
+.mapSidebarLine {
   padding: 12px 14px;
 }
 
-.blurredSidebarLine a {
+.mapSidebarLine a {
   text-decoration: none;
   color: white;
 }
 
-.blurredSidebarLine {
+.mapSidebarLine {
   }
 
-.blurredSidebarNew {
+.mapSidebarNew {
   background: #261835;
 }
 
-.blurredSidebarNew span {
+.mapSidebarNew span {
   border-bottom: 1px dotted #7D6992;
 }
 
-/********* Focused Line View ***************/
+/********* Selected Line View ***************/
 
 .mapMarkerWrapper {
   /* overide default styles for leaflet markers */
@@ -215,15 +227,15 @@ body {
   line-height: 44px;
 }
 
-/********* Focused Sidebar View ***************/
-.detailSidebar {
+/********* Line Sidebar View ***************/
+.lineSidebarView {
   position: absolute;
   top: 30px;
   right: 30px;
   width: 280px;
 }
 
-.detailSidebar>div {
+.lineSidebarView>div {
   padding: 12px 14px;
 }
 

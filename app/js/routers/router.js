@@ -7,18 +7,6 @@ app.Router = Backbone.Router.extend({
   },
 
   home: function() {
-    // If we want to load recent routes and show them on the homepage...
-    // var renderHome = function renderHome(collection) {
-    //   if (this.view) this.view.remove();
-    //   this.view = new app.HomeView({ collection: collection }).render();
-    // };
-
-    // var maps = new app.Maps();
-    // maps.fetch({
-    //   query: { limit: 10 },
-    //   success: _.bind(renderHome, this)
-  // });
-
     if (this.view) this.view.remove();
     this.view = new app.HomeView();
     $('body').append(this.view.render().el);

@@ -1,5 +1,5 @@
 app.LineSidebarView = Backbone.View.extend({
-  className: 'detailSidebar',
+  className: 'lineSidebarView',
   template: _.template($('#tmpl-line-sidebar-view').html()),
 
   bindings: {

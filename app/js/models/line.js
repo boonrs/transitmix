@@ -25,6 +25,7 @@ app.Line = Backbone.Model.extend({
     };
   },
 
+  // TODO: Drop the parse and toJSON when we switch to camelcase
   parse: function(response) {
     response.startTime = response.start_time;
     delete response.start_time;

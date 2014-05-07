@@ -3,9 +3,9 @@
 app.MapSidebarView = Backbone.View.extend({
   template: _.template($('#tmpl-map-sidebar-view').html()),
   lineTemplate: _.template($('#tmpl-map-sidebar-subview').html()),
-  className: 'blurredSidebarView',
+  className: 'mapSidebarView',
   events: {
-    'click .blurredSidebarNew': 'newLine',
+    'click .mapSidebarNew': 'newLine',
   },
 
   render: function() {
@@ -16,7 +16,7 @@ app.MapSidebarView = Backbone.View.extend({
     lines.forEach(function(line) {
       html += this.lineTemplate(line.toJSON());
     }, this);
-    this.$('.blurredSidebarLines').html(html);
+    this.$('.mapSidebarLines').html(html);
 
     return this;
   },
