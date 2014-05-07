@@ -2,9 +2,11 @@ app.SelectedLineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
 
-    _.bindAll(this, 'unselect', 'updateWaypoint', 'removeWaypoint','redrawMarkers', 
-      'delayedRedrawMarkers', 'draw', 'showDrawingLine', 'stopDrawing',
-      'showInsert', 'beginInsert', 'updateInsert','finishInsert', 'removeInsert');
+    _.bindAll(this, 'unselect', 'updateWaypoint', 'removeWaypoint',
+      'redrawMarkers', 'delayedRedrawMarkers', 'draw', 'showDrawingLine',
+      'stopDrawing', 'showInsert', 'beginInsert', 'updateInsert','finishInsert',
+      'removeInsert');
+
     this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
     this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
     this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
@@ -13,7 +15,6 @@ app.SelectedLineView = Backbone.View.extend({
     this.isDrawing = false;
     this.isInserting = false;
 
-    // Click anywhere on the map to unselect focus
     app.leaflet.on('click', this.unselect);
   },
 
