@@ -37,7 +37,7 @@ app.SelectedLineView = Backbone.View.extend({
 
   unselect: function() {
     if (this.isDrawing) return;
-    app.router.navigate('' + this.model.get('mapId'), { trigger: true });
+    app.router.navigate('map/' + this.model.get('mapId'), { trigger: true });
   },
 
   // Markers & Marker Events

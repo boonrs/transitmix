@@ -1,7 +1,7 @@
 app.Router = Backbone.Router.extend({
   routes: {
-    ':mapid/:lineid(/)': 'line',
-    ':mapid(/)': 'map',
+    'map/:mapid/line/:lineid(/)': 'line',
+    'map/:mapid(/)': 'map',
     '': 'home',
     '*default': 'error'
   },

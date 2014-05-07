@@ -13,19 +13,19 @@ app.LineView = Backbone.View.extend({
       weight: 5,
     }).addTo(app.leaflet);
 
-    this.line.on('click', this.jump, this);
+    this.line.on('click', this.select, this);
   },
 
   updateCoordinates: function() {
     this.line.setLatLngs(this.model.get('coordinates'));
   },
 
-  jump: function() {
-    app.router.navigate(this.model.get('mapId') + '/' + this.model.id, { trigger: true });
+  select: function() {
+    app.router.navigate('map/' + this.model.get('mapId') + '/line/' + this.model.id, { trigger: true });
   },
 
   remove: function() {
-    this.line.off('click', this.jump, this);
+    this.line.off('click', this.select, this);
     app.leaflet.removeLayer(this.line);
     
     Backbone.View.prototype.remove.apply(this, arguments);

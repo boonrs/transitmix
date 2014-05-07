@@ -35,8 +35,7 @@ app.HomeView = Backbone.View.extend({
       });
 
       var viewMap = function(model) {
-        console.log(model);
-        app.router.navigate('' + model.id, { trigger: true });
+        app.router.navigate('map/' + model.id, { trigger: true });
       };
 
       newMap.save({}, { success: viewMap });

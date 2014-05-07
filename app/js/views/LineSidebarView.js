@@ -18,7 +18,7 @@ app.LineSidebarView = Backbone.View.extend({
   },
 
   events: {
-    'click .navHome': 'home',
+    'click .navHome': 'unselect',
     'click .navRemix': 'remix',
     // Disable select-all-text-on-click. Need to user test this.
     // 'focus [contenteditable]': 'selectAllText',
@@ -65,8 +65,8 @@ app.LineSidebarView = Backbone.View.extend({
     }
   },
 
-  home: function() {
-    app.router.navigate('' + this.model.get('mapId'), { trigger: true });
+  unselect: function() {
+    app.router.navigate('map/' + this.model.get('mapId'), { trigger: true });
   },
 
   remix: function() {

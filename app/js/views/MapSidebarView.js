@@ -29,7 +29,7 @@ app.MapSidebarView = Backbone.View.extend({
 
     var viewLine = function(line) {
       this.model.get('lines').add(line);
-      app.router.navigate(this.model.id + '/' + line.id, { trigger: true });
+      app.router.navigate('map/' + this.model.id + '/line/' + line.id, { trigger: true });
     };
 
     line.save({}, { success: _.bind(viewLine, this) });
