@@ -6,6 +6,10 @@ app.Router = Backbone.Router.extend({
     '*default': 'error'
   },
 
+  initialize: function(options) {
+    Backbone.history.start({ pushState: true, root: '/' });
+  },
+
   home: function() {
     if (this.view) this.view.remove();
     this.view = new app.HomeView();

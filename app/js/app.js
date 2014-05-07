@@ -11,5 +11,4 @@ $(document).ready(function() {
   app.leaflet = L.mapbox.map('map', 'codeforamerica.h6mlbj75', options);
   
   app.router = new app.Router();
-  Backbone.history.start();
 });
