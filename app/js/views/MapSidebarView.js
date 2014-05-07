@@ -8,23 +8,48 @@ app.MapSidebarView = Backbone.View.extend({
   className: 'mapSidebarView',
 
   events: {
-    'click .mapSidebarNew': 'newLine',
+    'click .addLine': 'addLine',
+    'click .share': 'share',
+    'click .remix': 'remix',
   },
 
   render: function() {
+    // Create fragments for each individual line and
+    // calculate total costs for the summary
     var lines = this.model.get('lines');
-    this.$el.html(this.template(this.model.toJSON()));
-
     var html = '';
+
+    var totalDistance = 0;
+    var totalCost = 0;
+
     lines.forEach(function(line) {
-      html += this.lineTemplate(line.toJSON());
+      var calcs = line.getCalculations();
+      var attrs = _.clone(line.toJSON());
+
+      // TODO: Give the map model a function to compute it's summary statistics
+      totalDistance += calcs.distance;
+      totalCost += calcs.cost;
+
+      _.extend(attrs, calcs);
+      attrs.distance = attrs.distance.toFixed(2);
+      html += this.lineTemplate(attrs);
     }, this);
+
+    // Render the main view with the summary stats
+    var attrs = _.clone(this.model.toJSON());
+    _.extend(attrs, {
+      lineCount: lines.length,
+      distance: totalDistance.toFixed(2),
+      cost: app.utils.addCommas(totalCost),
+    });
+
+    this.$el.html(this.template(attrs));
     this.$('.mapSidebarLines').html(html);
 
     return this;
   },
 
-  newLine: function() {
+  addLine: function() {
     var line = new app.Line({
       mapId: this.model.get('id')
     });
@@ -37,6 +62,14 @@ app.MapSidebarView = Backbone.View.extend({
     };
 
     line.save({}, { success: _.bind(viewLine, this) });
+  },
+
+  share: function() {
+
+  },
+
+  remix: function() {
+
   },
 
   remove: function() {

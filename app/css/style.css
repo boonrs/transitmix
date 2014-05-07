@@ -121,9 +121,7 @@ body {
   position: absolute;
   top: 30px;
   right: 30px;
-  bottom: 30px;
   width: 280px;
-  overflow: hidden;
 }
 
 .mapSidebarView>div {
@@ -141,6 +139,31 @@ body {
   line-height: 36px;
 }
 
+.mapSidebarActions {
+  background: #261835;
+  position: relative;
+}
+
+.mapSidebarActions .right {
+  position: absolute;
+  right: 14px;
+  top: 11px;
+}
+
+.mapSidebarActions .right span {
+   margin-left: 10px;
+}
+
+.mapSidebarActions span {
+  border-bottom: 1px dotted #7D6992;
+}
+
+.mapSidebarActions span:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
+
 .mapSidebarLines {
   padding: 0 !important;
 }
@@ -155,7 +178,8 @@ body {
 }
 
 .mapSidebarLine {
-  }
+}
+
 
 .mapSidebarNew {
   background: #261835;
