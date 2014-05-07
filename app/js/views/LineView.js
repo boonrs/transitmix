@@ -21,7 +21,8 @@ app.LineView = Backbone.View.extend({
   },
 
   select: function() {
-    app.router.navigate('map/' + this.model.get('mapId') + '/line/' + this.model.id, { trigger: true });
+    var fragment = 'map/' + this.model.get('mapId') + '/line/' + this.model.id;
+    app.router.navigate(fragment, { trigger: true });
   },
 
   remove: function() {

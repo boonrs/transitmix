@@ -2,7 +2,7 @@ app.HomeView = Backbone.View.extend({
   className: 'homeView',
 
   template: _.template($('#tmpl-home-view').html()),
-  
+
   events: {
     'click .homeStartButton': 'createMap',
     'keydown': 'captureEnter',

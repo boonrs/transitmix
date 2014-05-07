@@ -15,6 +15,7 @@ app.SelectedLineView = Backbone.View.extend({
     this.isDrawing = false;
     this.isInserting = false;
 
+    // Click anywhere on the map to unselect
     app.leaflet.on('click', this.unselect);
   },
 
@@ -29,6 +30,7 @@ app.SelectedLineView = Backbone.View.extend({
 
     this.hookupInsert();
     this.redrawMarkers();
+
     if (coordinates.length < 1) this.startDrawing();
   },
 
