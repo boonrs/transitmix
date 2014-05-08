@@ -65,8 +65,10 @@ app.Line = Backbone.Model.extend({
       return;
     }
 
-    var routeBetween = [_.last(this.getWaypoints()), latlng];
-    app.utils.getRoute(routeBetween, function(route) {
+    app.utils.getRoute({
+      from: _.last(this.getWaypoints()),
+      to: latlng,
+    }, function(route) {
       coordinates.push(route);
       this.save({ coordinates: coordinates });
     }, this);
@@ -88,8 +90,10 @@ app.Line = Backbone.Model.extend({
     var coordinates = _.clone(this.get('coordinates'));
     var secondWaypoint = _.last(coordinates[1]);
 
-    var routeBetween = [latlng, secondWaypoint];
-    app.utils.getRoute(routeBetween, function(route) {
+    app.utils.getRoute({
+      from: latlng,
+      to: secondWaypoint,
+    }, function(route) {
       coordinates[0] = [route[0]];
       coordinates[1] = route;
       this.save({ coordinates: coordinates });
@@ -101,8 +105,11 @@ app.Line = Backbone.Model.extend({
     var prevWaypoint = _.last(coordinates[index - 1]);
     var nextWaypoint = _.last(coordinates[index + 1]);
 
-    var routeBetween = [prevWaypoint, latlng, nextWaypoint];
-    app.utils.getRoute(routeBetween, function(route) {
+    app.utils.getRoute({
+      from: prevWaypoint,
+      via: latlng,
+      to: nextWaypoint,
+    }, function(route) {
       var closest = app.utils.indexOfClosest(route, latlng);
       coordinates[index] = route.slice(0, closest + 1);
       coordinates[index + 1] = route.slice(closest);
@@ -114,8 +121,10 @@ app.Line = Backbone.Model.extend({
     var coordinates = _.clone(this.get('coordinates'));
     var penultimateWaypoint = _.last(coordinates[coordinates.length - 2]);
 
-    var routeBetween = [penultimateWaypoint, latlng];
-    app.utils.getRoute(routeBetween, function(route) {
+    app.utils.getRoute({
+      from: penultimateWaypoint,
+      to: latlng
+    }, function(route) {
       coordinates[coordinates.length - 1] = route;
       this.save({ coordinates: coordinates });
     }, this);

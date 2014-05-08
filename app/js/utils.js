@@ -1,14 +1,18 @@
 app.utils = app.utils || {};
 
-// Returns a set of coordinates that connect between ordered latlngs.
-// E.g. getRoute([[37.77, -122.46], [37.77, -122.46]], callback)
+// Returns a set of coordinates that connect between 'from' and 'to' latlngs
+// If an point.via is provided, the route will go through that point
+// E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
 app.utils.getRoute = function(latlngs, callback, context) {
   // Flips from [lat, lng] to [lng, lat]
   var flip = function(latlng) {
     return [latlng[1], latlng[0]];
   };
 
-  var waypoints = latlngs.map(flip).join(';');
+  var waypoints = [latlngs.from, latlngs.to];
+  if (latlngs.via) waypoints.splice(1, 0, latlngs.via);
+  waypoints = waypoints.map(flip).join(';');
+
   var url = 'http://api.tiles.mapbox.com/v3/codeforamerica.h6mlbj75/' +
   'directions/driving/' + waypoints + '.json?geometry=polyline';
 
