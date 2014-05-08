@@ -23,6 +23,11 @@ describe Transitmix::API do
       get "/api/lines/#{line.id}"
       expect(last_response.body).to eq line.to_json
     end
+
+    it 'is not found', pending: "pending until ID changed to int" do
+      get "/api/lines/missing-id"
+      expect(last_response.status).to eq 404
+    end
   end
 
   describe 'POST /api/lines' do
@@ -50,4 +55,26 @@ describe Transitmix::API do
       expect(response_body.first['id']).to eq lines.last.id
     end
   end
+
+  describe 'GET /api/maps/:id' do
+    let(:map) { create(:map) }
+
+    it 'is successful' do
+      get "/api/maps/#{map.id}"
+      expect(last_response.status).to eq 200
+    end
+
+    it 'returns the record' do
+      get "/api/maps/#{map.id}"
+      expect(last_response.body).to eq map.to_json
+    end
+
+    it 'is not found' do
+      missing_id = (Map.dataset.max(:id) || 0) + 1
+      get "/api/maps/#{missing_id}"
+      expect(last_response.status).to eq 404
+    end
+
+  end
+
 end

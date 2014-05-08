@@ -52,6 +52,10 @@ module Transitmix
     version 'v1', using: :header, vendor: 'transitmix'
     format :json
 
+    rescue_from Sequel::NoMatchingRow do
+      Rack::Response.new({}, 404)
+    end
+
     namespace :api do
       resource :lines do
         helpers do
@@ -68,7 +72,7 @@ module Transitmix
         end
 
         get '/:id' do
-          Line.where(id: params[:id]).first
+          Line.first!(id: params[:id])
         end
 
         params do
@@ -121,7 +125,7 @@ module Transitmix
         end
 
         get '/:id' do
-          Map.where(id: params[:id]).first
+          Map.first!(id: params[:id])
         end
 
         params do
