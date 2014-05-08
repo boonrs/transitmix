@@ -4,13 +4,25 @@ app.utils = app.utils || {};
 // If an point.via is provided, the route will go through that point
 // E.g. getRoute({from: [20, 30], to: [23, 40]}, callback)
 app.utils.getRoute = function(latlngs, callback, context) {
-  var routingUrl = 'http://router.project-osrm.org/viaroute?loc=' +
-    latlngs.from[0] + ',' + latlngs.from[1];
-  if (latlngs.via) routingUrl += '&loc=' + latlngs.via[0] + ',' + latlngs.via[1];
-  routingUrl += '&loc=' + latlngs.to[0] + ',' + latlngs.to[1];
+  // Flips from [lat, lng] to [lng, lat]
+  var flip = function(latlng) {
+    return [latlng[1], latlng[0]];
+  };
 
-  $.getJSON(routingUrl, function(route) {
-    var coordinates = app.utils.decodeGeometry(route.route_geometry);
+  var waypoints = [latlngs.from, latlngs.to];
+  if (latlngs.via) waypoints.splice(1, 0, latlngs.via);
+  waypoints = waypoints.map(flip).join(';');
+
+  var url = 'http://api.tiles.mapbox.com/v3/codeforamerica.h6mlbj75/' +
+  'directions/driving/' + waypoints + '.json?geometry=polyline';
+
+  $.getJSON(url, function(response) {
+    if (response.error || response.routes.length === 0) {
+      console.log('Unable to find route.', response.error);
+    }
+
+    var geometry = response.routes[0].geometry;
+    var coordinates = app.utils.decodeGeometry(geometry);
     callback.call(context || this, coordinates);
   });
 };
