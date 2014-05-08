@@ -77,4 +77,33 @@ describe Transitmix::API do
 
   end
 
+  describe 'POST /api/maps' do
+    let(:params) { attributes_for(:map) }
+
+    it 'is successful' do
+      post '/api/maps', params
+      expect(last_response.status).to eq 201
+    end
+
+    it 'creates a new record' do
+      expect { post '/api/maps', params }.to change{ Map.count }.by(+1)
+    end
+
+  end
+
+  describe 'GET /api/maps' do
+    it 'is successful' do
+      get '/api/maps'
+      expect(last_response.status).to eq 200
+    end
+
+    it 'returns the list of maps' do
+      maps = create_list(:map, 5)
+      get '/api/maps', per: 2
+      expect(last_response.body).to eq [maps[4], maps[3]].to_json
+    end
+
+  end
+
+
 end
