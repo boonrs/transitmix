@@ -2,8 +2,10 @@ source 'https://rubygems.org'
 
 ruby '2.1.1'
 
+gem 'activesupport'
 gem 'dotenv'
 gem 'grape'
+gem 'grape-entity'
 gem 'pg'
 gem 'puma'
 gem 'sequel'

@@ -25,35 +25,6 @@ app.Line = Backbone.Model.extend({
     };
   },
 
-  // TODO: Drop the parse and toJSON when we switch to camelcase
-  parse: function(response) {
-    response.startTime = response.start_time;
-    delete response.start_time;
-
-    response.endTime = response.end_time;
-    delete response.end_time;
-
-    response.mapId = response.map_id;
-    delete response.map_id;
-
-    return response;
-  },
-
-  toJSON: function() {
-    var attr = _.clone(this.attributes);
-
-    attr.start_time = attr.startTime;
-    // delete attr.startTime;
-
-    attr.end_time = attr.endTime;
-    // delete attr.endTime;
-
-    attr.map_id = attr.mapId;
-    // delete attr.mapId;
-
-    return attr;
-  },
-
   // Extends the line to the given latlng, routing in-between
   addWaypoint: function(latlng) {
     latlng = _.values(latlng);

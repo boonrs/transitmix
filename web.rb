@@ -2,8 +2,12 @@ require './db/config'
 require 'sinatra/base'
 require 'sinatra/assetpack'
 require 'grape'
+require 'grape-entity'
+require 'active_support/core_ext/string/inflections'
+
 
 Dir['./lib/validators/**/*.rb'].each { |f| require(f) }
+Dir['./lib/entities/**/*.rb'].each { |f| require(f) }
 
 configure do
   set :server, :puma
@@ -57,7 +61,8 @@ module Transitmix
         helpers do
           def line_params
             Line::PERMITTED.reduce({}) { |model_params, attr|
-              model_params[attr] = params[attr] if params[attr]
+              camelized_attr = attr.to_s.camelize(:lower)
+              model_params[attr] = params[camelized_attr] if params[camelized_attr]
               model_params
             }
           end
@@ -68,7 +73,8 @@ module Transitmix
         end
 
         get '/:id' do
-          Line.where(id: params[:id]).first
+          line = Line.find(id: params[:id])
+          present line, with: Transitmix::Entities::Line
         end
 
         params do
@@ -77,7 +83,8 @@ module Transitmix
         end
 
         get do
-          Line.dataset.paginate(params[:page], params[:per]).order(Sequel.desc(:created_at))
+          lines = Line.dataset.paginate(params[:page], params[:per]).order(Sequel.desc(:created_at)).all
+          present lines, with: Transitmix::Entities::Line
         end
 
         params do
@@ -110,7 +117,8 @@ module Transitmix
         helpers do
           def map_params
             Map::PERMITTED.reduce({}) { |model_params, attr|
-              model_params[attr] = params[attr] if params[attr]
+              camelized_attr = attr.to_s.camelize(:lower)
+              model_params[attr] = params[camelized_attr] if params[camelized_attr]
               model_params
             }
           end
@@ -121,7 +129,8 @@ module Transitmix
         end
 
         get '/:id' do
-          Map.where(id: params[:id]).first
+          map = Map.find(id: params[:id])
+          present map, with: Transitmix::Entities::Map
         end
 
         params do
@@ -130,7 +139,8 @@ module Transitmix
         end
 
         get do
-          Map.dataset.paginate(params[:page], params[:per]).order(Sequel.desc(:created_at))
+          maps = Map.dataset.paginate(params[:page], params[:per]).order(Sequel.desc(:created_at)).all
+          present maps, with: Transitmix::Entities::Map
         end
 
         params do
