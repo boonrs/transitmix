@@ -52,6 +52,10 @@ module Transitmix
     version 'v1', using: :header, vendor: 'transitmix'
     format :json
 
+    rescue_from Sequel::NoMatchingRow do
+      Rack::Response.new({}, 404)
+    end
+
     namespace :api do
       resource :lines do
         helpers do
@@ -68,7 +72,7 @@ module Transitmix
         end
 
         get '/:id' do
-          Line.where(id: params[:id]).first
+          Line.first!(id: params[:id])
         end
 
         params do
@@ -105,6 +109,54 @@ module Transitmix
           line
         end
       end # resource :lines
+
+      resource :maps do
+        helpers do
+          def map_params
+            Map::PERMITTED.reduce({}) { |model_params, attr|
+              model_params[attr] = params[attr] if params[attr]
+              model_params
+            }
+          end
+        end
+
+        params do
+          requires :id, type: String
+        end
+
+        get '/:id' do
+          Map.first!(id: params[:id])
+        end
+
+        params do
+          optional :page, type: Integer, default: 1
+          optional :per, type: Integer, default: 10, max: 100
+        end
+
+        get do
+          Map.dataset.paginate(params[:page], params[:per]).order(Sequel.desc(:created_at))
+        end
+
+        params do
+          requires :name, type: String
+          optional :center, type: Array
+          optional :zoom_level, type: String
+        end
+
+        post do
+          Map.create(map_params)
+        end
+
+        params do
+          requires :id, type: String
+        end
+
+        put '/:id' do
+          map = Map.where(id: params[:id]).first
+          map.update(map_params)
+          map
+        end
+      end # resource :maps
     end # namespace :api
 
   end # API

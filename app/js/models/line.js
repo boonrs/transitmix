@@ -1,11 +1,8 @@
 // A line is an always-routed set of latlngs, stored in a 'coordinates'
 // field, using a GeoJSON multilinestring represntation. Just give it a set
 // of waypoints to navigate through, and it'll handle the rest.
-
 app.Line = Backbone.Model.extend({
-  url: function() {
-    return this.id ? '/api/lines/'+this.id : '/api/lines';
-  },
+  urlRoot: '/api/lines',
 
   defaults: function() {
     // For now, just randomly assign each line a color.
@@ -21,11 +18,40 @@ app.Line = Backbone.Model.extend({
       description: 'Click to add description.',
       frequency: 30,
       speed: 10,
-      start_time: '8am',
-      end_time: '8pm',
+      startTime: '8am',
+      endTime: '8pm',
       color: randomColor,
       coordinates: [], // A GeoJSON MultiLineString
     };
+  },
+
+  // TODO: Drop the parse and toJSON when we switch to camelcase
+  parse: function(response) {
+    response.startTime = response.start_time;
+    delete response.start_time;
+
+    response.endTime = response.end_time;
+    delete response.end_time;
+
+    response.mapId = response.map_id;
+    delete response.map_id;
+
+    return response;
+  },
+
+  toJSON: function() {
+    var attr = _.clone(this.attributes);
+
+    attr.start_time = attr.startTime;
+    // delete attr.startTime;
+
+    attr.end_time = attr.endTime;
+    // delete attr.endTime;
+
+    attr.map_id = attr.mapId;
+    // delete attr.mapId;
+
+    return attr;
   },
 
   // Extends the line to the given latlng, routing in-between
@@ -84,13 +110,9 @@ app.Line = Backbone.Model.extend({
       via: latlng,
       to: nextWaypoint,
     }, function(route) {
-      // Add a new point closest to the given lat/lng
-      var closestPointInfo = app.utils.closestPointInRoute(route, latlng);
-      route.splice(closestPointInfo.index, 0, closestPointInfo.point);
-
-      // Update the route to have two paths on either side
-      coordinates[index] = route.slice(0, closestPointInfo.index + 1);
-      coordinates[index + 1] = route.slice(closestPointInfo.index);
+      var closest = app.utils.indexOfClosest(route, latlng);
+      coordinates[index] = route.slice(0, closest + 1);
+      coordinates[index + 1] = route.slice(closest);
       this.save({ coordinates: coordinates });
     }, this);
   },
@@ -181,8 +203,8 @@ app.Line = Backbone.Model.extend({
       return hours * 60 + minutes;
     };
 
-    var startTime = this.get('start_time');
-    var endTime = this.get('end_time');
+    var startTime = this.get('startTime');
+    var endTime = this.get('endTime');
     var hoursPerDay = (minutesIntoDay(endTime) - minutesIntoDay(startTime)) / 60;
 
 
@@ -194,11 +216,12 @@ app.Line = Backbone.Model.extend({
 
     var roundTripTime = (distance / speed) * (1 + LAYOVER_PERCENTAGE);
     // Can you have half a bus? Do we need to ceiling this next value?
-    var busesRequired = roundTripTime / frequency; 
+    var busesRequired = Math.ceil(roundTripTime / frequency); 
     var revenueHoursPerDay = busesRequired * hoursPerDay;
     var yearlyCost = revenueHoursPerDay * SERVICE_DAYS * COST_PER_REVENUE_HOUR;
 
     return {
+      busesRequired: busesRequired,
       distance: distance,
       cost: yearlyCost,
     };

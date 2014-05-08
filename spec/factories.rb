@@ -11,9 +11,22 @@ FactoryGirl.define do
       }
     }
   end
+
+  factory :map, class: Map do
+    name { Faker::Lorem.words.join(' ') }
+    zoom_level { (1..4).to_a.sample }
+    center { [Faker::Geolocation.lat, Faker::Geolocation.lng] }
+  end
 end
 
 class Line
+  # FactoryGirl expects a #save! method in order use create(:line)
+  def save!
+    save or raise 'ahhh invalid record!'
+  end
+end
+
+class Map
   # FactoryGirl expects a #save! method in order use create(:line)
   def save!
     save or raise 'ahhh invalid record!'

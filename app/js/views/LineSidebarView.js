@@ -1,6 +1,6 @@
-app.DetailView = Backbone.View.extend({
-  className: 'detailSidebar',
-  template: _.template($('#tmpl-detail-view').html()),
+app.LineSidebarView = Backbone.View.extend({
+  className: 'lineSidebarView',
+  template: _.template($('#tmpl-line-sidebar-view').html()),
 
   bindings: {
     '.lineName': 'name',
@@ -18,8 +18,7 @@ app.DetailView = Backbone.View.extend({
   },
 
   events: {
-    'click .navHome': 'home',
-    'click .navRemix': 'remix',
+    'click .navHome': 'unselect',
     // Disable select-all-text-on-click. Need to user test this.
     // 'focus [contenteditable]': 'selectAllText',
     'keydown': 'preventNewline',
@@ -35,9 +34,6 @@ app.DetailView = Backbone.View.extend({
   },
 
   render: function() {
-    this.lineView = new app.LineView({ model: this.model });
-    this.lineView.render();
-
     // Compute several shades of color for the UI
     var color = this.model.get('color');
     var attrs = _.extend(this.model.attributes, {
@@ -58,8 +54,10 @@ app.DetailView = Backbone.View.extend({
 
     var cost = calcs.cost.toFixed(0);
     // Crazy internet regex to add commas numbers
-    cost =  cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    cost = app.utils.addCommas(cost);
     this.$('.lineCost').html('$' + cost);
+
+    this.$('.lineBuses').html(calcs.busesRequired + ' buses');
   },
 
   save: function(model, options) {
@@ -68,12 +66,8 @@ app.DetailView = Backbone.View.extend({
     }
   },
 
-  home: function() {
-    app.router.navigate('', { trigger: true });
-  },
-
-  remix: function() {
-    console.log('add remixing ability...');
+  unselect: function() {
+    app.router.navigate('map/' + this.model.get('mapId'), { trigger: true });
   },
 
   // Select all text in a contentEditable field. Need to _.defer for 
@@ -94,7 +88,6 @@ app.DetailView = Backbone.View.extend({
 
   remove: function() {
     this.model.save();
-    this.lineView.remove();
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 });

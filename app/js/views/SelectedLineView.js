@@ -1,11 +1,12 @@
-app.LineView = Backbone.View.extend({
-
+app.SelectedLineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
 
-    _.bindAll(this, 'updateWaypoint', 'removeWaypoint','redrawMarkers', 
-      'delayedRedrawMarkers', 'draw', 'showDrawingLine', 'stopDrawing',
-      'showInsert', 'beginInsert', 'updateInsert','finishInsert', 'removeInsert');
+    _.bindAll(this, 'unselect', 'updateWaypoint', 'removeWaypoint',
+      'redrawMarkers', 'delayedRedrawMarkers', 'draw', 'showDrawingLine',
+      'stopDrawing', 'showInsert', 'beginInsert', 'updateInsert','finishInsert',
+      'removeInsert');
+
     this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
     this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
     this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
@@ -13,6 +14,9 @@ app.LineView = Backbone.View.extend({
     this.markers = [];
     this.isDrawing = false;
     this.isInserting = false;
+
+    // Click anywhere on the map to unselect
+    app.leaflet.on('click', this.unselect);
   },
 
   render: function() {
@@ -22,15 +26,21 @@ app.LineView = Backbone.View.extend({
       color: this.model.get('color'),
       opacity: 1,
       weight: 9,
-    }).addTo(app.map);
+    }).addTo(app.leaflet);
 
     this.hookupInsert();
     this.redrawMarkers();
+
     if (coordinates.length < 1) this.startDrawing();
   },
 
   updateCoordinates: function() {
     this.line.setLatLngs(this.model.get('coordinates'));
+  },
+
+  unselect: function() {
+    if (this.isDrawing) return;
+    app.router.navigate('map/' + this.model.get('mapId'), { trigger: true });
   },
 
   // Markers & Marker Events
@@ -47,7 +57,7 @@ app.LineView = Backbone.View.extend({
     var marker = L.marker(latlng, {
       icon: icon,
       draggable: true,
-    }).addTo(app.map);
+    }).addTo(app.leaflet);
 
     marker.waypointIndex = waypointIndex;
     marker.on('mousedown', function() {
@@ -62,7 +72,7 @@ app.LineView = Backbone.View.extend({
 
   redrawMarkers: function() {
     this.markers.forEach(function(marker) {
-      app.map.removeLayer(marker);
+      app.leaflet.removeLayer(marker);
     });
     this.markers = [];
 
@@ -108,21 +118,21 @@ app.LineView = Backbone.View.extend({
     this.isDrawing = true;
 
     // Simple UI for drawing mode. 
-    $(app.map._container).addClass('showDrawingCursor');
+    $(app.leaflet._container).addClass('showDrawingCursor');
     $('body').append('<div class="drawingInstructions">' +
       'Click the map to start drawing a transit line.</div>');
-    app.map.on('click', function() {
+    app.leaflet.on('click', function() {
       $('.drawingInstructions').remove();
     });
 
-    app.map.on('click', this.draw);
-    app.map.on('mousemove', this.throttledShowDrawingLine);
+    app.leaflet.on('click', this.draw);
+    app.leaflet.on('mousemove', this.throttledShowDrawingLine);
 
     this.drawingLine = L.polyline([], {
       color: this.model.get('color'),
       opacity: 1,
       weight: 9,
-    }).addTo(app.map);
+    }).addTo(app.leaflet);
   },
 
   // Update the model with the click, and draw a dummy marker with different
@@ -140,7 +150,7 @@ app.LineView = Backbone.View.extend({
     var classNames = 'mapMarkerWrapper';
     if (this.markers.length > 0) classNames += ' showDrawingTooltip';
     var icon = L.divIcon({ className: classNames,  html: html });
-    var marker = L.marker(event.latlng, { icon: icon }).addTo(app.map);
+    var marker = L.marker(event.latlng, { icon: icon }).addTo(app.leaflet);
 
     // Click any marker, but preferably the last one, to finish drawing.
     marker.on('click', this.stopDrawing);
@@ -166,11 +176,11 @@ app.LineView = Backbone.View.extend({
   },
 
   removeDrawing: function() {
-    $(app.map._container).removeClass('showDrawingCursor');
+    $(app.leaflet._container).removeClass('showDrawingCursor');
     $('.drawingInstructions').remove();
-    app.map.off('click', this.addWaypoint, this);
-    app.map.off('mousemove', this.throttledShowDrawingLine, this);
-    if (this.drawingLine) app.map.removeLayer(this.drawingLine);
+    app.leaflet.off('click', this.draw);
+    app.leaflet.off('mousemove', this.throttledShowDrawingLine);
+    if (this.drawingLine) app.leaflet.removeLayer(this.drawingLine);
   },
 
   // Inserting Waypoints
@@ -207,7 +217,7 @@ app.LineView = Backbone.View.extend({
     var insertMarker = this.insertMarker = L.marker(event.latlng, {
       icon: icon,
       draggable: true,
-    }).addTo(app.map);
+    }).addTo(app.leaflet);
 
     insertMarker.waypointIndex = this._findWaypointIndex(event.layer);
     insertMarker.on('dragstart', this.beginInsert);
@@ -216,10 +226,10 @@ app.LineView = Backbone.View.extend({
 
     // Prevent mousemove from propagating to the map, but re-enable it on
     // mousedown for drag support. See hookupInsert for full description.
-    app.map.on('mousemove', this.removeInsert);
+    app.leaflet.on('mousemove', this.removeInsert);
     L.DomEvent.addListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
     L.DomEvent.addListener(insertMarker._icon, 'mousedown', function() {
-      app.map.off('mousemove', this.removeInsert);
+      app.leaflet.off('mousemove', this.removeInsert);
       L.DomEvent.removeListener(insertMarker._icon, 'mousemove', L.DomEvent.stop);
     });
 
@@ -246,9 +256,9 @@ app.LineView = Backbone.View.extend({
 
   removeInsert: function() {
     if (this.insertMarker) {
-      app.map.removeLayer(this.insertMarker);
+      app.leaflet.removeLayer(this.insertMarker);
       this.insertMarker = false;
-      app.map.off('mousemove', this.removeInsert);
+      app.leaflet.off('mousemove', this.removeInsert);
     }
   },
 
@@ -257,8 +267,9 @@ app.LineView = Backbone.View.extend({
   
   remove: function() {
     this.removeDrawing();
-    this.markers.forEach(function(m) { app.map.removeLayer(m); });
-    app.map.removeLayer(this.line);
+    this.markers.forEach(function(m) { app.leaflet.removeLayer(m); });
+    app.leaflet.removeLayer(this.line);
+    app.leaflet.off('click', this.unselect);
     Backbone.View.prototype.remove.apply(this, arguments);
   },
 

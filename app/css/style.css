@@ -17,8 +17,6 @@ body {
   outline: 0px solid transparent;
 }
 
-/********* Map ***************/
-
 #map {
   position: absolute;
   top: 0;
@@ -26,6 +24,155 @@ body {
   bottom: 0;
   left: 0;
 }
+
+/********* Home View ***************/
+.homeView {
+  position: absolute;
+  left: 50%;
+  width: 450px;
+  margin-left: -225px;
+  top: 50%;
+  background: #261835;
+  margin-top: -150px;
+  padding: 18px 24px;
+}
+
+.homeTitle {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.homeDescription {
+  font-size: 14px;
+  line-height: 24px;
+  color: #A79ACA;
+  margin-top: 6px;
+}
+
+.homeCityWrapper {
+  background: #493A70;
+  padding: 16px 26px;
+  margin: 14px -24px;
+  position: relative;
+}
+
+.homeCity {
+  color: #FFF;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+  padding: 6px 3px;
+  margin: 0 -3px;
+  font-size: 20px;
+  display: inline-block;
+  width: 304px;
+}
+
+.homeCity:hover {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.homeStartButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  color: #FFF;
+  padding: 0px 22px;
+  border-left: 8px solid #261835;
+  bottom: 0;
+  line-height: 63px;
+}
+
+.homeStartButton:hover {
+  background: #7D42BB;
+  cursor: pointer;
+}
+
+.homeFooter {
+  font-size: 14px;
+  line-height: 24px;
+  color: #A79ACA;
+  margin-top: 6px;
+}
+
+.homeFooter a {
+  color: #A79ACA;
+  text-decoration: none;
+}
+
+.homeFooter a:hover {
+  color: #A79ACA;
+  text-decoration: underline;
+}
+
+/****************** Map View ***************/
+
+/* 
+  Subviews:
+  MapSidebarView
+  LineSidebarView
+  LineView
+  SelectedLine
+*/
+
+/********* Map Sidebar View ***************/
+.mapSidebarView {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 280px;
+}
+
+.mapSidebarView>div {
+  padding: 12px 14px;
+}
+
+.mapSidebarView span {
+  border-bottom: 1px dotted #7D6992;
+  color: white;
+}
+
+.mapSidebarView span:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
+.mapSidebarHeader {
+  background: #261835;
+  padding: 16px 14px !important;
+}
+
+.mapSidebarTitle {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.mapSidebarActions {
+  background: #261835;
+  position: relative;
+}
+
+.mapSidebarActions .right {
+  position: absolute;
+  right: 14px;
+  top: 11px;
+}
+
+.mapSidebarActions .right span {
+  margin-left: 10px;
+}
+
+.mapSidebarLines {
+  padding: 0 !important;
+}
+
+.mapSidebarLine {
+  padding: 12px 14px;
+}
+
+/********* Selected Line View ***************/
 
 .mapMarkerWrapper {
   /* overide default styles for leaflet markers */
@@ -87,15 +234,15 @@ body {
   line-height: 44px;
 }
 
-/********* Detail View ***************/
-.detailSidebar {
+/********* Line Sidebar View ***************/
+.lineSidebarView {
   position: absolute;
   top: 30px;
   right: 30px;
   width: 280px;
 }
 
-.detailSidebar>div {
+.lineSidebarView>div {
   padding: 12px 14px;
 }
 
@@ -181,66 +328,4 @@ body {
 }
 
 .lineDistance {}
-.lineFrequency{}
-
-
-/********* Home View ***************/
-/* TODO: Make home view's css less bad */
-.homeSidebar {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  bottom: 30px;
-  width: 280px;
-  overflow: hidden;
-}
-
-.homeSidebar>div {
-  padding: 12px 14px;
-}
-
-.homeHeader {
-  background: #261835;
-  padding: 16px 14px !important;
-}
-
-.homeTitle {
-  font-size: 30px;
-  font-weight: 600;
-  line-height: 36px;
-}
-
-.homeDescription {
-  font-size: 14px;
-  line-height: 22px;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 6px;
-}
-
-.homeSidebar .lineHeader {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.homeSidebar .lineName {
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.homeSidebar .lineDescription {
-  height: 22px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.newLine {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #261835;
-}
-
-.newLine span {
-  border-bottom: 1px dotted #7D6992;
-}
+.lineFrequency {}

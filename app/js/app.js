@@ -6,13 +6,9 @@ _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
 };
 
-// The app is based largely around 'lines', aka transit lines
-// and related information like name and frequency. A shared collection
-// is created here that all views and the router use to render the app.
 $(document).ready(function() {
-  var lines = new app.Lines();
-
-  app.view = new app.AppView({ collection: lines });
-  app.router = new app.Router({ collection: lines });
-
+  var options = { tileLayer: { detectRetina: true } };
+  app.leaflet = L.mapbox.map('map', 'codeforamerica.h6mlbj75', options);
+  
+  app.router = new app.Router();
 });
