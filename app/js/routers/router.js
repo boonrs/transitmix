@@ -31,7 +31,7 @@ app.Router = Backbone.Router.extend({
   _loadMap: function(mapId, callback) {
     // If we already have a view with the apropriate model, we just need
     // to handle the select/unselect events, and skip data load / view rendering
-    if (this.view && this.view.model && this.view.model.id === mapId) {
+    if (this.view && this.view.model && this.view.model.id.toString() === mapId) {
       callback(this.view.model);
       return;
     }

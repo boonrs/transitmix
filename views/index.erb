@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="description" content="Design, remix, and share your pefect transit system.">
+  <meta name="description" content="Design, remix, and share your pefect transit map.">
   <meta name="viewport" content="width=device-width">
   
   <title>Transitmix</title>
@@ -24,7 +24,7 @@
   <!-- underscore templates -->
   <script type="text/template" id="tmpl-home-view">
     <div class="homeTitle">Transitmix</div>
-    <div class="homeDescription">Design, remix, and share your pefect transit system. First, choose a city:</div>
+    <div class="homeDescription">Design, remix, and share your pefect transit map. First, choose a city:</div>
     <div class="homeCityWrapper">
       <span class="homeCity" contenteditable="true">San Francisco, CA</span>
       <span class="homeStartButton">Start</span>
@@ -34,25 +34,39 @@
   <script type="text/template" id="tmpl-map-sidebar-view">
     <div class="mapSidebarHeader">
       <div class="mapSidebarTitle">{{ name }}</div>
-      <div class="homeDescription">Create and remix transit lines, for fun and profit.</div>
+      <div class="homeDescription">This map has {{ lineCount }} lines, covering {{ distance }} miles, costing ${{ cost }} per year.</div>
     </div>
     <div class="mapSidebarLines"></div>
-    <div class="mapSidebarNew">Or create a <span>new transit line...</span></div>
+    <div class="mapSidebarActions">
+      <div class="left">
+        <span class="addLine">Add a line</span>
+      </div>
+
+      <div class="right">
+       <span class="share">Share</span>
+       <span class="remix">Remix</span>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/template" id="tmpl-map-sidebar-empty-view">
+    <div class="mapSidebarHeader">
+      <div class="mapSidebarTitle">{{ name }}</div>
+      <div class="homeDescription">Lovely city you've got there. But it sure could use some transit.<!-- ' Fix syntax coloring in Sublime--></div>
+      <div class="homeDescription">Start by <span class="addLine">adding a transit line</span>.</div>
+    </div>
   </script>
 
   <script type="text/template" id="tmpl-map-sidebar-subview">
     <div class="mapSidebarLine" style="background:{{ color }}">
-      <a href="#map/{{ mapId }}/line/{{ id }}">
-        <div class="lineName">{{ name }}</div>
-        <div class="lineDescription">{{ description }}</div>
-      </a>
+      <div class="lineName">{{ name }}</div>
+      <div class="lineDescription">{{ distance }} miles • every {{ frequency }} min • {{ busesRequired }} buses</div>
     </div>
   </script>
 
   <script type="text/template" id="tmpl-line-sidebar-view">
     <div class="nav">
-      <div class="navHome">See all lines</div>
-      <div class="navRemix">Remix</div>
+      <div class="navHome">&#8592; back to all lines</div>
     </div>
 
     <div class="lineHeader" style="background: {{ color }}">
@@ -67,8 +81,9 @@
     </div>
 
     <div class="lineCalculations" style="background: {{ color3 }}">
-      This line is <span class="lineDistance">0 miles</span><br/>
-      and would cost <span class="lineCost">$0</span>.
+      This line is <span class="lineDistance">0 miles</span>,<br/>
+      requires <span class="lineBuses">0 buses</span>,<br/>
+      and costs <span class="lineCost">$0</span> per year.
     </div>
   </script>
 

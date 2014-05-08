@@ -187,11 +187,12 @@ app.Line = Backbone.Model.extend({
 
     var roundTripTime = (distance / speed) * (1 + LAYOVER_PERCENTAGE);
     // Can you have half a bus? Do we need to ceiling this next value?
-    var busesRequired = roundTripTime / frequency; 
+    var busesRequired = Math.ceil(roundTripTime / frequency); 
     var revenueHoursPerDay = busesRequired * hoursPerDay;
     var yearlyCost = revenueHoursPerDay * SERVICE_DAYS * COST_PER_REVENUE_HOUR;
 
     return {
+      busesRequired: busesRequired,
       distance: distance,
       cost: yearlyCost,
     };

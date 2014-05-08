@@ -177,3 +177,8 @@ app.utils.closestPointInRoute = function(arr, point) {
         index: closestIndex
     };
 };
+
+// Adds commas to a number
+app.utils.addCommas = function(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};

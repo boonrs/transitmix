@@ -19,7 +19,6 @@ app.LineSidebarView = Backbone.View.extend({
 
   events: {
     'click .navHome': 'unselect',
-    'click .navRemix': 'remix',
     // Disable select-all-text-on-click. Need to user test this.
     // 'focus [contenteditable]': 'selectAllText',
     'keydown': 'preventNewline',
@@ -55,8 +54,10 @@ app.LineSidebarView = Backbone.View.extend({
 
     var cost = calcs.cost.toFixed(0);
     // Crazy internet regex to add commas numbers
-    cost =  cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    cost = app.utils.addCommas(cost);
     this.$('.lineCost').html('$' + cost);
+
+    this.$('.lineBuses').html(calcs.busesRequired + ' buses');
   },
 
   save: function(model, options) {
@@ -67,10 +68,6 @@ app.LineSidebarView = Backbone.View.extend({
 
   unselect: function() {
     app.router.navigate('map/' + this.model.get('mapId'), { trigger: true });
-  },
-
-  remix: function() {
-    console.log('add remixing ability...');
   },
 
   // Select all text in a contentEditable field. Need to _.defer for 
