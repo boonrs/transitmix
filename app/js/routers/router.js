@@ -12,9 +12,9 @@ app.Router = Backbone.Router.extend({
   },
 
   _trackPageview: function() {
-    if (typeof ga !== "undefined") {
+    if (typeof ga !== 'undefined') {
       var url = Backbone.history.getFragment();
-      ga('send', 'pageview', {'page': "/" + url});
+      ga('send', 'pageview', {'page': '/' + url});
     }
   },
 
