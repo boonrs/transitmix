@@ -10,8 +10,23 @@ app.Map = Backbone.Model.extend({
 
   // TODO: Drop the parse and toJSON when we switch to camelcase
   parse: function(response) {
-    response.lines = new app.Lines(response.lines);
-    return response;
+    return {
+      id: response.id,
+      name: response.name,
+      center: response.center,
+      zoomLevel: response.zoom_level,
+      lines: new app.Lines(response.lines, { parse: true }),
+    };
+  },
+
+  toJSON: function() {
+    var attr = this.attributes;
+    return {
+      id: attr.id,
+      name: attr.name,
+      center: attr.center,
+      zoom_level: attr.zoomLevel,
+    };
   },
 
   // A specific model in the collection can be selected. This lets
