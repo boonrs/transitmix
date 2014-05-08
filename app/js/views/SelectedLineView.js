@@ -7,9 +7,9 @@ app.SelectedLineView = Backbone.View.extend({
       'stopDrawing', 'showInsert', 'beginInsert', 'updateInsert','finishInsert',
       'removeInsert');
 
-    this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 150);
-    this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 150);
-    this.throttledUpdateInsert = _.throttle(this.updateInsert, 150);
+    this.throttledUpdateWaypoint = _.throttle(this.updateWaypoint, 250);
+    this.throttledShowDrawingLine = _.throttle(this.showDrawingLine, 250);
+    this.throttledUpdateInsert = _.throttle(this.updateInsert, 250);
 
     this.markers = [];
     this.isDrawing = false;
@@ -161,10 +161,8 @@ app.SelectedLineView = Backbone.View.extend({
     var coordinates = this.model.get('coordinates');
     if (coordinates.length === 0) return;
 
-    app.utils.getRoute({
-      from: _.last(this.model.getWaypoints()),
-      to: _.values(event.latlng),
-    }, function(coordinates) {
+    var routeBetween = [_.last(this.model.getWaypoints()), _.values(event.latlng)];
+    app.utils.getRoute(routeBetween, function(coordinates) {
       this.drawingLine.setLatLngs(coordinates);
     }, this);
   },
