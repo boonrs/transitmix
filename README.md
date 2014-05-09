@@ -1,6 +1,29 @@
 # Transitmix
 
-TODO: What is this?
+Transitmix is a sketching tool for transit planners (both professional and armchair) to quickly design routes and share with the public. It lives at [transitmix.net](http://transitmix.net).
+
+## About
+
+### What does this do now?
+
+* You can draw your own routes by dragging and dropping points and it snaps to a street grid.
+* You can input stats like headway ("bus comes every X min"), speed (mph), and operating hours.
+* It outputs stats like distance of route, # of buses required, and total cost.
+
+### What will this do in the future?
+
+* It will take customizable inputs for layover percentage, cost per revenue hour, annual service days, and perhaps bus capacity.
+* It will output round trip / cycle time, revenue hours per day, and estimated ridership
+* It will allow users to import custom data for decision making (i.e. census data, residential density, employment density, etc.)
+
+### What does this not do?
+
+* Transitmix is not (yet) a replacement for professional transit operations planning and scheduling.
+
+### How can I help?
+
+* Check out our github issues page [here](https://github.com/codeforamerica/transitmix/issues/).
+
 
 ## Setup
 
