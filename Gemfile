@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 
-ruby '2.1.1'
+if ENV['CI']
+  ruby RUBY_VERSION
+else
+  ruby '2.1.1'
+end
 
 gem 'dedent'
 gem 'dotenv'

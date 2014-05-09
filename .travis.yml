@@ -1,5 +1,16 @@
+language: ruby
+cache: bundler
+rvm:
+  - 2.1.1
+  - ruby-head
+before_script:
+  - cp .env.sample .env
+  - bundle exec rake db:create db:migrate DATABASE_URL=postgres://localhost/transitmix_test
 deploy:
   provider: heroku
   api_key:
     secure: GQNUD1hf8VKHeFx1OW+mdxTXeUDU3li6XwfW4jKapbCVMAN/3WrgUnAZnp2hA5tvLI93xVM84Ez48L42B5Cl5pkld0DTR0/Fv7fJ7znYEpsxkDi8eW8QSJnU37W3HIq8Ngx3kPhJC1QQ600nsWF76+oizAlLsLjCv4XRuyIIfJk=
-  app: transitmix
+  app: transitmix-staging
+  run:
+    - "rake db:migrate"
+    - restart
