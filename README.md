@@ -27,19 +27,24 @@ Transitmix is a sketching tool for transit planners (both professional and armch
 
 ## Setup
 
-[Install PostgreSQL](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md).
+Transitmix is a Ruby on Rails application with a PostgreSQL database.
 
-```console
-git clone https://github.com/codeforamerica/transitmix.git
-cd transitmix
-cp .env.sample .env
-bundle install
-rake db:create db:migrate
-rake db:create db:migrate DATABASE_URL=postgres://localhost/transitmix_test
-bundle exec rackup
-```
+1. [Install PostgreSQL](https://github.com/codeforamerica/howto/blob/master/PostgreSQL.md).
+2. [Install Ruby](https://github.com/codeforamerica/howto/blob/master/Ruby.md).
+3. [Install Rails](https://github.com/codeforamerica/howto/blob/master/Rails.md).
+4. Clone Transmitmix from Github and prepare the database:
+   
+  ```console
+  git clone https://github.com/codeforamerica/transitmix.git
+  cd transitmix
+  cp .env.sample .env
+  bundle install
+  rake db:create db:migrate
+  rake db:create db:migrate DATABASE_URL=postgres://localhost/transitmix_test
+  bundle exec rackup
+  ```
 
-## Deploy
+## Deploy to Heroku
 
 ```console
 heroku create <app name>
