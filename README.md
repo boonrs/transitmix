@@ -20,10 +20,26 @@ Transitmix is a sketching tool for transit planners (both professional and armch
 
 * Transitmix is not (yet) a replacement for professional transit operations planning and scheduling.
 
+### Who is this made by?
+
+- [Sam Hashemi](https://github.com/samhashemi)
+- [Dan Getelman](https://github.com/dget)
+- [Tiffany Chu](https://github.com/tchu88)
+- [Danny Whalen](https://github.com/invisiblefunnel)
+- [Becky Boone](https://github.com/boonrs)
+- [Maksim Pecherskiy](https://github.com/mrmaksimize)
+
+With additional help from [Jason Denizac](https://github.com/jden), [Lyzi Diamond](https://github.com/lyzidiamond), and [Andrew Douglass](https://github.com/ardouglass).
+
+Reach out to all of us at [transitmix@codeforamerica.org](mailto:transitmix@codeforamerica.org).
+
+### How did this project start?
+
+Transitmix was started as a Code for America [hackathon project](https://github.com/tiffani/transit-mix) in January 2013, by the [Atlanta fellowship team](http://willcodeforpeaches.tumblr.com/). It was inspired by a similar project, [Streetmix](http://streetmix.net) and from talks with transit planners.
+
 ### How can I help?
 
 * Check out our github issues page [here](https://github.com/codeforamerica/transitmix/issues/).
-
 
 ## Setup
 
