@@ -4,9 +4,7 @@ require 'ffaker'
 require 'rspec'
 require 'rack/test'
 
-# TODO: find a better way to do this
-ENV['DATABASE_URL'] = 'postgres://localhost/transitmix_test'
-require './web'
+require './app'
 require './spec/factories'
 
 Dir['./spec/support/**/*.rb'].each { |f| require(f) }
