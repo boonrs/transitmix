@@ -4,6 +4,6 @@ Sequel.migration do
   end
 
   down do
-    execute %{DROP EXTENSION 'uuid-ossp';}
+    execute %{DROP EXTENSION "uuid-ossp";}
   end
 end
