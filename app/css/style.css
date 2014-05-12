@@ -269,29 +269,40 @@ body {
 }
 
 .lineSidebarView>div {
-  padding: 12px 14px;
+  padding: 14px 14px;
 }
 
 .nav {
   background: #261835;
-  height: 39px;
+  height: 42px;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .navHome {
   float: left;
+  margin-top: -1px;
 }
 
-.navRemix {
+.navRight {
   float: right;
+  margin-top: -1px;
 }
 
-.navHome, .navRemix {
+.navRight .navNew {
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.navRight .navDelete {
+  display: inline-block;
+}
+
+.navHome, .navNew, .navDelete {
   padding-bottom: 2px;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
 }
 
-.navHome:hover, .navRemix:hover {
+.navHome:hover, .navNew:hover, .navDelete:hover {
   color: white;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
   cursor: pointer;
