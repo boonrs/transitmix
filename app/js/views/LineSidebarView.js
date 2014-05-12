@@ -19,6 +19,7 @@ app.LineSidebarView = Backbone.View.extend({
 
   events: {
     'click .navHome': 'unselect',
+    'click .navDelete': 'delete',
     // Disable select-all-text-on-click. Need to user test this.
     // 'focus [contenteditable]': 'selectAllText',
     'keydown': 'preventNewline',
@@ -84,6 +85,10 @@ app.LineSidebarView = Backbone.View.extend({
       event.preventDefault();
       event.target.blur();
     }
+  },
+
+  delete: function() {
+    this.model.destroy();
   },
 
   remove: function() {
