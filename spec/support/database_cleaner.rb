@@ -1,21 +1,11 @@
 require 'database_cleaner'
 
+DatabaseCleaner[:sequel, connection: Sequel::Model.db].strategy = :transaction
+
 RSpec.configure do |config|
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-  end
-
-  config.before(:suite) do
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.before(:each) do
-    DatabaseCleaner.start
-  end
-
-  config.after(:each) do
-    DatabaseCleaner.clean
+  config.around do |example|
+    DatabaseCleaner[:sequel, connection: Sequel::Model.db].start
+    example.run
+    DatabaseCleaner[:sequel, connection: Sequel::Model.db].clean
   end
 end
-
-DatabaseCleaner.logger = Logger.new(STDOUT)

@@ -2,14 +2,16 @@ source 'https://rubygems.org'
 
 ruby '2.1.1'
 
+gem 'dedent'
 gem 'dotenv'
 gem 'grape'
 gem 'pg'
-gem 'puma'
+gem 'rake'
 gem 'sequel'
 gem 'sinatra-assetpack', :require => 'sinatra/assetpack'
 gem 'sinatra'
 gem 'uglifier'
+gem 'unicorn'
 
 group :test do
   gem 'database_cleaner'

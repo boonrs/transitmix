@@ -1,9 +1,9 @@
-require './db/tasks.rb'
+require 'bundler'
+Bundler.require
 
-task :test do
-  require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new(:spec)
-  Rake::Task[:spec].invoke
-end
+# require rake tasks
+Dir['./lib/tasks/**/*.rake'].each { |f| load(f) }
 
+# declare default rake task
+desc 'Run the entire test suite'
 task default: :test
