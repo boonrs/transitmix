@@ -46,7 +46,7 @@ body {
 .homeDescription {
   font-size: 14px;
   line-height: 24px;
-  color: #A79ACA;
+  color: #B9B3CA;
   margin-top: 6px;
 }
 
@@ -149,15 +149,28 @@ body {
   line-height: 36px;
 }
 
+.mapSidebarDescription {
+  font-size: 14px;
+  line-height: 24px;
+  color: #B9B3CA;
+  margin-top: 6px;
+}
+
 .mapSidebarActions {
   background: #261835;
   position: relative;
+  padding: 16px 14px !important;
+}
+
+.mapSidebarActions .left {
+  position: relative;
+  top: -1px;
 }
 
 .mapSidebarActions .right {
   position: absolute;
   right: 14px;
-  top: 11px;
+  top: 15px;
 }
 
 .mapSidebarActions .right span {
@@ -169,7 +182,20 @@ body {
 }
 
 .mapSidebarLine {
-  padding: 12px 14px;
+  padding: 17px 14px;
+}
+
+.mapSidebarLine .lineName {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.mapSidebarLine .lineDescription {
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 11px;
 }
 
 /********* Selected Line View ***************/

@@ -39,7 +39,7 @@
   <script type="text/template" id="tmpl-map-sidebar-view">
     <div class="mapSidebarHeader">
       <div class="mapSidebarTitle">{{ name }}</div>
-      <div class="homeDescription">This map has {{ lineCount }} lines, covering {{ distance }} miles, costing ${{ cost }} per year.</div>
+      <div class="mapSidebarDescription">This map has {{ lineCount }} lines, covering {{ distance }} miles, costing ${{ cost }} per year.</div>
     </div>
     <div class="mapSidebarLines"></div>
     <div class="mapSidebarActions">
@@ -63,7 +63,7 @@
   </script>
 
   <script type="text/template" id="tmpl-map-sidebar-subview">
-    <div class="mapSidebarLine" style="background:{{ color }}">
+    <div class="mapSidebarLine" style="background:{{ color }}; bordedr: 1px solid {{ color2 }}; border-top: none;">
       <div class="lineName">{{ name }}</div>
       <div class="lineDescription">{{ distance }} miles • every {{ frequency }} min • {{ busesRequired }} buses</div>
     </div>
