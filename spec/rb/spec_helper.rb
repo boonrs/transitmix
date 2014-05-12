@@ -5,9 +5,9 @@ require 'rspec'
 require 'rack/test'
 
 require './app'
-require './spec/factories'
+require './spec/rb/factories'
 
-Dir['./spec/support/**/*.rb'].each { |f| require(f) }
+Dir['./spec/rb/support/**/*.rb'].each { |f| require(f) }
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
