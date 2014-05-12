@@ -32,8 +32,11 @@ body {
   width: 450px;
   margin-left: -225px;
   top: 50%;
+  margin-top: -200px;
+}
+
+.homeViewWrapper {
   background: #261835;
-  margin-top: -150px;
   padding: 18px 24px;
 }
 
@@ -104,6 +107,64 @@ body {
 .homeFooter a:hover {
   color: #A79ACA;
   text-decoration: underline;
+}
+
+.homeViewFeedback {
+  background: #261835;
+  margin-top: 20px;
+  padding: 18px 24px;
+}
+
+.feedbackHeader {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.feedbackDescription {
+  font-size: 14px;
+  line-height: 23px;
+  color: #B9B3CA;
+}
+
+.homeViewFeedback a {
+  color: white;
+  border-bottom: 1px dotted #7D6992;
+  text-decoration: none;
+}
+
+.homeViewFeedback a:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
+.feedbackForm {
+  margin-top: 10px;
+  position: relative;
+}
+
+.feedbackForm input {
+  font-size: 15px;
+  line-height: 25px;
+  padding: 3px 7px;
+}
+
+.feedbackSubmit {
+  font-size: 15px !important;
+  float: right;
+  background: #493A70;
+  color: #FFF;
+  padding: 6px 12px !important;
+  border: none;
+  position: absolute;
+  right: -24px;
+  top: 0px;
+  width: 165px;
+}
+
+.feedbackSubmit:hover {
+  background: #7D42BB;
+  cursor: pointer;
 }
 
 /****************** Map View ***************/
