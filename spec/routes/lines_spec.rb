@@ -51,4 +51,17 @@ describe Transitmix::Routes::Lines do
       expect(last_response.body).to eq [lines[4], lines[3]].to_json
     end
   end
+
+  describe 'DELETE /api/lines' do
+    let!(:line) { create(:line) }
+
+    it 'is sucessful' do
+      delete "/api/lines/#{ line.id }"
+      expect(last_response.status).to eq 200
+    end
+
+    it 'deletes the line' do
+      expect { delete "/api/lines/#{ line.id }" }.to change{ Line.count }.by(-1)
+    end
+  end
 end

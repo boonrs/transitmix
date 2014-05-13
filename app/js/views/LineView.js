@@ -1,6 +1,7 @@
 app.LineView = Backbone.View.extend({
   initialize: function() {
     this.listenTo(this.model, 'change:coordinates', this.updateCoordinates);
+    this.listenTo(this.model, 'destroy', this.remove);
   },
 
   render: function() {

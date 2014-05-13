@@ -99,7 +99,9 @@ app.LineSidebarView = Backbone.View.extend({
   },
 
   delete: function() {
+    var fragment = 'map/' + this.model.get('mapId');
     this.model.destroy();
+    app.router.navigate(fragment, { trigger: true });
   },
 
   remove: function() {
