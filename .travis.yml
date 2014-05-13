@@ -12,5 +12,5 @@ deploy:
   run:
     - "rake db:migrate"
     - restart
-  notifications:
-    webhooks: http://project-monitor.codeforamerica.org/projects/b4187edb-11eb-429e-bc0a-9eb92f6eead6/status
+notifications:
+  webhooks: http://project-monitor.codeforamerica.org/projects/b4187edb-11eb-429e-bc0a-9eb92f6eead6/status
