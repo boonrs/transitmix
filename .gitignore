@@ -35,3 +35,6 @@ build/
 
 # see github.com/bkeepers/dotenv
 .env
+
+# mac-specific files
+.DS_Store
