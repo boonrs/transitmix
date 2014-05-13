@@ -14,4 +14,4 @@ end
 
 require 'app/models/line'
 require 'app/models/map'
-require 'app/models/status'
+require 'app/models/app_status'

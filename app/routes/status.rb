@@ -4,7 +4,7 @@ module Transitmix
       format :json
 
       get '/.well-known/status' do
-        Status.new
+        AppStatus.new
       end
     end
   end

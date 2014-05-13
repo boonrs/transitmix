@@ -1,10 +1,10 @@
-class Status
+class AppStatus
   OK = 'ok'.freeze
   FAILURE = 'not ok'.freeze
 
   def payload
     {
-      dependencies: %w(heroku-postgresql heroku-scheduler osrm mapbox),
+      dependencies: %w(heroku-postgresql heroku-scheduler mapbox mapbox-smart-directions),
       status: status,
       updated: Time.now.to_i,
       resources: {}

@@ -27,16 +27,8 @@ module Transitmix
         css_compression :simple
       end
 
-      get '/' do
-        erb :index
-      end
-
       get '/*' do
-        if params[:splat].first[0,3] == 'api'
-          pass
-        else
-          erb :index
-        end
+        erb :index
       end
     end
   end
