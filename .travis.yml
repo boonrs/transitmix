@@ -1,5 +1,7 @@
 language: ruby
 cache: bundler
+env:
+  - RACK_ENV=test
 rvm:
   - 2.1.1
 before_script:
