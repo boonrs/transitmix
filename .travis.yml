@@ -7,8 +7,10 @@ before_script:
 deploy:
   provider: heroku
   api_key:
-    secure: GQNUD1hf8VKHeFx1OW+mdxTXeUDU3li6XwfW4jKapbCVMAN/3WrgUnAZnp2hA5tvLI93xVM84Ez48L42B5Cl5pkld0DTR0/Fv7fJ7znYEpsxkDi8eW8QSJnU37W3HIq8Ngx3kPhJC1QQ600nsWF76+oizAlLsLjCv4XRuyIIfJk=
+    secure: hWV9+hAsC50G2yMXYz9h3M1fYALnNVc/SrUxiemcZ0B9fWKGCQ8qJCrU57OwtU6lnxTaVZXVvOrHoKjLYCd3NwEqFary6DuHoLPYXT6tZp58B9TX9EHF0O++0mVa3SyO5rDyO6XSz7BDXj1rLT2u+vRzC2I7tM9uVmMkZKwIeb4=
   app: transitmix-staging
   run:
     - "rake db:migrate"
     - restart
+  notifications:
+    webhooks: http://project-monitor.codeforamerica.org/projects/b4187edb-11eb-429e-bc0a-9eb92f6eead6/status
