@@ -93,8 +93,7 @@ app.mapSidebarSubview = Backbone.View.extend({
 
   render: function() {
     var attrs = _.clone(this.model.toJSON());
-    attrs.color2 = app.utils.tweakColor(attrs.color, -3);
-
+    
     var calcs = this.model.getCalculations();
     calcs.distance = calcs.distance.toFixed(2);
     _.extend(attrs, calcs);
