@@ -20,8 +20,9 @@ describe Transitmix::Routes::Lines do
       expect(last_response.body).to eq line.to_json
     end
 
-    it 'is not found', pending: "pending until ID changed to int" do
-      get "/api/lines/missing-id"
+    it 'is not found' do
+      max = Line.max(:id) || 0
+      get "/api/lines/#{ max + 1 }"
       expect(last_response.status).to eq 404
     end
   end
