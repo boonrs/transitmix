@@ -58,6 +58,14 @@ module Transitmix
         line.update(line_params)
         line
       end
+
+      params do
+        requires :id, type: String
+      end
+
+      delete '/api/lines/:id' do
+        Line.first!(id: params[:id]).destroy
+      end
     end
   end
 end
