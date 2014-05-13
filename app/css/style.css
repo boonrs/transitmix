@@ -25,6 +25,84 @@ body {
   left: 0;
 }
 
+/********* Feedback View ***************/
+.feedbackView {
+  background: #000;
+  margin-top: 20px;
+  padding: 18px 24px;
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  opacity: 0.6;
+  font-size: 14px;
+  max-width: 450px;
+}
+
+.feedbackView.expanded {
+  padding: 24px 24px;
+  font-size: 18px;
+}
+
+.feedbackView.expanded .feedbackHint {
+  font-weight: 600;
+}
+
+.feedbackView:hover {
+  opacity: 0.8;
+}
+
+.feedbackHint:hover {
+  cursor: pointer;
+}
+
+.feedbackDescription {
+  font-size: 14px;
+  line-height: 26px;
+  color: #ADADAD;
+  margin-top: 10px;
+}
+
+
+.feedbackView a {
+  color: white;
+  border-bottom: 1px dotted #7D6992;
+  text-decoration: none;
+}
+
+.feedbackView a:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
+.feedbackForm {
+  margin-top: 10px;
+  position: relative;
+}
+
+.feedbackForm input {
+  font-size: 15px;
+  line-height: 25px;
+  padding: 3px 7px;
+}
+
+.feedbackForm input[type="submit"] {
+  font-size: 15px;
+  float: right;
+  background: #3A3A3A;
+  color: #FFF;
+  padding: 6px 12px;
+  border: none;
+  position: absolute;
+  right: 0px;
+  top: -1px;
+  width: 142px;
+}
+
+.feedbackForm input[type="submit"]:hover {
+  background: #9B0000;
+  cursor: pointer;
+}
+
 /********* Home View ***************/
 .homeView {
   position: absolute;
@@ -32,8 +110,11 @@ body {
   width: 450px;
   margin-left: -225px;
   top: 50%;
-  background: #261835;
   margin-top: -150px;
+}
+
+.homeViewWrapper {
+  background: #261835;
   padding: 18px 24px;
 }
 
@@ -46,7 +127,7 @@ body {
 .homeDescription {
   font-size: 14px;
   line-height: 24px;
-  color: #A79ACA;
+  color: #B9B3CA;
   margin-top: 6px;
 }
 
@@ -149,15 +230,28 @@ body {
   line-height: 36px;
 }
 
+.mapSidebarDescription {
+  font-size: 14px;
+  line-height: 24px;
+  color: #B9B3CA;
+  margin-top: 6px;
+}
+
 .mapSidebarActions {
   background: #261835;
   position: relative;
+  padding: 16px 14px !important;
+}
+
+.mapSidebarActions .left {
+  position: relative;
+  top: -1px;
 }
 
 .mapSidebarActions .right {
   position: absolute;
   right: 14px;
-  top: 11px;
+  top: 15px;
 }
 
 .mapSidebarActions .right span {
@@ -169,7 +263,20 @@ body {
 }
 
 .mapSidebarLine {
-  padding: 12px 14px;
+  padding: 17px 14px;
+}
+
+.mapSidebarLine .lineName {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 16px;
+}
+
+.mapSidebarLine .lineDescription {
+  font-size: 14px;
+  line-height: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 11px;
 }
 
 /********* Selected Line View ***************/
@@ -243,29 +350,40 @@ body {
 }
 
 .lineSidebarView>div {
-  padding: 12px 14px;
+  padding: 14px 14px;
 }
 
 .nav {
   background: #261835;
-  height: 39px;
+  height: 42px;
   color: rgba(255, 255, 255, 0.8);
 }
 
 .navHome {
   float: left;
+  margin-top: -1px;
 }
 
-.navRemix {
+.navRight {
   float: right;
+  margin-top: -1px;
 }
 
-.navHome, .navRemix {
+.navRight .navNew {
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.navRight .navDelete {
+  display: inline-block;
+}
+
+.navHome, .navNew, .navDelete {
   padding-bottom: 2px;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
 }
 
-.navHome:hover, .navRemix:hover {
+.navHome:hover, .navNew:hover, .navDelete:hover {
   color: white;
   border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
   cursor: pointer;

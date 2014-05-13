@@ -16,8 +16,8 @@ app.Line = Backbone.Model.extend({
     return {
       name: randomName,
       description: 'Click to add description.',
-      frequency: 30,
-      speed: 10,
+      frequency: 15,
+      speed: 12,
       startTime: '8am',
       endTime: '8pm',
       color: randomColor,

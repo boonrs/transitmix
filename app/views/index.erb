@@ -27,19 +27,33 @@
   <div id="map"></div>
 
   <!-- underscore templates -->
+  <script type="text/template" id="tmpl-feedback-view">
+    <div class="feedbackHint">What is Transitmix?</div>
+    <div class="feedbackExpansion" style="display:none">
+      <div class="feedbackDescription">This is an <a href="https://github.com/codeforamerica/transitmix/blob/master/README.md" target="_blank">early preview</a> of a transit planning app, made by <a href="http://codeforamerica.org/about/" target="_blank">Code for America</a>. Help make it better by <a href="mailto:transitmix@codeforamerica.org">emailing us</a> with feedback and stories.</div>
+      <div class="feedbackDescription">Or, sign up for email updates:</div>
+       <form class="feedbackForm" action="https://tinyletter.com/transitmix" method="post" target="popupwindow" onsubmit="window.open('https://tinyletter.com/transitmix', 'popupwindow', 'scrollbars=yes,width=800,height=600');return true">
+        <p><input type="text" style="width:250px" name="email" id="tlemail" placeholder="enter email address" /></p>
+        <input type="hidden" value="1" name="embed"/><input class="feedbackSubmit" type="submit" value="Subscribe" />
+      </form>
+    </div>
+  </script>
+
   <script type="text/template" id="tmpl-home-view">
-    <div class="homeTitle">Transitmix</div>
-    <div class="homeDescription">Design, remix, and share your pefect transit map. First, choose a city:</div>
-    <div class="homeCityWrapper">
-      <span class="homeCity" contenteditable="true">San Francisco, CA</span>
-      <span class="homeStartButton">Start</span>
+    <div class="homeViewWrapper">
+      <div class="homeTitle">Transitmix</div>
+      <div class="homeDescription">Design, remix, and share your pefect transit map.<br />Choose a city:</div>
+      <div class="homeCityWrapper">
+        <span class="homeCity" contenteditable="true">San Francisco, CA</span>
+        <span class="homeStartButton">Start</span>
+      </div>
     </div>
   </script>
 
   <script type="text/template" id="tmpl-map-sidebar-view">
     <div class="mapSidebarHeader">
       <div class="mapSidebarTitle">{{ name }}</div>
-      <div class="homeDescription">This map has {{ lineCount }} lines, covering {{ distance }} miles, costing ${{ cost }} per year.</div>
+      <div class="mapSidebarDescription">This map has {{ lineCount }} lines, covering {{ distance }} miles, costing ${{ cost }} per year.</div>
     </div>
     <div class="mapSidebarLines"></div>
     <div class="mapSidebarActions">
@@ -71,7 +85,11 @@
 
   <script type="text/template" id="tmpl-line-sidebar-view">
     <div class="nav">
-      <div class="navHome">&#8592; back to all lines</div>
+      <div class="navHome">&#8592; Map</div>
+      <div class="navRight">
+        <div class="navNew">Add a Line</div>
+        <div class="navDelete">Delete</div>
+      </div>
     </div>
 
     <div class="lineHeader" style="background: {{ color }}">

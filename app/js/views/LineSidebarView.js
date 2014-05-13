@@ -19,6 +19,8 @@ app.LineSidebarView = Backbone.View.extend({
 
   events: {
     'click .navHome': 'unselect',
+    'click .navNew': 'addLine',
+    'click .navDelete': 'delete',
     // Disable select-all-text-on-click. Need to user test this.
     // 'focus [contenteditable]': 'selectAllText',
     'keydown': 'preventNewline',
@@ -84,6 +86,20 @@ app.LineSidebarView = Backbone.View.extend({
       event.preventDefault();
       event.target.blur();
     }
+  },
+
+  addLine: function() {
+    var viewLine = function(model) {
+      var fragment = 'map/' + model.get('mapId') + '/line/' + model.id;
+      app.router.navigate(fragment, { trigger: true });
+    };
+
+    var mapId = this.model.get('mapId');
+    this.model.collection.create({ mapId: mapId }, { success: viewLine });
+  },
+
+  delete: function() {
+    this.model.destroy();
   },
 
   remove: function() {
