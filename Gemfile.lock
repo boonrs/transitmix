@@ -47,6 +47,12 @@ GEM
     hashie (2.1.1)
     i18n (0.6.9)
     ice_nine (0.11.0)
+    jasmine (2.0.1)
+      jasmine-core (~> 2.0.0)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.0.0)
     jsmin (1.0.1)
     json (1.8.1)
     kgio (2.9.2)
@@ -54,6 +60,7 @@ GEM
     multi_json (1.9.3)
     multi_xml (0.5.5)
     pg (0.17.1)
+    phantomjs (1.9.7.0)
     rack (1.5.2)
     rack-accept (0.4.5)
       rack (>= 0.4)
@@ -111,6 +118,7 @@ DEPENDENCIES
   factory_girl
   ffaker
   grape
+  jasmine
   pg
   rack-test
   rake

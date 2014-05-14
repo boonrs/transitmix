@@ -1,4 +1,4 @@
-require 'spec_helper'
+require './spec/rb/spec_helper.rb'
 
 describe Transitmix::Routes::Home do
   include Rack::Test::Methods

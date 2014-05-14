@@ -78,3 +78,8 @@ heroku open
 gem install rerun
 rerun 'bundle exec rackup'
 ```
+
+### Tests
+
+* Javascript: [Jasmine](http://jasmine.github.io/)
+* Ruby: [RSpec](https://www.relishapp.com/rspec)

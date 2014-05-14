@@ -20,4 +20,5 @@ group :test do
   gem 'ffaker'
   gem 'rack-test'
   gem 'rspec'
+  gem 'jasmine'
 end
