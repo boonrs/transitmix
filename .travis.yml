@@ -7,7 +7,7 @@ before_script:
 deploy:
   provider: heroku
   api_key:
-    secure: hWV9+hAsC50G2yMXYz9h3M1fYALnNVc/SrUxiemcZ0B9fWKGCQ8qJCrU57OwtU6lnxTaVZXVvOrHoKjLYCd3NwEqFary6DuHoLPYXT6tZp58B9TX9EHF0O++0mVa3SyO5rDyO6XSz7BDXj1rLT2u+vRzC2I7tM9uVmMkZKwIeb4=
+    secure: T3UJNJoh00GOsvRNOvsf66vG45ZrjLo/vxKRGUjMEcebLNZFTuRpJSdIIK/pNVkxNsCQnkBaiYbAUX0WTeCS8p6LM4CULgY+llFnpQ1/kN2urZOi/OdNu9CiLGrbNYdIobnEWH3mfhwhlAMnppBaCqq8G1YPcpYQRKSpJGuqwvo=
   app: transitmix-staging
   run:
     - "rake db:migrate"
