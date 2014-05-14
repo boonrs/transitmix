@@ -20,6 +20,7 @@ module Transitmix
         ]
 
         css :app, [
+          '/css/normalize.css',
           '/css/style.css'
          ]
 
