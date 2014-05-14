@@ -21,7 +21,7 @@ module Transitmix
 
         css :app, [
           '/css/normalize.css',
-          '/css/style.css'
+          '/css/style.scss'
          ]
 
         js_compression :uglify

@@ -2,6 +2,8 @@
 /* apply a natural box layout model to all elements */
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
+$primary-color: #261835;
+
 body {
   font-family: jaf-facitweb, sans-serif;
   color: white;
@@ -112,7 +114,7 @@ body {
 }
 
 .homeViewWrapper {
-  background: #261835;
+  background: $primary-color;
   padding: 18px 24px;
 }
 
@@ -158,7 +160,7 @@ body {
   font-size: 20px;
   color: #FFF;
   padding: 0px 22px;
-  border-left: 8px solid #261835;
+  border-left: 8px solid $primary-color;
   bottom: 0;
   line-height: 63px;
 }
@@ -218,7 +220,7 @@ body {
 }
 
 .mapSidebarHeader {
-  background: #261835;
+  background: $primary-color;
   padding: 16px 14px !important;
 }
 
@@ -236,7 +238,7 @@ body {
 }
 
 .mapSidebarActions {
-  background: #261835;
+  background: $primary-color;
   position: relative;
   padding: 16px 14px !important;
 }
@@ -334,7 +336,7 @@ body {
   right: 0;
   bottom: 100px;
   left: 0;
-  background: #261835;
+  background: $primary-color;
   text-align: center;
   line-height: 44px;
 }
@@ -352,7 +354,7 @@ body {
 }
 
 .nav {
-  background: #261835;
+  background: $primary-color;
   height: 42px;
   color: rgba(255, 255, 255, 0.8);
 }
