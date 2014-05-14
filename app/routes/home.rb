@@ -24,7 +24,7 @@ module Transitmix
          ]
 
         js_compression :uglify
-        css_compression :simple
+        css_compression :sass
       end
 
       get '/*' do
