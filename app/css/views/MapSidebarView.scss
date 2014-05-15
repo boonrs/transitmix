@@ -78,3 +78,31 @@
   color: rgba(255, 255, 255, 0.7);
   margin-top: 11px;
 }
+
+.mapSidebarShare {
+  background: #518A51;
+  padding: 16px 14px !important;
+  position: relative;
+}
+
+.mapSidebarShare input {
+  margin-top: 13px;
+  color: #000;
+  font-size: 13px;
+  padding: 9px;
+  width: 100%;
+  outline: 0;
+  border: none;
+}
+
+.mapSidebarShare:after {
+  bottom: 100%;
+  right: 29%;
+  border: 10px solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-bottom-color: #518A51;
+}
