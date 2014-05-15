@@ -1,0 +1,82 @@
+.homeView {
+  position: absolute;
+  left: 50%;
+  width: 450px;
+  margin-left: -225px;
+  top: 50%;
+  margin-top: -150px;
+}
+
+.homeViewWrapper {
+  background: $primary-color;
+  padding: 18px 24px;
+}
+
+.homeTitle {
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.homeDescription {
+  font-size: 14px;
+  line-height: 24px;
+  color: #B9B3CA;
+  margin-top: 6px;
+}
+
+.homeCityWrapper {
+  background: #493A70;
+  padding: 16px 26px;
+  margin: 14px -24px;
+  position: relative;
+}
+
+.homeCity {
+  color: #FFF;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+  padding: 6px 3px;
+  margin: 0 -3px;
+  font-size: 20px;
+  display: inline-block;
+  width: 304px;
+}
+
+.homeCity:hover {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.homeStartButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  color: #FFF;
+  padding: 0px 22px;
+  border-left: 8px solid $primary-color;
+  bottom: 0;
+  line-height: 63px;
+}
+
+.homeStartButton:hover {
+  background: #7D42BB;
+  cursor: pointer;
+}
+
+.homeFooter {
+  font-size: 14px;
+  line-height: 24px;
+  color: #A79ACA;
+  margin-top: 6px;
+}
+
+.homeFooter a {
+  color: #A79ACA;
+  text-decoration: none;
+}
+
+.homeFooter a:hover {
+  color: #A79ACA;
+  text-decoration: underline;
+}

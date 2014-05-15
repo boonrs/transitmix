@@ -1,0 +1,77 @@
+.feedbackView {
+  background: #000;
+  margin-top: 20px;
+  padding: 18px 24px;
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  opacity: 0.6;
+  font-size: 14px;
+  max-width: 450px;
+}
+
+.feedbackView.expanded {
+  padding: 24px 24px;
+  font-size: 18px;
+}
+
+.feedbackView.expanded .feedbackHint {
+  font-weight: 600;
+}
+
+.feedbackView:hover {
+  opacity: 0.8;
+}
+
+.feedbackHint:hover {
+  cursor: pointer;
+}
+
+.feedbackDescription {
+  font-size: 14px;
+  line-height: 26px;
+  color: #ADADAD;
+  margin-top: 10px;
+}
+
+
+.feedbackView a {
+  color: white;
+  border-bottom: 1px dotted #7D6992;
+  text-decoration: none;
+}
+
+.feedbackView a:hover {
+  cursor: pointer;
+  border-bottom: 1px dotted #F9F4FF;
+}
+
+.feedbackForm {
+  margin-top: 10px;
+  position: relative;
+}
+
+.feedbackForm input {
+  font-size: 15px;
+  line-height: 25px;
+  padding: 3px 7px;
+  color: black;
+}
+
+.feedbackForm input[type="submit"] {
+  font-size: 15px;
+  float: right;
+  background: #3A3A3A;
+  color: #FFF;
+  padding: 6px 12px;
+  border: none;
+  position: absolute;
+  right: 0px;
+  top: -1px;
+  width: 142px;
+}
+
+.feedbackForm input[type="submit"]:hover {
+  background: #9B0000;
+  cursor: pointer;
+}

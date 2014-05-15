@@ -4,6 +4,7 @@ module Transitmix
       configure do
         set :root, File.expand_path('../../../', __FILE__)
         set :views, 'app/views'
+        set :scss, { load_paths: ["#{root}/app/css"] }
       end
 
       register Sinatra::AssetPack
@@ -20,11 +21,11 @@ module Transitmix
         ]
 
         css :app, [
-          '/css/style.css'
+          '/css/style.css',
          ]
 
         js_compression :uglify
-        css_compression :simple
+        css_compression :sass
       end
 
       get '/*' do

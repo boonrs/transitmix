@@ -1,0 +1,59 @@
+.mapMarkerWrapper {
+  /* overide default styles for leaflet markers */
+  background: #ffffff;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 16px;
+}
+
+.mapMarker {
+  border-radius: 10px;
+  height: 10px;
+  width: 10px;
+  border: 3px solid #999;
+  padding: 4px;
+  margin: 1px;
+  background: #ffffff;
+}
+
+.showMarkerTooltip:hover:after {
+  position: absolute;
+  left: 24px;
+  top: -6px;
+  background: #FFF;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 0px 8px;
+  content: "Drag to change route, click to remove.";
+  text-shadow: none;
+  box-shadow: 0px 1px 5px #8F8F8F;
+  color: #333;
+}
+
+.showDrawingTooltip:after {
+  position: absolute;
+  left: 24px;
+  top: -6px;
+  background: #FFF;
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 0px 8px;
+  content: "Click again to finish.";
+  text-shadow: none;
+  box-shadow: 0px 1px 5px #8F8F8F;
+  color: #333;
+}
+
+.showDrawingCursor {
+  cursor: pointer;
+}
+
+.drawingInstructions {
+  position: absolute;
+  right: 0;
+  bottom: 100px;
+  left: 0;
+  background: $primary-color;
+  text-align: center;
+  line-height: 44px;
+}

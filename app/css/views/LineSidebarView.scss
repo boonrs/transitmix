@@ -1,0 +1,105 @@
+.lineSidebarView {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 280px;
+}
+
+.lineSidebarView>div {
+  padding: 14px 14px;
+}
+
+.nav {
+  background: $primary-color;
+  height: 42px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.navHome {
+  float: left;
+  margin-top: -1px;
+}
+
+.navRight {
+  float: right;
+  margin-top: -1px;
+}
+
+.navRight .navNew {
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.navRight .navDelete {
+  display: inline-block;
+}
+
+.navHome, .navNew, .navDelete {
+  padding-bottom: 2px;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+}
+
+.navHome:hover, .navNew:hover, .navDelete:hover {
+  color: white;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.lineHeader {
+  /*background: #AD0101;*/
+}
+
+.lineName {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 36px;
+}
+
+.lineDescription {
+  font-size: 14px;
+  line-height: 22px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 6px;
+}
+
+.lineName:hover, .lineDescription:hover {
+  /* TODO: make this look more editable */
+  cursor: pointer;
+}
+
+.lineVariables {
+  /*background: #750000;*/
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lineVariables span {
+  color: white;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+  padding: 0 3px;
+  margin: 0 -3px;
+  min-width: 20px;
+  display: inline-block;
+}
+
+.lineVariables span:hover {
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+}
+
+.lineFrequency {}
+.lineSpeed {}
+.lineHours {}
+
+.lineCalculations {
+  /*background: #3C0000;*/
+  line-height: 26px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lineCalculations span {
+  color: white;
+}
+
+.lineDistance {}
+.lineFrequency {}

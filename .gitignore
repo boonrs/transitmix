@@ -38,3 +38,6 @@ build/
 
 # mac-specific files
 .DS_Store
+
+# sass temporary files
+.sass-cache/
