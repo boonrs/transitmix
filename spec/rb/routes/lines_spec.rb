@@ -1,4 +1,5 @@
 require './spec/rb/spec_helper.rb'
+require 'json'
 
 describe Transitmix::Routes::Lines do
   include Rack::Test::Methods
@@ -37,6 +38,36 @@ describe Transitmix::Routes::Lines do
 
     it 'creates a new record' do
       expect { post '/api/lines', params }.to change{ Line.count }.by(+1)
+    end
+  end
+
+  describe 'PUT /api/lines/:id/remix' do
+    let(:line) { create(:line) }
+
+    it 'is successful' do
+      put "/api/lines/#{line.id}/remix"
+      expect(last_response.status).to eq 200
+    end
+
+    it 'returns a line with a different id' do
+      put "/api/lines/#{line.id}/remix"
+      remix = JSON.parse(last_response.body)
+      expect(remix["id"]).should_not eq line.id
+    end
+
+    it 'copies a line' do
+      put "/api/lines/#{line.id}/remix"
+      remix = JSON.parse(last_response.body).symbolize_keys
+
+      # ignore the id when comparing and datetime stuff
+      remix[:id] = nil
+      line.id = nil
+      remix[:created_at] = nil
+      line.created_at = nil
+      remix[:updated_at] = nil
+      line.updated_at = nil
+
+      expect(remix).to eq line.values
     end
   end
 

@@ -1,3 +1,4 @@
+require 'pp'
 module Transitmix
   module Routes
     class Lines < Grape::API
@@ -65,6 +66,15 @@ module Transitmix
 
       delete '/api/lines/:id' do
         Line.first!(id: params[:id]).destroy
+      end
+
+      params do
+        requires :id, type: String
+      end
+
+      put '/api/lines/:id/remix' do
+        line = Line.first!(id: params[:id])
+        Line.create(line.values.reject{|col| col == :id})
       end
     end
   end
