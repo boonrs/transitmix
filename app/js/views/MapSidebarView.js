@@ -71,7 +71,7 @@ app.MapSidebarView = Backbone.View.extend({
   },
 
   showShare: function() {
-    var url = 'http://transitmix.net/map/' + this.model.id;
+    var url = window.location.origin + '/map/' + this.model.id;
     var $inputField = this.$('.mapSidebarShare>input');
 
     $inputField.val(url);
