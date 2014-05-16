@@ -9,8 +9,9 @@ app.MapSidebarView = Backbone.View.extend({
 
   events: {
     'click .addLine': 'addLine',
-    'click .share': 'share',
     'click .remix': 'remix',
+    'click .share': 'showShare',
+    'mouseleave': 'hideShare',
   },
 
   initialize: function() {
@@ -69,8 +70,17 @@ app.MapSidebarView = Backbone.View.extend({
     line.save({}, { success: _.bind(viewLine, this) });
   },
 
-  share: function() {
+  showShare: function() {
+    var url = 'http://transitmix.net/map/' + this.model.id;
+    var $inputField = this.$('.mapSidebarShare>input');
 
+    $inputField.val(url);
+    this.$('.mapSidebarShare').show();
+    $inputField.select();
+  },
+
+  hideShare: function() {
+    this.$('.mapSidebarShare').hide();
   },
 
   remix: function() {
