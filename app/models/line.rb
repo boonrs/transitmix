@@ -4,4 +4,6 @@ class Line < Sequel::Model
   plugin :serialization, :json, :coordinates
 
   PERMITTED = [:coordinates, :name, :description, :start_time, :end_time, :frequency, :speed, :color, :map_id].freeze
+
+  many_to_one :map
 end

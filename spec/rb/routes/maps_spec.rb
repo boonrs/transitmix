@@ -52,4 +52,53 @@ describe Transitmix::Routes::Maps do
       expect(last_response.body).to eq [maps[4], maps[3]].to_json
     end
   end
+
+  describe 'PUT /api/maps/:id/remix' do
+    let(:map) { create(:map) }
+    let(:lines) { Array.new(3) { FactoryGirl.create(:line, map_id: map.id) } }
+    it 'is successful' do
+      put "/api/maps/#{map.id}/remix"
+      expect(last_response.status).to eq 200
+    end
+
+    it 'returns a map with a different id' do
+      put "/api/maps/#{map.id}/remix"
+      remix = JSON.parse(last_response.body)
+      expect(remix["id"]).should_not eq map.id
+    end
+
+    it 'copies a map' do
+      put "/api/maps/#{map.id}/remix"
+
+      remix = JSON.parse(last_response.body).symbolize_keys
+
+      puts "*"*40
+      p map.id
+      p lines
+      p remix[:lines]
+      puts "*"*40
+
+      # In comparisons, ignore id and datetime
+      remix[:id] = nil
+      map.id = nil
+      remix[:created_at] = nil
+      map.created_at = nil
+      remix[:updated_at] = nil
+      map.updated_at = nil
+
+      # map.lines = nil
+
+      # remix = JSON.parse(last_response.body).symbolize_keys
+
+      # # ignore the id when comparing and datetime stuff
+      # remix[:id] = nil
+      # line.id = nil
+      # remix[:created_at] = nil
+      # line.created_at = nil
+      # remix[:updated_at] = nil
+      # line.updated_at = nil
+
+      # expect(remix).to eq line.values
+    end
+  end
 end

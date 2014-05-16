@@ -53,6 +53,18 @@ module Transitmix
         map.update(map_params)
         map
       end
+
+      params do
+        requires :id, type: String
+      end
+
+      put '/api/maps/:id/remix' do
+        map = Map.first!(id: params[:id])
+        values_to_copy = map.values.reject { |col| col == :id || col == :lines  }
+        remix = Map.create(values_to_copy)
+        
+        #Map.create(map.values.reject{|col| col == :id})
+      end
     end
   end
 end
