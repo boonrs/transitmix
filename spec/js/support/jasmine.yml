@@ -11,7 +11,12 @@
 #   - dist/**/*.js
 #
 src_files:
+  - app/js/vendor/jquery.js
+  - app/js/vendor/underscore.js
+  - app/js/vendor/backbone.js
+  - app/js/vendor/backbone.stickit.min.js
   - app/js/**/*.js
+  - app/js/app.js
 
 # stylesheets
 #

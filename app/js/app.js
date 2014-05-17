@@ -1,6 +1,6 @@
 // Namespace for the application
 var app = app || {};
-
+app.hello = "World";
 // Use mustache-style syntax for underscore templates
 _.templateSettings = {
   interpolate: /\{\{(.+?)\}\}/g
